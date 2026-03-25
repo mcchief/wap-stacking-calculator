@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WaP Troop Stacking Calculator</title>
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:#111827;
+      --panel-2:#1f2937;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --accent:#22c55e;
+      --accent-2:#38bdf8;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --border:#334155;
+      --input:#0b1220;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+      background:linear-gradient(180deg,#0b1220 0%,#0f172a 100%);
+      color:var(--text);
+    }
+    .wrap{max-width:1280px;margin:0 auto;padding:24px}
+    .hero{
+      background:linear-gradient(135deg,#0f172a,#111827 45%,#0b3b2e);
+      border:1px solid var(--border);
+      border-radius:20px;
+      padding:24px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+    h1{margin:0 0 8px;font-size:30px}
+    .sub{color:var(--muted);line-height:1.5}
+    .grid{
+      display:grid;
+      grid-template-columns:320px 1fr;
+      gap:20px;
+      margin-top:20px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background:rgba(17,24,39,.92);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:18px;
+    }
+    .card h2{margin:0 0 12px;font-size:18px}
+    .field{margin-bottom:14px}
+    .field label{
+      display:block;
+      margin-bottom:6px;
+      color:#cbd5e1;
+      font-size:14px;
+      font-weight:600;
+    }
+    input,select{
+      width:100%;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:var(--input);
+      color:var(--text);
+      font-size:15px;
+      outline:none;
+    }
+    input:focus,select:focus{border-color:var(--accent-2)}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+    button{
+      padding:12px 14px;
+      border:none;
+      border-radius:12px;
+      background:var(--accent);
+      color:#06280f;
+      font-weight:800;
+      cursor:pointer;
+    }
+    button.secondary{
+      background:#1e293b;
+      color:var(--text);
+      border:1px solid var(--border);
+    }
+    .hint{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:12px;
+      margin-bottom:16px;
+    }
+    @media (max-width: 980px){
+      .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    .stat{
+      background:var(--panel-2);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:14px;
+    }
+    .stat .k{font-size:12px;color:var(--muted);margin-bottom:6px}
+    .stat .v{font-size:20px;font-weight:800}
+    .pill{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      margin-right:6px;
+      margin-bottom:6px;
+      border:1px solid transparent;
+    }
+    .ok{background:rgba(34,197,94,.15);color:#86efac;border-color:rgba(34,197,94,.25)}
+    .warn{background:rgba(245,158,11,.15);color:#fcd34d;border-color:rgba(245,158,11,.25)}
+    .bad{background:rgba(239,68,68,.15);color:#fca5a5;border-color:rgba(239,68,68,.25)}
+    .toolbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:14px;
+    }
+    th,td{
+      padding:10px 12px;
+      border-bottom:1px solid #253247;
+      text-align:left;
+      font-size:14px;
+    }
+    th{
+      position:sticky;top:0;
+      background:#132033;
+      color:#cfe3ff;
+      z-index:1;
+    }
+    tr:hover td{background:rgba(56,189,248,.06)}
+    .type-guard{color:#93c5fd}
+    .type-monster{color:#fca5a5}
+    .type-merc{color:#fde68a}
+    .section-note{color:var(--muted);font-size:13px;margin-top:8px}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media (max-width: 980px){.two-col{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>WaP Troop Stacking Calculator</h1>
+      <div class="sub">
+        Enter Leadership, Authority, Dominance, and Highest Troop Level. The calculator builds the stack automatically,
+        applies monster and mercenary HP caps, and gives a compact output list with no gaps.
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Inputs</h2>
+
+        <div class="field">
+          <label for="leadership">Leadership</label>
+          <input id="leadership" type="number" value="371000" min="0" step="10" />
+        </div>
+
+        <div class="field">
+          <label for="authority">Authority</label>
+          <input id="authority" type="number" value="10000" min="0" step="10" />
+        </div>
+
+        <div class="field">
+          <label for="dominance">Dominance</label>
+          <input id="dominance" type="number" value="10000" min="0" step="10" />
+        </div>
+
+        <div class="field">
+          <label for="troopLevel">Highest Troop Level</label>
+          <select id="troopLevel">
+            <option>G5</option>
+            <option>G6</option>
+            <option selected>G7</option>
+            <option>G8</option>
+            <option>G9</option>
+          </select>
+        </div>
+
+        <div class="btns">
+          <button id="calcBtn">Calculate</button>
+          <button class="secondary" id="resetBtn">Reset</button>
+        </div>
+
+        <div class="hint">
+          <strong>How to use:</strong><br>
+          1. Enter the 3 capacities.<br>
+          2. Pick the highest troop level.<br>
+          3. Use the output filter to show All, Guards, Monsters, or Mercs.<br><br>
+          <span class="mono">Note:</span> 
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stats">
+          <div class="stat"><div class="k">Selected Guard Tiers</div><div class="v" id="guardTiers">-</div></div>
+          <div class="stat"><div class="k">Selected Monster Levels</div><div class="v" id="monsterLevels">-</div></div>
+          <div class="stat"><div class="k">Highest Flyer Total HP</div><div class="v" id="flyerCap">-</div></div>
+          <div class="stat"><div class="k">Rows Returned</div><div class="v" id="rowCount">0</div></div>
+        </div>
+
+        <div id="messages"></div>
+
+        <div class="toolbar">
+          <div>
+            <span class="pill ok">Compact output</span>
+            <span class="pill ok">Count sorted A-Z</span>
+          </div>
+          <div>
+            <label for="typeFilter" style="margin-right:8px;color:#cbd5e1;font-weight:700;">Quick Filter</label>
+            <select id="typeFilter" style="width:180px;display:inline-block;">
+              <option>All</option>
+              <option>Guards</option>
+              <option>Monsters</option>
+              <option>Mercs</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="overflow:auto;max-height:70vh;">
+          <table>
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Tier</th>
+                <th>Unit / Monster / Merc</th>
+                <th>Count</th>
+                <th>HP / Unit</th>
+                <th>Total HP</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody id="outputBody"></tbody>
+          </table>
+        </div>
+        <div class="section-note">
+          Filtering is built into the page itself, so users do not need Excel filters or formulas.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Editable config
+    const troopHP = {
+      G3: { Ranged: 480, Mounted: 960, Melee: 480, Flyers: 9260 },
+      G4: { Ranged: 870, Mounted: 1740, Melee: 870, Flyers: 16670 },
+      G5: { Ranged: 1560, Mounted: 3150, Melee: 1560, Flyers: 30000 },
+      G6: { Ranged: 2840, Mounted: 5700, Melee: 2840, Flyers: 57000 },
+      G7: { Ranged: 5100, Mounted: 10200, Melee: 5100, Flyers: 102000 },
+      G8: { Ranged: 9180, Mounted: 18360, Melee: 9180, Flyers: 183600 },
+      G9: { Ranged: 16530, Mounted: 33060, Melee: 16530, Flyers: 330600 },
+    };
+
+    const monsterCatalog = {
+      M4: [
+        ["Gorgon Medusa", 3600],
+        ["Many Armed Guardian", 3900],
+        ["Magic Dragon", 4500],
+        ["Ice Phoenix", 5100],
+      ],
+      M5: [
+        ["Desert Vanguisher", 126000],
+        ["Flaming Centaur", 132000],
+        ["Fearsome Manticore", 138000],
+        ["Ettin", 144000],
+      ],
+      M6: [
+        ["Troll Rider", 330000],
+        ["Crystal Dragon", 360000],
+        ["Ruby Golem", 390000],
+        ["Jungle Destroyer", 390000],
+      ],
+      M7: [
+        ["Ancient Terror", 840000],
+        ["Destructive", 870000],
+        ["Black Dragon", 900000],
+        ["Wind Lord", 930000],
+      ],
+      M8: [
+        ["Trickster I", 1920000],
+        ["Devastator I", 1950000],
+        ["Fire Phoenix I", 1980000],
+        ["Kraken I", 2010000],
+      ],
+      M9: [
+        ["Trickster II", 3450000],
+        ["Devastator II", 3510000],
+        ["Fire Phoenix II", 3570000],
+        ["Kraken II", 3630000],
+      ],
+    };
+
+    const mercCatalog = [
+      ["Deminonic Salamander", 410000],
+      ["Warden", 470000],
+      ["Eternal Cannoneer", 440000],
+      ["Jago", 220000],
+      ["Galloper", 22000],
+      ["Scarface", 11000],
+      ["Pounder", 11000],
+      ["Warregal", 220000],
+      ["Quicksand", 22000],
+      ["Slavic Warrior", 11000],
+      ["Highlander", 11000],
+      ["Superior Epic Monster Hunter", 25000],
+      ["Heavy Siege", 55000],
+      ["Wyvern", 690000],
+    ];
+
+    const els = {
+      leadership: document.getElementById('leadership'),
+      authority: document.getElementById('authority'),
+      dominance: document.getElementById('dominance'),
+      troopLevel: document.getElementById('troopLevel'),
+      calcBtn: document.getElementById('calcBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      typeFilter: document.getElementById('typeFilter'),
+      outputBody: document.getElementById('outputBody'),
+      guardTiers: document.getElementById('guardTiers'),
+      monsterLevels: document.getElementById('monsterLevels'),
+      flyerCap: document.getElementById('flyerCap'),
+      rowCount: document.getElementById('rowCount'),
+      messages: document.getElementById('messages'),
+    };
+
+    const fmt = n => Number(n || 0).toLocaleString();
+
+    function round10(n){ return Math.max(Math.floor(n / 10) * 10, 0); }
+
+    function selectedMonsterLevels(highNum){
+      if (highNum === 5) return ["M4", "M5"];
+      return [`M${highNum-1}`, `M${highNum}`];
+    }
+
+    function rowType(tier){
+      if (tier === "Merc") return "Mercs";
+      if (tier.startsWith("M")) return "Monsters";
+      return "Guards";
+    }
+
+    function calcRows(){
+      const leadership = Number(els.leadership.value || 0);
+      const authority = Number(els.authority.value || 0);
+      const dominance = Number(els.dominance.value || 0);
+      const highNum = Number(String(els.troopLevel.value).replace("G",""));
+      const t1 = Math.max(3, highNum - 2);
+      const t2 = highNum - 1;
+      const t3 = highNum;
+      const tiers = [`G${t1}`, `G${t2}`, `G${t3}`];
+
+      const roundedLeadership = Math.floor(leadership / 1000) * 1000;
+      const baseDivider = t1 <= 4 ? 3 : 4;
+      const baseStack = round10(roundedLeadership / 2 / baseDivider);
+
+      const rows = [];
+
+      // Guards with flyers on all 3 tiers
+      const counts = {};
+      counts[`G${t1}`] = {
+        Ranged: baseStack,
+        Mounted: round10(baseStack / 2),
+        Melee: baseStack,
+      };
+      counts[`G${t1}`].Flyers = round10(counts[`G${t1}`].Melee / 20);
+
+      counts[`G${t2}`] = {
+        Ranged: round10(counts[`G${t1}`].Ranged / 1.84),
+        Mounted: round10(counts[`G${t1}`].Mounted / 1.84),
+        Melee: round10(counts[`G${t1}`].Flyers / 1 ? counts[`G${t1}`].Melee / 1.84 : counts[`G${t1}`].Melee / 1.84),
+      };
+      counts[`G${t2}`].Flyers = round10(counts[`G${t2}`].Melee / 20);
+
+      counts[`G${t3}`] = {
+        Ranged: round10(counts[`G${t2}`].Ranged / 1.84),
+        Mounted: round10(counts[`G${t2}`].Mounted / 1.84),
+        Melee: round10(counts[`G${t2}`].Melee / 1.84),
+      };
+      counts[`G${t3}`].Flyers = round10(counts[`G${t3}`].Melee / 20);
+
+      let order = 1;
+      for (const tier of tiers){
+        for (const unit of ["Ranged","Mounted","Melee","Flyers"]){
+          const count = counts[tier][unit];
+          const hp = troopHP[tier][unit];
+          rows.push({
+            order: order++,
+            tier,
+            name: unit,
+            count,
+            hp,
+            total: count * hp,
+            type: "Guards"
+          });
+        }
+      }
+
+      const highestFlyerTotal = counts[`G${t3}`].Flyers * troopHP[`G${t3}`].Flyers;
+
+      // Monsters
+      const [lowMonster, highMonster] = selectedMonsterLevels(highNum);
+      let monsterLowCount = 0;
+      let monsterHighCount = 0;
+      const lowMonsterMaxHP = Math.max(...monsterCatalog[lowMonster].map(x => x[1]));
+      const highMonsterMaxHP = Math.max(...monsterCatalog[highMonster].map(x => x[1]));
+      const baseLowMonster = round10(dominance / 6);
+      const lowCap = round10((highestFlyerTotal - 1) / lowMonsterMaxHP);
+      const highCapAsLow = round10(((highestFlyerTotal - 1) / highMonsterMaxHP) * 2);
+      monsterLowCount = Math.max(Math.min(baseLowMonster, lowCap, highCapAsLow), 0);
+      monsterHighCount = monsterLowCount > 0 ? round10(monsterLowCount / 2) : 0;
+
+      const activeMonsterTotals = [];
+      for (const [name, hp] of monsterCatalog[lowMonster]){
+        const total = monsterLowCount * hp;
+        if (monsterLowCount > 0 && total < highestFlyerTotal){
+          rows.push({
+            order: order++,
+            tier: lowMonster,
+            name,
+            count: monsterLowCount,
+            hp,
+            total,
+            type: "Monsters"
+          });
+          activeMonsterTotals.push(total);
+        }
+      }
+      for (const [name, hp] of monsterCatalog[highMonster]){
+        const total = monsterHighCount * hp;
+        if (monsterHighCount > 0 && total < highestFlyerTotal){
+          rows.push({
+            order: order++,
+            tier: highMonster,
+            name,
+            count: monsterHighCount,
+            hp,
+            total,
+            type: "Monsters"
+          });
+          activeMonsterTotals.push(total);
+        }
+      }
+
+      // Mercs
+      const mercAllowed = highNum >= 6;
+      const mercCap = activeMonsterTotals.length ? Math.min(...activeMonsterTotals) : highestFlyerTotal;
+      const baseMercCount = mercAllowed ? round10(authority / mercCatalog.length) : 0;
+
+      for (const [name, hp] of mercCatalog){
+        const hpCapCount = round10((mercCap - 1) / hp);
+        const count = mercAllowed ? Math.max(Math.min(baseMercCount, hpCapCount), 0) : 0;
+        const total = count * hp;
+        if (count > 0){
+          rows.push({
+            order: order++,
+            tier: "Merc",
+            name,
+            count,
+            hp,
+            total,
+            type: "Mercs"
+          });
+        }
+      }
+
+      // sort by Count ascending, no gaps
+      rows.sort((a,b) => a.count - b.count || a.order - b.order);
+      rows.forEach((r, i) => r.order = i + 1);
+
+      return {
+        rows,
+        tiers,
+        monsterLevels: `${lowMonster} + ${highMonster}`,
+        highestFlyerTotal,
+        monsterStatus: monsterLowCount > 0 ? "ok" : "warn",
+        mercStatus: mercAllowed ? "ok" : "warn",
+        mercAllowed
+      };
+    }
+
+    function render(){
+      const result = calcRows();
+      const filter = els.typeFilter.value;
+
+      els.guardTiers.textContent = result.tiers.join(" / ");
+      els.monsterLevels.textContent = result.monsterLevels;
+      els.flyerCap.textContent = fmt(result.highestFlyerTotal);
+
+      els.messages.innerHTML = `
+        <span class="pill ${result.monsterStatus === "ok" ? "ok" : "warn"}">
+          Monsters: ${result.monsterStatus === "ok" ? "included where cap allows" : "limited / blocked by cap or dominance"}
+        </span>
+        <span class="pill ${result.mercAllowed ? "ok" : "warn"}">
+          Mercs: ${result.mercAllowed ? "enabled from this troop level" : "start at G6"}
+        </span>
+      `;
+
+      const filtered = result.rows.filter(r => filter === "All" ? true : r.type === filter);
+      els.rowCount.textContent = String(filtered.length);
+
+      els.outputBody.innerHTML = filtered.map(r => `
+        <tr>
+          <td>${r.order}</td>
+          <td class="mono">${r.tier}</td>
+          <td>${r.name}</td>
+          <td>${fmt(r.count)}</td>
+          <td>${fmt(r.hp)}</td>
+          <td>${fmt(r.total)}</td>
+          <td class="${r.type === 'Guards' ? 'type-guard' : r.type === 'Monsters' ? 'type-monster' : 'type-merc'}">${r.type}</td>
+        </tr>
+      `).join("");
+    }
+
+    els.calcBtn.addEventListener('click', render);
+    els.resetBtn.addEventListener('click', () => {
+      els.leadership.value = 371000;
+      els.authority.value = 10000;
+      els.dominance.value = 10000;
+      els.troopLevel.value = "G7";
+      els.typeFilter.value = "All";
+      render();
+    });
+    els.typeFilter.addEventListener('change', render);
+
+    render();
+  </script>
+</body>
+</html>
