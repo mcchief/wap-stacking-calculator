@@ -6,37 +6,66 @@
 <title>WaP Troop Stacking Calculator</title>
 <style>
 :root{--bg:#0f172a;--panel:#111827;--panel2:#1f2937;--text:#e5e7eb;--muted:#94a3b8;--accent:#22c55e;--border:#334155;--input:#0b1220}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#0b1220,#0f172a);color:var(--text)}
-.wrap{max-width:1440px;margin:0 auto;padding:18px}.hero{background:linear-gradient(135deg,#0f172a,#111827 45%,#0b3b2e);border:1px solid var(--border);border-radius:20px;padding:24px}
-h1{margin:0 0 8px;font-size:30px}.sub{color:var(--muted);line-height:1.5}.grid{display:grid;grid-template-columns:minmax(280px,340px) minmax(0,1fr);gap:18px;margin-top:18px}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#0b1220,#0f172a);color:var(--text)}
+.wrap{max-width:1440px;margin:0 auto;padding:18px}
+.hero{background:linear-gradient(135deg,#0f172a,#111827 45%,#0b3b2e);border:1px solid var(--border);border-radius:20px;padding:24px}
+h1{margin:0 0 8px;font-size:30px}.sub{color:var(--muted);line-height:1.5}
+.grid{display:grid;grid-template-columns:minmax(280px,340px) minmax(0,1fr);gap:18px;margin-top:18px}
 @media (max-width:1100px){.grid{grid-template-columns:1fr}.wrap{padding:12px}.hero,.card{padding:16px}h1{font-size:24px}}
-.card{background:rgba(17,24,39,.94);border:1px solid var(--border);border-radius:18px;padding:18px}.field{margin-bottom:14px}.field label{display:block;margin-bottom:6px;font-size:14px;font-weight:700;color:#cbd5e1}
-input,select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--input);color:var(--text);font-size:15px}.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}button{padding:12px 14px;border:none;border-radius:12px;background:var(--accent);color:#06280f;font-weight:800;cursor:pointer}button.secondary{background:#1e293b;color:var(--text);border:1px solid var(--border)}.hint{margin-top:10px;color:var(--muted);font-size:13px;line-height:1.45}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:12px;margin-bottom:14px}@media (max-width:900px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:560px){.stats{grid-template-columns:1fr}.toolbar{align-items:stretch}.toolbar .right{width:100%}.toolbar .right select{width:100%!important}table{font-size:12px}th,td{padding:8px}}
-.stat{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:14px}.stat .k{font-size:12px;color:var(--muted);margin-bottom:6px}.stat .v{font-size:20px;font-weight:800}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}.pill{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;margin-right:6px;margin-bottom:6px;border:1px solid transparent}.ok{background:rgba(34,197,94,.15);color:#86efac;border-color:rgba(34,197,94,.25)}.warn{background:rgba(245,158,11,.15);color:#fcd34d;border-color:rgba(245,158,11,.25)}
-table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:1px solid #253247;text-align:left}th{background:#132033;color:#cfe3ff;position:sticky;top:0}.type-guardsmen{color:#93c5fd}.type-monsters{color:#fca5a5}.type-mercs{color:#fde68a}.mono{font-family:ui-monospace,Consolas,monospace}.lang-row{display:flex;justify-content:flex-end;gap:10px;margin-bottom:14px;flex-wrap:wrap}.lang-row label{align-self:center;font-weight:700;color:#cbd5e1}.lang-row select{width:180px}
+.card{background:rgba(17,24,39,.94);border:1px solid var(--border);border-radius:18px;padding:18px}
+.field{margin-bottom:14px}.field label{display:block;margin-bottom:6px;font-size:14px;font-weight:700;color:#cbd5e1}
+input,select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--input);color:var(--text);font-size:15px}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}button{padding:12px 14px;border:none;border-radius:12px;background:var(--accent);color:#06280f;font-weight:800;cursor:pointer}
+button.secondary{background:#1e293b;color:var(--text);border:1px solid var(--border)}
+.hint{margin-top:10px;color:var(--muted);font-size:13px;line-height:1.45}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:12px;margin-bottom:14px}
+@media (max-width:900px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.stats{grid-template-columns:1fr}.toolbar{align-items:stretch}.toolbar .right{width:100%}.toolbar .right select{width:100%!important}table{font-size:12px}th,td{padding:8px}}
+.stat{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:14px}.stat .k{font-size:12px;color:var(--muted);margin-bottom:6px}.stat .v{font-size:20px;font-weight:800}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.pill{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;margin-right:6px;margin-bottom:6px;border:1px solid transparent}
+.ok{background:rgba(34,197,94,.15);color:#86efac;border-color:rgba(34,197,94,.25)}
+.warn{background:rgba(245,158,11,.15);color:#fcd34d;border-color:rgba(245,158,11,.25)}
+table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:1px solid #253247;text-align:left}th{background:#132033;color:#cfe3ff;position:sticky;top:0}
+.type-guardsmen{color:#93c5fd}.type-monsters{color:#fca5a5}.type-mercs{color:#fde68a}.mono{font-family:ui-monospace,Consolas,monospace}
+.lang-row{display:flex;justify-content:flex-end;gap:10px;margin-bottom:14px;flex-wrap:wrap}.lang-row label{align-self:center;font-weight:700;color:#cbd5e1}.lang-row select{width:200px}
 </style>
 </head>
-<body>
+<body onload="initCalculator()">
 <div class="wrap">
   <div class="hero">
     <div class="lang-row">
       <label for="language" id="langLabel">Language</label>
-      <select id="language"><option value="en">English</option><option value="pt">Português</option><option value="es">Español</option><option value="fr">Français</option></select>
+      <select id="language" onchange="changeLanguage()">
+        <option value="en">English</option>
+        <option value="ru">Русский</option>
+        <option value="tr">Türkçe</option>
+        <option value="es">Español</option>
+        <option value="pl">Polski</option>
+        <option value="ar">العربية</option>
+        <option value="uk">Українська</option>
+        <option value="fr">Français</option>
+        <option value="pt">Português</option>
+      </select>
     </div>
     <h1 id="heroTitle">WaP Troop Stacking Calculator</h1>
     <div class="sub" id="heroSub">Enter Leadership, Authority, Dominance, and Highest Troop Level. The calculator builds the stack automatically and shows a compact filtered output list.</div>
   </div>
+
   <div class="grid">
     <div class="card">
       <h2 id="inputsTitle">Inputs</h2>
-      <div class="field"><label id="leadershipLabel" for="leadership">Leadership</label><input id="leadership" type="number" value="371000" min="0" step="10"></div>
+      <div class="field"><label id="leadershipLabel" for="leadership">Leadership</label><input id="leadership" type="number" value="15000" min="0" step="10"></div>
       <div class="field"><label id="authorityLabel" for="authority">Authority</label><input id="authority" type="number" value="10000" min="0" step="10"></div>
       <div class="field"><label id="dominanceLabel" for="dominance">Dominance</label><input id="dominance" type="number" value="10000" min="0" step="10"></div>
-      <div class="field"><label id="troopLevelLabel" for="troopLevel">Highest Troop Level</label><select id="troopLevel"><option>G5</option><option>G6</option><option selected>G7</option><option>G8</option><option>G9</option></select></div>
-      <div class="btns"><button id="calcBtn">Calculate</button><button class="secondary" id="resetBtn">Reset</button></div>
+      <div class="field"><label id="troopLevelLabel" for="troopLevel">Highest Troop Level</label>
+        <select id="troopLevel"><option>G5</option><option>G6</option><option selected>G7</option><option>G8</option><option>G9</option></select>
+      </div>
+      <div class="btns"><button onclick="renderCalculator()">Calculate</button><button class="secondary" onclick="resetCalculator()">Reset</button></div>
       <div class="hint"><strong id="howTitle">How to use:</strong><br><span id="how1">1. Enter the 3 capacities.</span><br><span id="how2">2. Pick the highest troop level.</span><br><span id="how3">3. Use the output filter to show All, Guardsmen, Monsters, or Mercs.</span></div>
     </div>
+
     <div class="card">
       <div class="stats">
         <div class="stat"><div class="k" id="statGuard">Selected Guard Tiers</div><div class="v" id="guardTiers">-</div></div>
@@ -45,22 +74,183 @@ table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:
         <div class="stat"><div class="k" id="statRows">Rows Returned</div><div class="v" id="rowCount">0</div></div>
       </div>
       <div id="messages"></div>
-      <div class="toolbar"><div></div><div class="right"><label id="filterLabel" for="typeFilter" style="margin-right:8px;font-weight:700;color:#cbd5e1">Quick Filter</label><select id="typeFilter" style="width:180px;display:inline-block"><option value="all">All</option><option value="guardsmen">Guardsmen</option><option value="monsters">Monsters</option><option value="mercs">Mercs</option></select></div></div>
-      <div style="overflow:auto;max-height:70vh"><table><thead><tr><th id="thOrder">Order</th><th id="thTier">Tier</th><th id="thUnit">Unit / Monster / Merc</th><th id="thCount">Count</th><th id="thHP">HP / Unit</th><th id="thTotal">Total HP</th><th id="thType">Type</th></tr></thead><tbody id="outputBody"></tbody></table></div>
+      <div class="toolbar">
+        <div></div>
+        <div class="right">
+          <label id="filterLabel" for="typeFilter" style="margin-right:8px;font-weight:700;color:#cbd5e1">Quick Filter</label>
+          <select id="typeFilter" style="width:180px;display:inline-block" onchange="renderCalculator()">
+            <option value="all">All</option>
+            <option value="guardsmen">Guardsmen</option>
+            <option value="monsters">Monsters</option>
+            <option value="mercs">Mercs</option>
+          </select>
+        </div>
+      </div>
+      <div style="overflow:auto;max-height:70vh">
+        <table>
+          <thead>
+            <tr><th id="thOrder">Order</th><th id="thTier">Tier</th><th id="thUnit">Unit / Monster / Merc</th><th id="thCount">Count</th><th id="thHP">HP / Unit</th><th id="thTotal">Total HP</th><th id="thType">Type</th></tr>
+          </thead>
+          <tbody id="outputBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
+
 <script>
-const i18n={en:{language:"Language",title:"WaP Troop Stacking Calculator",sub:"Enter Leadership, Authority, Dominance, and Highest Troop Level. The calculator builds the stack automatically and shows a compact filtered output list.",inputs:"Inputs",leadership:"Leadership",authority:"Authority",dominance:"Dominance",troop:"Highest Troop Level",calc:"Calculate",reset:"Reset",howTitle:"How to use:",how1:"1. Enter the 3 capacities.",how2:"2. Pick the highest troop level.",how3:"3. Use the output filter to show All, Guardsmen, Monsters, or Mercs.",guard:"Selected Guard Tiers",mon:"Selected Monster Levels",fly:"Highest Flyer Total HP",rows:"Rows Returned",qf:"Quick Filter",all:"All",guardsmen:"Guardsmen",monsters:"Monsters",mercs:"Mercs",order:"Order",tier:"Tier",unit:"Unit / Monster / Merc",count:"Count",hp:"HP / Unit",total:"Total HP",type:"Type",monOK:"Monsters: included where cap allows",monWarn:"Monsters: limited / blocked by cap or dominance",mercOK:"Mercs: enabled from this troop level",mercWarn:"Mercs: start at G6"},pt:{language:"Idioma",title:"Calculadora de Empilhamento de Tropas WaP",sub:"Insira Liderança, Autoridade, Dominância e o nível mais alto de tropas. A calculadora monta a formação automaticamente e mostra uma lista compacta filtrada.",inputs:"Entradas",leadership:"Liderança",authority:"Autoridade",dominance:"Dominância",troop:"Maior Nível de Tropa",calc:"Calcular",reset:"Redefinir",howTitle:"Como usar:",how1:"1. Insira as 3 capacidades.",how2:"2. Escolha o maior nível de tropa.",how3:"3. Use o filtro para mostrar Tudo, Guardas, Monstros ou Mercenários.",guard:"Níveis de Guarda Selecionados",mon:"Níveis de Monstros Selecionados",fly:"HP Total Mais Alto dos Voadores",rows:"Linhas Retornadas",qf:"Filtro Rápido",all:"Tudo",guardsmen:"Guardas",monsters:"Monstros",mercs:"Mercenários",order:"Ordem",tier:"Nível",unit:"Unidade / Monstro / Merc",count:"Quantidade",hp:"HP / Unidade",total:"HP Total",type:"Tipo",monOK:"Monstros: incluídos quando o limite permite",monWarn:"Monstros: limitados / bloqueados por limite ou dominância",mercOK:"Mercenários: habilitados neste nível de tropa",mercWarn:"Mercenários: começam no G6"},es:{language:"Idioma",title:"Calculadora de Apilamiento de Tropas WaP",sub:"Ingresa Liderazgo, Autoridad, Dominancia y el nivel más alto de tropas. La calculadora construye la formación automáticamente y muestra una lista compacta filtrada.",inputs:"Entradas",leadership:"Liderazgo",authority:"Autoridad",dominance:"Dominancia",troop:"Nivel Máximo de Tropa",calc:"Calcular",reset:"Restablecer",howTitle:"Cómo usar:",how1:"1. Ingresa las 3 capacidades.",how2:"2. Elige el nivel máximo de tropa.",how3:"3. Usa el filtro para mostrar Todo, Guardias, Monstruos o Mercenarios.",guard:"Niveles de Guardia Seleccionados",mon:"Niveles de Monstruos Seleccionados",fly:"HP Total Más Alto de Voladores",rows:"Filas Devueltas",qf:"Filtro Rápido",all:"Todo",guardsmen:"Guardias",monsters:"Monstruos",mercs:"Mercenarios",order:"Orden",tier:"Nivel",unit:"Unidad / Monstruo / Merc",count:"Cantidad",hp:"HP / Unidad",total:"HP Total",type:"Tipo",monOK:"Monstruos: incluidos cuando el límite lo permite",monWarn:"Monstruos: limitados / bloqueados por el límite o dominancia",mercOK:"Mercenarios: habilitados en este nivel de tropa",mercWarn:"Mercenarios: comienzan en G6"},fr:{language:"Langue",title:"Calculateur d’Empilement de Troupes WaP",sub:"Saisissez Leadership, Autorité, Dominance et le niveau de troupe le plus élevé. Le calculateur construit la pile automatiquement et affiche une liste compacte filtrée.",inputs:"Entrées",leadership:"Leadership",authority:"Autorité",dominance:"Dominance",troop:"Niveau de Troupe le Plus Élevé",calc:"Calculer",reset:"Réinitialiser",howTitle:"Comment utiliser :",how1:"1. Saisissez les 3 capacités.",how2:"2. Choisissez le niveau de troupe le plus élevé.",how3:"3. Utilisez le filtre pour afficher Tout, Gardes, Monstres ou Mercenaires.",guard:"Niveaux de Garde Sélectionnés",mon:"Niveaux de Monstres Sélectionnés",fly:"HP Total Le Plus Élevé des Volants",rows:"Lignes Retournées",qf:"Filtre Rapide",all:"Tout",guardsmen:"Gardes",monsters:"Monstres",mercs:"Mercenaires",order:"Ordre",tier:"Niveau",unit:"Unité / Monstre / Merc",count:"Quantité",hp:"HP / Unité",total:"HP Total",type:"Type",monOK:"Monstres : inclus lorsque le plafond le permet",monWarn:"Monstres : limités / bloqués par le plafond ou la dominance",mercOK:"Mercenaires : activés à ce niveau de troupe",mercWarn:"Mercenaires : commencent au G6"}};
-const troopHP={G3:{Ranged:480,Mounted:960,Melee:480,Flyers:9260},G4:{Ranged:870,Mounted:1740,Melee:870,Flyers:16670},G5:{Ranged:1560,Mounted:3150,Melee:1560,Flyers:30000},G6:{Ranged:2840,Mounted:5700,Melee:2840,Flyers:57000},G7:{Ranged:5100,Mounted:10200,Melee:5100,Flyers:102000},G8:{Ranged:9180,Mounted:18360,Melee:9180,Flyers:183600},G9:{Ranged:16530,Mounted:33060,Melee:16530,Flyers:330600}};
-const monsters={M4:[["Gorgon Medusa",3600],["Many Armed Guardian",3900],["Magic Dragon",4500],["Ice Phoenix",5100]],M5:[["Desert Vanguisher",126000],["Flaming Centaur",132000],["Fearsome Manticore",138000],["Ettin",144000]],M6:[["Troll Rider",330000],["Crystal Dragon",360000],["Ruby Golem",390000],["Jungle Destroyer",390000]],M7:[["Ancient Terror",840000],["Destructive",870000],["Black Dragon",900000],["Wind Lord",930000]],M8:[["Trickster I",1920000],["Devastator I",1950000],["Fire Phoenix I",1980000],["Kraken I",2010000]],M9:[["Trickster II",3450000],["Devastator II",3510000],["Fire Phoenix II",3570000],["Kraken II",3630000]]};
-const mercs=[["Deminonic Salamander",410000],["Warden",470000],["Eternal Cannoneer",440000],["Jago",220000],["Galloper",22000],["Scarface",11000],["Pounder",11000],["Warregal",220000],["Quicksand",22000],["Slavic Warrior",11000],["Highlander",11000],["Superior Epic Monster Hunter",25000],["Heavy Siege",55000],["Wyvern",690000]];
-const els={language:document.getElementById("language"),leadership:document.getElementById("leadership"),authority:document.getElementById("authority"),dominance:document.getElementById("dominance"),troopLevel:document.getElementById("troopLevel"),calcBtn:document.getElementById("calcBtn"),resetBtn:document.getElementById("resetBtn"),typeFilter:document.getElementById("typeFilter"),outputBody:document.getElementById("outputBody"),guardTiers:document.getElementById("guardTiers"),monsterLevels:document.getElementById("monsterLevels"),flyerCap:document.getElementById("flyerCap"),rowCount:document.getElementById("rowCount"),messages:document.getElementById("messages")};
-const fmt=n=>Number(n||0).toLocaleString(); const round10=n=>Math.max(Math.floor(n/10)*10,0); const selectedMonsterLevels=n=>n===5?["M4","M5"]:[`M${n-1}`,`M${n}`];
-function applyLanguage(){const t=i18n[els.language.value];document.documentElement.lang=els.language.value;document.getElementById("langLabel").textContent=t.language;document.getElementById("heroTitle").textContent=t.title;document.getElementById("heroSub").textContent=t.sub;document.getElementById("inputsTitle").textContent=t.inputs;document.getElementById("leadershipLabel").textContent=t.leadership;document.getElementById("authorityLabel").textContent=t.authority;document.getElementById("dominanceLabel").textContent=t.dominance;document.getElementById("troopLevelLabel").textContent=t.troop;document.getElementById("howTitle").textContent=t.howTitle;document.getElementById("how1").textContent=t.how1;document.getElementById("how2").textContent=t.how2;document.getElementById("how3").textContent=t.how3;document.getElementById("statGuard").textContent=t.guard;document.getElementById("statMon").textContent=t.mon;document.getElementById("statFly").textContent=t.fly;document.getElementById("statRows").textContent=t.rows;document.getElementById("filterLabel").textContent=t.qf;document.getElementById("thOrder").textContent=t.order;document.getElementById("thTier").textContent=t.tier;document.getElementById("thUnit").textContent=t.unit;document.getElementById("thCount").textContent=t.count;document.getElementById("thHP").textContent=t.hp;document.getElementById("thTotal").textContent=t.total;document.getElementById("thType").textContent=t.type;els.calcBtn.textContent=t.calc;els.resetBtn.textContent=t.reset;const prev=els.typeFilter.value||"all";els.typeFilter.innerHTML=`<option value="all">${t.all}</option><option value="guardsmen">${t.guardsmen}</option><option value="monsters">${t.monsters}</option><option value="mercs">${t.mercs}</option>`;els.typeFilter.value=prev;render();}
-function calcRows(){const leadership=Number(els.leadership.value||0),authority=Number(els.authority.value||0),dominance=Number(els.dominance.value||0),high=Number(String(els.troopLevel.value).replace("G",""));const t1=Math.max(3,high-2),t2=high-1,t3=high,tiers=[`G${t1}`,`G${t2}`,`G${t3}`];const rounded=Math.floor(leadership/1000)*1000,divider=t1<=4?3:4,base=round10(rounded/2/divider);const c={};c[tiers[0]]={Ranged:base,Mounted:round10(base/2),Melee:base};c[tiers[0]].Flyers=round10(c[tiers[0]].Melee/20);c[tiers[1]]={Ranged:round10(c[tiers[0]].Ranged/1.84),Mounted:round10(c[tiers[0]].Mounted/1.84),Melee:round10(c[tiers[0]].Melee/1.84)};c[tiers[1]].Flyers=round10(c[tiers[1]].Melee/20);c[tiers[2]]={Ranged:round10(c[tiers[1]].Ranged/1.84),Mounted:round10(c[tiers[1]].Mounted/1.84),Melee:round10(c[tiers[1]].Melee/1.84)};c[tiers[2]].Flyers=round10(c[tiers[2]].Melee/20);let rows=[],order=1;for(const tier of tiers){for(const unit of ["Ranged","Mounted","Melee","Flyers"]){const count=c[tier][unit],hp=troopHP[tier][unit];rows.push({order:order++,tier,name:unit,count,hp,total:count*hp,type:"guardsmen"});}}const highestFlyerTotal=c[tiers[2]].Flyers*troopHP[tiers[2]].Flyers;const [lowM,highM]=selectedMonsterLevels(high);const lowMax=Math.max(...monsters[lowM].map(x=>x[1])),highMax=Math.max(...monsters[highM].map(x=>x[1]));const baseLow=round10(dominance/6),lowCap=round10((highestFlyerTotal-1)/lowMax),highCapAsLow=round10(((highestFlyerTotal-1)/highMax)*2),lowCount=Math.max(Math.min(baseLow,lowCap,highCapAsLow),0),highCount=lowCount>0?round10(lowCount/2):0;const activeMonsterTotals=[];for(const [name,hp] of monsters[lowM]){const total=lowCount*hp;if(lowCount>0&&total<highestFlyerTotal){rows.push({order:order++,tier:lowM,name,count:lowCount,hp,total,type:"monsters"});activeMonsterTotals.push(total);}}for(const [name,hp] of monsters[highM]){const total=highCount*hp;if(highCount>0&&total<highestFlyerTotal){rows.push({order:order++,tier:highM,name,count:highCount,hp,total,type:"monsters"});activeMonsterTotals.push(total);}}const mercAllowed=high>=6,mercCap=activeMonsterTotals.length?Math.min(...activeMonsterTotals):highestFlyerTotal,baseMerc=mercAllowed?round10(authority/mercs.length):0;for(const [name,hp] of mercs){const hpCapCount=round10((mercCap-1)/hp),count=mercAllowed?Math.max(Math.min(baseMerc,hpCapCount),0):0,total=count*hp;if(count>0)rows.push({order:order++,tier:"Merc",name,count,hp,total,type:"mercs"});}rows.sort((a,b)=>a.count-b.count||a.order-b.order);rows.forEach((r,i)=>r.order=i+1);return{rows,tiers,monsterLevels:`${lowM} + ${highM}`,highestFlyerTotal,monsterOK:lowCount>0,mercAllowed};}
-function render(){const t=i18n[els.language.value],result=calcRows(),filter=els.typeFilter.value;els.guardTiers.textContent=result.tiers.join(" / ");els.monsterLevels.textContent=result.monsterLevels;els.flyerCap.textContent=fmt(result.highestFlyerTotal);els.messages.innerHTML=`<span class="pill ${result.monsterOK?"ok":"warn"}">${result.monsterOK?t.monOK:t.monWarn}</span><span class="pill ${result.mercAllowed?"ok":"warn"}">${result.mercAllowed?t.mercOK:t.mercWarn}</span>`;const filtered=result.rows.filter(r=>filter==="all"||r.type===filter);els.rowCount.textContent=String(filtered.length);els.outputBody.innerHTML=filtered.map(r=>{const typeLabel=r.type==="guardsmen"?t.guardsmen:r.type==="monsters"?t.monsters:t.mercs;return `<tr><td>${r.order}</td><td class="mono">${r.tier}</td><td>${r.name}</td><td>${fmt(r.count)}</td><td>${fmt(r.hp)}</td><td>${fmt(r.total)}</td><td class="type-${r.type}">${typeLabel}</td></tr>`;}).join("");}
-els.calcBtn.addEventListener("click",render);els.resetBtn.addEventListener("click",()=>{els.leadership.value=371000;els.authority.value=10000;els.dominance.value=10000;els.troopLevel.value="G7";els.typeFilter.value="all";render();});els.typeFilter.addEventListener("change",render);els.language.addEventListener("change",applyLanguage);applyLanguage();
+var LANG = {
+  en:{language:"Language",title:"WaP Troop Stacking Calculator",sub:"Enter Leadership, Authority, Dominance, and Highest Troop Level. The calculator builds the stack automatically and shows a compact filtered output list.",inputs:"Inputs",leadership:"Leadership",authority:"Authority",dominance:"Dominance",troop:"Highest Troop Level",howTitle:"How to use:",how1:"1. Enter the 3 capacities.",how2:"2. Pick the highest troop level.",how3:"3. Use the output filter to show All, Guardsmen, Monsters, or Mercs.",guard:"Selected Guard Tiers",mon:"Selected Monster Levels",fly:"Highest Flyer Total HP",rows:"Rows Returned",qf:"Quick Filter",all:"All",guardsmen:"Guardsmen",monsters:"Monsters",mercs:"Mercs",order:"Order",tier:"Tier",unit:"Unit / Monster / Merc",count:"Count",hp:"HP / Unit",total:"Total HP",type:"Type",monOK:"Monsters: included where cap allows",monWarn:"Monsters: limited / blocked by cap or dominance",mercOK:"Mercs: enabled from this troop level",mercWarn:"Mercs: start at G6"},
+  ru:{language:"Язык",title:"Калькулятор Стэка Войск WaP",sub:"Введите Лидерство, Авторитет, Доминирование и самый высокий уровень войск. Калькулятор автоматически строит стек и показывает компактный отфильтрованный список.",inputs:"Ввод",leadership:"Лидерство",authority:"Авторитет",dominance:"Доминирование",troop:"Максимальный Уровень Войск",howTitle:"Как использовать:",how1:"1. Введите 3 значения.",how2:"2. Выберите максимальный уровень войск.",how3:"3. Используйте фильтр, чтобы показать Все, Гвардейцев, Монстров или Наемников.",guard:"Выбранные Уровни Гвардии",mon:"Выбранные Уровни Монстров",fly:"Макс. Общий HP Летунов",rows:"Возвращено Строк",qf:"Быстрый Фильтр",all:"Все",guardsmen:"Гвардейцы",monsters:"Монстры",mercs:"Наемники",order:"Порядок",tier:"Уровень",unit:"Юнит / Монстр / Наемник",count:"Количество",hp:"HP / Юнит",total:"Общий HP",type:"Тип",monOK:"Монстры: включены, если позволяет лимит",monWarn:"Монстры: ограничены / заблокированы лимитом или доминированием",mercOK:"Наемники: доступны на этом уровне войск",mercWarn:"Наемники: начинаются с G6"},
+  tr:{language:"Dil",title:"WaP Birlik Dizilim Hesaplayıcısı",sub:"Liderlik, Otorite, Hakimiyet ve en yüksek birlik seviyesini girin. Hesaplayıcı dizilimi otomatik oluşturur ve kompakt filtrelenmiş çıktı listesi gösterir.",inputs:"Girdiler",leadership:"Liderlik",authority:"Otorite",dominance:"Hakimiyet",troop:"En Yüksek Birlik Seviyesi",howTitle:"Nasıl kullanılır:",how1:"1. 3 kapasiteyi girin.",how2:"2. En yüksek birlik seviyesini seçin.",how3:"3. Tümü, Muhafızlar, Canavarlar veya Paralı Askerleri göstermek için filtreyi kullanın.",guard:"Seçilen Muhafız Seviyeleri",mon:"Seçilen Canavar Seviyeleri",fly:"En Yüksek Uçan Toplam HP",rows:"Dönen Satırlar",qf:"Hızlı Filtre",all:"Tümü",guardsmen:"Muhafızlar",monsters:"Canavarlar",mercs:"Paralı Askerler",order:"Sıra",tier:"Seviye",unit:"Birim / Canavar / Paralı Asker",count:"Sayı",hp:"HP / Birim",total:"Toplam HP",type:"Tür",monOK:"Canavarlar: limit izin verdiğinde dahil edilir",monWarn:"Canavarlar: limit veya hakimiyet nedeniyle sınırlı / engelli",mercOK:"Paralı askerler: bu birlik seviyesinde etkin",mercWarn:"Paralı askerler: G6'dan başlar"},
+  es:{language:"Idioma",title:"Calculadora de Apilamiento de Tropas WaP",sub:"Ingresa Liderazgo, Autoridad, Dominancia y el nivel más alto de tropas. La calculadora construye la formación automáticamente y muestra una lista compacta filtrada.",inputs:"Entradas",leadership:"Liderazgo",authority:"Autoridad",dominance:"Dominancia",troop:"Nivel Máximo de Tropa",howTitle:"Cómo usar:",how1:"1. Ingresa las 3 capacidades.",how2:"2. Elige el nivel máximo de tropa.",how3:"3. Usa el filtro para mostrar Todo, Guardias, Monstruos o Mercenarios.",guard:"Niveles de Guardia Seleccionados",mon:"Niveles de Monstruos Seleccionados",fly:"HP Total Más Alto de Voladores",rows:"Filas Devueltas",qf:"Filtro Rápido",all:"Todo",guardsmen:"Guardias",monsters:"Monstruos",mercs:"Mercenarios",order:"Orden",tier:"Nivel",unit:"Unidad / Monstruo / Mercenario",count:"Cantidad",hp:"HP / Unidad",total:"HP Total",type:"Tipo",monOK:"Monstruos: incluidos cuando el límite lo permite",monWarn:"Monstruos: limitados / bloqueados por el límite o dominancia",mercOK:"Mercenarios: habilitados en este nivel de tropa",mercWarn:"Mercenarios: comienzan en G6"},
+  pl:{language:"Język",title:"Kalkulator Stackowania Wojsk WaP",sub:"Wpisz Przywództwo, Autorytet, Dominację i najwyższy poziom wojsk. Kalkulator automatycznie buduje stack i pokazuje zwartą, filtrowaną listę wyników.",inputs:"Dane",leadership:"Przywództwo",authority:"Autorytet",dominance:"Dominacja",troop:"Najwyższy Poziom Wojsk",howTitle:"Jak używać:",how1:"1. Wpisz 3 wartości.",how2:"2. Wybierz najwyższy poziom wojsk.",how3:"3. Użyj filtra, aby pokazać Wszystko, Straż, Potwory lub Najemników.",guard:"Wybrane Poziomy Straży",mon:"Wybrane Poziomy Potworów",fly:"Najwyższe Łączne HP Latających",rows:"Zwrócone Wiersze",qf:"Szybki Filtr",all:"Wszystko",guardsmen:"Straż",monsters:"Potwory",mercs:"Najemnicy",order:"Kolejność",tier:"Poziom",unit:"Jednostka / Potwór / Najemnik",count:"Liczba",hp:"HP / Jednostkę",total:"Łączne HP",type:"Typ",monOK:"Potwory: uwzględnione, gdy limit pozwala",monWarn:"Potwory: ograniczone / zablokowane przez limit lub dominację",mercOK:"Najemnicy: włączeni dla tego poziomu wojsk",mercWarn:"Najemnicy: zaczynają się od G6"},
+  ar:{language:"اللغة",title:"حاسبة تكديس القوات WaP",sub:"أدخل القيادة والسلطة والهيمنة وأعلى مستوى للقوات. تقوم الحاسبة ببناء التكديس تلقائيًا وتعرض قائمة مفلترة ومضغوطة.",inputs:"المدخلات",leadership:"القيادة",authority:"السلطة",dominance:"الهيمنة",troop:"أعلى مستوى للقوات",howTitle:"طريقة الاستخدام:",how1:"1. أدخل القيم الثلاث.",how2:"2. اختر أعلى مستوى للقوات.",how3:"3. استخدم الفلتر لإظهار الكل أو الحرس أو الوحوش أو المرتزقة.",guard:"مستويات الحرس المختارة",mon:"مستويات الوحوش المختارة",fly:"أعلى إجمالي HP للطيران",rows:"عدد الصفوف",qf:"تصفية سريعة",all:"الكل",guardsmen:"الحرس",monsters:"الوحوش",mercs:"المرتزقة",order:"الترتيب",tier:"المستوى",unit:"وحدة / وحش / مرتزق",count:"العدد",hp:"HP / للوحدة",total:"إجمالي HP",type:"النوع",monOK:"الوحوش: مضافة عندما يسمح الحد",monWarn:"الوحوش: محدودة / محجوبة بسبب الحد أو الهيمنة",mercOK:"المرتزقة: مفعلة لهذا المستوى",mercWarn:"المرتزقة: تبدأ من G6"},
+  uk:{language:"Мова",title:"Калькулятор Стекування Військ WaP",sub:"Введіть Лідерство, Авторитет, Домінування та найвищий рівень військ. Калькулятор автоматично будує стек і показує компактний відфільтрований список.",inputs:"Вхідні Дані",leadership:"Лідерство",authority:"Авторитет",dominance:"Домінування",troop:"Найвищий Рівень Військ",howTitle:"Як використовувати:",how1:"1. Введіть 3 значення.",how2:"2. Виберіть найвищий рівень військ.",how3:"3. Використовуйте фільтр, щоб показати Все, Гвардію, Монстрів або Найманців.",guard:"Обрані Рівні Гвардії",mon:"Обрані Рівні Монстрів",fly:"Найвищий Загальний HP Літаючих",rows:"Повернуто Рядків",qf:"Швидкий Фільтр",all:"Усе",guardsmen:"Гвардія",monsters:"Монстри",mercs:"Найманці",order:"Порядок",tier:"Рівень",unit:"Юніт / Монстр / Найманець",count:"Кількість",hp:"HP / Юніт",total:"Загальний HP",type:"Тип",monOK:"Монстри: включені, якщо дозволяє ліміт",monWarn:"Монстри: обмежені / заблоковані лімітом або домінуванням",mercOK:"Найманці: доступні на цьому рівні військ",mercWarn:"Найманці: починаються з G6"},
+  fr:{language:"Langue",title:"Calculateur d’Empilement de Troupes WaP",sub:"Saisissez Leadership, Autorité, Dominance et le niveau de troupe le plus élevé. Le calculateur construit la pile automatiquement et affiche une liste compacte filtrée.",inputs:"Entrées",leadership:"Leadership",authority:"Autorité",dominance:"Dominance",troop:"Niveau de Troupe le Plus Élevé",howTitle:"Comment utiliser :",how1:"1. Saisissez les 3 capacités.",how2:"2. Choisissez le niveau de troupe le plus élevé.",how3:"3. Utilisez le filtre pour afficher Tout, Gardes, Monstres ou Mercenaires.",guard:"Niveaux de Garde Sélectionnés",mon:"Niveaux de Monstres Sélectionnés",fly:"HP Total Le Plus Élevé des Volants",rows:"Lignes Retournées",qf:"Filtre Rapide",all:"Tout",guardsmen:"Gardes",monsters:"Monstres",mercs:"Mercenaires",order:"Ordre",tier:"Niveau",unit:"Unité / Monstre / Mercenaire",count:"Quantité",hp:"HP / Unité",total:"HP Total",type:"Type",monOK:"Monstres : inclus lorsque le plafond le permet",monWarn:"Monstres : limités / bloqués par le plafond ou la dominance",mercOK:"Mercenaires : activés à ce niveau de troupe",mercWarn:"Mercenaires : commencent au G6"},
+  pt:{language:"Idioma",title:"Calculadora de Empilhamento de Tropas WaP",sub:"Insira Liderança, Autoridade, Dominância e o nível mais alto de tropas. A calculadora monta a formação automaticamente e mostra uma lista compacta filtrada.",inputs:"Entradas",leadership:"Liderança",authority:"Autoridade",dominance:"Dominância",troop:"Maior Nível de Tropa",howTitle:"Como usar:",how1:"1. Insira as 3 capacidades.",how2:"2. Escolha o maior nível de tropa.",how3:"3. Use o filtro para mostrar Tudo, Guardas, Monstros ou Mercenários.",guard:"Níveis de Guarda Selecionados",mon:"Níveis de Monstros Selecionados",fly:"HP Total Mais Alto dos Voadores",rows:"Linhas Retornadas",qf:"Filtro Rápido",all:"Tudo",guardsmen:"Guardas",monsters:"Monstros",mercs:"Mercenários",order:"Ordem",tier:"Nível",unit:"Unidade / Monstro / Mercenário",count:"Quantidade",hp:"HP / Unidade",total:"HP Total",type:"Tipo",monOK:"Monstros: incluídos quando o limite permite",monWarn:"Monstros: limitados / bloqueados por limite ou dominância",mercOK:"Mercenários: habilitados neste nível de tropa",mercWarn:"Mercenários: começam no G6"}
+};
+
+var TROOP_HP={"G3":{"Ranged":480,"Mounted":960,"Melee":480,"Flyers":9260},"G4":{"Ranged":870,"Mounted":1740,"Melee":870,"Flyers":16670},"G5":{"Ranged":1560,"Mounted":3150,"Melee":1560,"Flyers":30000},"G6":{"Ranged":2840,"Mounted":5700,"Melee":2840,"Flyers":57000},"G7":{"Ranged":5100,"Mounted":10200,"Melee":5100,"Flyers":102000},"G8":{"Ranged":9180,"Mounted":18360,"Melee":9180,"Flyers":183600},"G9":{"Ranged":16530,"Mounted":33060,"Melee":16530,"Flyers":330600}};
+var MONSTERS={"M4":[["Gorgon Medusa",3600],["Many Armed Guardian",3900],["Magic Dragon",4500],["Ice Phoenix",5100]],"M5":[["Desert Vanguisher",126000],["Flaming Centaur",132000],["Fearsome Manticore",138000],["Ettin",144000]],"M6":[["Troll Rider",330000],["Crystal Dragon",360000],["Ruby Golem",390000],["Jungle Destroyer",390000]],"M7":[["Ancient Terror",840000],["Destructive",870000],["Black Dragon",900000],["Wind Lord",930000]],"M8":[["Trickster I",1920000],["Devastator I",1950000],["Fire Phoenix I",1980000],["Kraken I",2010000]],"M9":[["Trickster II",3450000],["Devastator II",3510000],["Fire Phoenix II",3570000],["Kraken II",3630000]]};
+var MERCS=[["Deminonic Salamander",410000],["Warden",470000],["Eternal Cannoneer",440000],["Jago",220000],["Galloper",22000],["Scarface",11000],["Pounder",11000],["Warregal",220000],["Quicksand",22000],["Slavic Warrior",11000],["Highlander",11000],["Superior Epic Monster Hunter",25000],["Heavy Siege",55000],["Wyvern",690000]];
+
+function byId(id){ return document.getElementById(id); }
+function currentLang(){ return byId("language").value || "en"; }
+function fmt(n){ return Number(n || 0).toLocaleString(); }
+function round10(n){ return Math.max(Math.floor(n/10)*10, 0); }
+function selectedMonsterLevels(n){ return n === 5 ? ["M4","M5"] : ["M"+(n-1), "M"+n]; }
+
+function initCalculator(){ changeLanguage(); }
+
+function changeLanguage(){
+  var t=LANG[currentLang()];
+  document.documentElement.lang=currentLang();
+  document.documentElement.dir=currentLang()==="ar" ? "rtl" : "ltr";
+  byId("langLabel").textContent=t.language;
+  byId("heroTitle").textContent=t.title;
+  byId("heroSub").textContent=t.sub;
+  byId("inputsTitle").textContent=t.inputs;
+  byId("leadershipLabel").textContent=t.leadership;
+  byId("authorityLabel").textContent=t.authority;
+  byId("dominanceLabel").textContent=t.dominance;
+  byId("troopLevelLabel").textContent=t.troop;
+  byId("howTitle").textContent=t.howTitle;
+  byId("how1").textContent=t.how1;
+  byId("how2").textContent=t.how2;
+  byId("how3").textContent=t.how3;
+  byId("statGuard").textContent=t.guard;
+  byId("statMon").textContent=t.mon;
+  byId("statFly").textContent=t.fly;
+  byId("statRows").textContent=t.rows;
+  byId("filterLabel").textContent=t.qf;
+  byId("thOrder").textContent=t.order;
+  byId("thTier").textContent=t.tier;
+  byId("thUnit").textContent=t.unit;
+  byId("thCount").textContent=t.count;
+  byId("thHP").textContent=t.hp;
+  byId("thTotal").textContent=t.total;
+  byId("thType").textContent=t.type;
+
+  var filter = byId("typeFilter");
+  var prev = filter.value || "all";
+  filter.innerHTML = '<option value="all">'+t.all+'</option><option value="guardsmen">'+t.guardsmen+'</option><option value="monsters">'+t.monsters+'</option><option value="mercs">'+t.mercs+'</option>';
+  filter.value = prev;
+  renderCalculator();
+}
+
+function calcRows(){
+  var leadership=Number(byId("leadership").value || 0);
+  var authority=Number(byId("authority").value || 0);
+  var dominance=Number(byId("dominance").value || 0);
+  var high=Number(String(byId("troopLevel").value).replace("G",""));
+  var t1=Math.max(3, high-2), t2=high-1, t3=high;
+  var tiers=["G"+t1, "G"+t2, "G"+t3];
+  var rounded=Math.floor(leadership/1000)*1000;
+  var divider=t1<=4 ? 3 : 4;
+  var base=round10(rounded/2/divider);
+
+  var c={};
+  c[tiers[0]]={Ranged:base, Mounted:round10(base/2), Melee:base};
+  c[tiers[0]].Flyers=round10(c[tiers[0]].Melee/20);
+  c[tiers[1]]={Ranged:round10(c[tiers[0]].Ranged/1.84), Mounted:round10(c[tiers[0]].Mounted/1.84), Melee:round10(c[tiers[0]].Melee/1.84)};
+  c[tiers[1]].Flyers=round10(c[tiers[1]].Melee/20);
+  c[tiers[2]]={Ranged:round10(c[tiers[1]].Ranged/1.84), Mounted:round10(c[tiers[1]].Mounted/1.84), Melee:round10(c[tiers[1]].Melee/1.84)};
+  c[tiers[2]].Flyers=round10(c[tiers[2]].Melee/20);
+
+  var rows=[], order=1, i, unit, tier, count, hp, total;
+  for(i=0;i<tiers.length;i++){
+    tier=tiers[i];
+    var units=["Ranged","Mounted","Melee","Flyers"];
+    for(var u=0;u<units.length;u++){
+      unit=units[u];
+      count=c[tier][unit];
+      hp=TROOP_HP[tier][unit];
+      total=count*hp;
+      rows.push({order:order++, tier:tier, name:unit, count:count, hp:hp, total:total, type:"guardsmen"});
+    }
+  }
+
+  var highestFlyerTotal = c[tiers[2]].Flyers * TROOP_HP[tiers[2]].Flyers;
+  var mLevels = selectedMonsterLevels(high);
+  var lowM = mLevels[0], highM = mLevels[1];
+  var lowMax = 0, highMax = 0;
+  for(i=0;i<MONSTERS[lowM].length;i++){ if(MONSTERS[lowM][i][1] > lowMax) lowMax = MONSTERS[lowM][i][1]; }
+  for(i=0;i<MONSTERS[highM].length;i++){ if(MONSTERS[highM][i][1] > highMax) highMax = MONSTERS[highM][i][1]; }
+
+  var baseLow = round10(dominance/6);
+  var lowCap = round10((highestFlyerTotal-1)/lowMax);
+  var highCapAsLow = round10(((highestFlyerTotal-1)/highMax)*2);
+  var lowCount = Math.max(Math.min(baseLow, lowCap, highCapAsLow), 0);
+  var highCount = lowCount>0 ? round10(lowCount/2) : 0;
+
+  var activeMonsterTotals=[];
+  for(i=0;i<MONSTERS[lowM].length;i++){
+    var m1=MONSTERS[lowM][i]; total=lowCount*m1[1];
+    if(lowCount>0 && total<highestFlyerTotal){ rows.push({order:order++, tier:lowM, name:m1[0], count:lowCount, hp:m1[1], total:total, type:"monsters"}); activeMonsterTotals.push(total); }
+  }
+  for(i=0;i<MONSTERS[highM].length;i++){
+    var m2=MONSTERS[highM][i]; total=highCount*m2[1];
+    if(highCount>0 && total<highestFlyerTotal){ rows.push({order:order++, tier:highM, name:m2[0], count:highCount, hp:m2[1], total:total, type:"monsters"}); activeMonsterTotals.push(total); }
+  }
+
+  var mercAllowed = high>=6;
+  var mercCap = activeMonsterTotals.length ? Math.min.apply(null, activeMonsterTotals) : highestFlyerTotal;
+  var baseMerc = mercAllowed ? round10(authority/MERCS.length) : 0;
+  for(i=0;i<MERCS.length;i++){
+    var merc=MERCS[i];
+    var hpCapCount=round10((mercCap-1)/merc[1]);
+    count=mercAllowed ? Math.max(Math.min(baseMerc, hpCapCount), 0) : 0;
+    total=count*merc[1];
+    if(count>0){ rows.push({order:order++, tier:"Merc", name:merc[0], count:count, hp:merc[1], total:total, type:"mercs"}); }
+  }
+
+  rows.sort(function(a,b){ return a.count===b.count ? a.order-b.order : a.count-b.count; });
+  for(i=0;i<rows.length;i++){ rows[i].order=i+1; }
+  return {rows:rows, tiers:tiers, monsterLevels:lowM+" + "+highM, highestFlyerTotal:highestFlyerTotal, monsterOK:lowCount>0, mercAllowed:mercAllowed};
+}
+
+function renderCalculator(){
+  var t=LANG[currentLang()];
+  var result = calcRows();
+  var filter = byId("typeFilter").value;
+
+  byId("guardTiers").textContent = result.tiers.join(" / ");
+  byId("monsterLevels").textContent = result.monsterLevels;
+  byId("flyerCap").textContent = fmt(result.highestFlyerTotal);
+  byId("messages").innerHTML = '<span class="pill '+(result.monsterOK?'ok':'warn')+'">'+(result.monsterOK?t.monOK:t.monWarn)+'</span><span class="pill '+(result.mercAllowed?'ok':'warn')+'">'+(result.mercAllowed?t.mercOK:t.mercWarn)+'</span>';
+
+  var html = "", filteredCount=0;
+  for(var i=0;i<result.rows.length;i++){
+    var r=result.rows[i];
+    if(filter!=="all" && r.type!==filter){ continue; }
+    filteredCount++;
+    var typeLabel = r.type==="guardsmen" ? t.guardsmen : (r.type==="monsters" ? t.monsters : t.mercs);
+    html += '<tr><td>'+r.order+'</td><td class="mono">'+r.tier+'</td><td>'+r.name+'</td><td>'+fmt(r.count)+'</td><td>'+fmt(r.hp)+'</td><td>'+fmt(r.total)+'</td><td class="type-'+r.type+'">'+typeLabel+'</td></tr>';
+  }
+  byId("rowCount").textContent = String(filteredCount);
+  byId("outputBody").innerHTML = html;
+}
 </script>
 </body>
 </html>
