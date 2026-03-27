@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -142,6 +143,7 @@
     }
     .lang-row label { align-self: center; font-weight: 700; color: #cbd5e1; }
     .lang-row select { width: 220px; }
+
     @media (max-width: 1100px) {
       .grid { grid-template-columns: 1fr; }
       .wrap { padding: 12px; }
@@ -185,12 +187,33 @@
     <div class="grid">
       <div class="card">
         <h2 id="inputsTitle">Inputs</h2>
-        <div class="field"><label for="leadership" id="leadershipLabel">Leadership</label><input id="leadership" type="number" value="100000" min="0" step="10"></div>
-        <div class="field"><label for="authority" id="authorityLabel">Authority</label><input id="authority" type="number" value="1000" min="0" step="10"></div>
-        <div class="field"><label for="dominance" id="dominanceLabel">Dominance</label><input id="dominance" type="number" value="1000" min="0" step="10"></div>
-        <div class="field"><label for="troopLevel" id="troopLevelLabel">Highest Troop Level</label>
-          <select id="troopLevel"><option>G5</option><option>G6</option><option selected>G7</option><option>G8</option><option>G9</option></select>
+
+        <div class="field">
+          <label for="leadership" id="leadershipLabel">Leadership</label>
+          <input id="leadership" type="number" value="100000" min="0" step="1">
         </div>
+
+        <div class="field">
+          <label for="authority" id="authorityLabel">Authority</label>
+          <input id="authority" type="number" value="1000" min="0" step="1">
+        </div>
+
+        <div class="field">
+          <label for="dominance" id="dominanceLabel">Dominance</label>
+          <input id="dominance" type="number" value="1000" min="0" step="1">
+        </div>
+
+        <div class="field">
+          <label for="troopLevel" id="troopLevelLabel">Highest Troop Level</label>
+          <select id="troopLevel">
+            <option>G5</option>
+            <option>G6</option>
+            <option selected>G7</option>
+            <option>G8</option>
+            <option>G9</option>
+          </select>
+        </div>
+
         <div class="field">
           <label id="stackModeLabel">Stack Mode</label>
           <div class="inline-radio">
@@ -198,6 +221,7 @@
             <label><input type="radio" name="stackMode" value="specialists"> <span id="stackModeSpecsText">Guardsmen + Specialists</span></label>
           </div>
         </div>
+
         <div class="field">
           <label id="modernisationLabel">Army Modernisation Completed</label>
           <div class="inline-radio">
@@ -205,9 +229,23 @@
             <label><input type="radio" name="modernisation" value="yes"> <span id="modernisationYesText">Yes</span></label>
           </div>
         </div>
-        <div class="btns"><button id="calcBtn">Calculate</button><button class="secondary" id="resetBtn">Reset</button></div>
-        <div class="hint"><strong id="howTitle">How to use:</strong><br><span id="how1">1. Enter Leadership, Authority and Dominance.</span><br><span id="how2">2. Pick troop level and stack mode.</span><br><span id="how3">3. Specialists are blocked unless Army Modernisation is completed.</span><br><span id="how4">4. G7 specialists use special count balancing only for S7. G8 and G9 use standard specialist substitution.</span></div>
-        <div class="notice"><span class="pill warn" id="modeNoteText">Guardsmen + Specialists is only recommended when Army Modernisation is fully completed.</span></div>
+
+        <div class="btns">
+          <button id="calcBtn">Calculate</button>
+          <button class="secondary" id="resetBtn">Reset</button>
+        </div>
+
+        <div class="hint">
+          <strong id="howTitle">How to use:</strong><br>
+          <span id="how1">1. Enter Leadership, Authority and Dominance.</span><br>
+          <span id="how2">2. Pick troop level and stack mode.</span><br>
+          <span id="how3">3. Specialists are blocked unless Army Modernisation is completed.</span><br>
+          <span id="how4">4. G7 specialists use special count balancing only for S7. G8 and G9 use standard specialist substitution.</span>
+        </div>
+
+        <div class="notice">
+          <span class="pill warn" id="modeNoteText">Guardsmen + Specialists is only recommended when Army Modernisation is fully completed.</span>
+        </div>
       </div>
 
       <div class="card">
@@ -217,7 +255,9 @@
           <div class="stat"><div class="k" id="statFly">Highest Flyer Total HP</div><div class="v" id="flyerCap">-</div></div>
           <div class="stat"><div class="k" id="statRows">Stacks Returned</div><div class="v" id="rowCount">0</div></div>
         </div>
+
         <div id="messages"></div>
+
         <div class="toolbar">
           <div></div>
           <div class="right">
@@ -232,10 +272,20 @@
             </select>
           </div>
         </div>
+
         <div style="overflow:auto;max-height:70vh">
           <table>
             <thead>
-              <tr><th id="thOrder">Order</th><th id="thTier">Tier</th><th id="thName">Name</th><th id="thType">Type</th><th id="thCount">Count</th><th id="thHP">HP / Unit</th><th id="thTotal">Total HP</th><th id="thGroup">Group</th></tr>
+              <tr>
+                <th id="thOrder">Order</th>
+                <th id="thTier">Tier</th>
+                <th id="thName">Name</th>
+                <th id="thType">Type</th>
+                <th id="thCount">Count</th>
+                <th id="thHP">HP / Unit</th>
+                <th id="thTotal">Total HP</th>
+                <th id="thGroup">Group</th>
+              </tr>
             </thead>
             <tbody id="outputBody"></tbody>
           </table>
@@ -275,6 +325,7 @@
       set('howTitle','howTitle'); set('how1','how1'); set('how2','how2'); set('how3','how3'); set('how4','how4');
       set('modeNoteText','modeNote'); set('statGuard','selectedTiers'); set('statMon','selectedMonsters'); set('statFly','highestFlyer'); set('statRows','stacksReturned');
       set('filterLabel','quickFilter'); set('thOrder','order'); set('thTier','tier'); set('thName','name'); set('thType','type'); set('thCount','count'); set('thHP','hp'); set('thTotal','total'); set('thGroup','group');
+
       const filter=document.getElementById('typeFilter');
       if(filter){
         const prev=filter.value;
@@ -283,39 +334,149 @@
       }
     }
 
-    const guardData={G3:{Ranged:{name:"Archer III",hp:480},Mounted:{name:"Spearman III",hp:960},Melee:{name:"Rider III",hp:480}},G4:{Ranged:{name:"Archer IV",hp:870},Mounted:{name:"Spearman IV",hp:1740},Melee:{name:"Rider IV",hp:870}},G5:{Ranged:{name:"Archer V",hp:1560},Mounted:{name:"Spearman V",hp:3150},Melee:{name:"Rider V",hp:1560},Flyers:{name:"Battle griffin V",hp:30000}},G6:{Ranged:{name:"Heavy arbalester VI",hp:2840},Mounted:{name:"Heavy halberdier VI",hp:5700},Melee:{name:"Mounted knight VI",hp:2840},Flyers:{name:"Battle griffin VI",hp:57000}},G7:{Ranged:{name:"Heavy arbalester VII",hp:5100},Mounted:{name:"Heavy halberdier VII",hp:10200},Melee:{name:"Mounted knight VII",hp:5100},Flyers:{name:"Battle griffin VII",hp:102000}},G8:{Ranged:{name:"Purifier I",hp:9180},Mounted:{name:"Punisher I",hp:18360},Melee:{name:"Smiter I",hp:9180},Flyers:{name:"Corax I",hp:183600}},G9:{Ranged:{name:"Purifier II",hp:16530},Mounted:{name:"Punisher II",hp:33060},Melee:{name:"Smiter II",hp:16530},Flyers:{name:"Corax II",hp:330600}}};
-    const specialistData={S7:{Ranged:{name:"Deadshot VII",hp:5100},Mounted:{name:"Lion Rider VII",hp:10200},Melee:{name:"Heavy Knight VII",hp:5100},Flyers:{name:"Vulture VII",hp:5100}},S8:{Ranged:{name:"Legitimist I",hp:9180},Mounted:{name:"Royal Lion I",hp:18360},Melee:{name:"Duelist I",hp:9180},Flyers:{name:"Whitemane I",hp:183600}},S9:{Ranged:{name:"Legitimist II",hp:16530},Mounted:{name:"Royal Lion II",hp:33060},Melee:{name:"Duelist II",hp:16530},Flyers:{name:"Whitemane II",hp:330600}}};
-    const monsterData={M4:[["Gorgon Medusa", "Ranged", 12000],["Magic Dragon", "Ranged", 15000],["Many Armed Guardian", "Melee", 13000],["Ice Phoenix", "Flying", 17000]],M5:[["Desert Vanquisher V","Mounted",126000],["Flaming Centaur V","Mounted",132000],["Fearsome Manticore V","Flying",138000],["Ettin V","Melee",144000]],M6:[["Troll Rider VI","Mounted",330000],["Crystal Dragon VI","Melee",360000],["Ruby Golem VI","Melee",390000],["Jungle Destroyer VI","Melee",390000]],M7:[["Ancient Terror VII","Mounted",840000],["Destructive Colossus VII","Ranged",870000],["Black Dragon VII","Flying",900000],["Wind Lord VII","Melee",930000]],M8:[["Trickster I","Ranged",1920000],["Devastator I","Mounted",1950000],["Fire Phoenix I","Flying",1980000],["Kraken I","Melee",2010000]],M9:[["Trickster II","Ranged",3450000],["Devastator II","Mounted",3510000],["Fire Phoenix II","Flying",3570000],["Kraken II","Melee",3630000]]};
-    const mercData=[["Deminonic Salamander",410000],["Warden",470000],["Eternal Cannoneer",440000],["Jago",220000],["Galloper",22000],["Scarface",11000],["Pounder",11000],["Warregal",220000],["Quicksand",22000],["Slavic Warrior",11000],["Highlander",11000],["Superior Epic Monster Hunter",25000],["Heavy Siege",55000],["Wyvern",690000]];
+    const guardData = {
+      G3:{Ranged:{name:"Archer III",hp:480},Mounted:{name:"Spearman III",hp:960},Melee:{name:"Rider III",hp:480}},
+      G4:{Ranged:{name:"Archer IV",hp:870},Mounted:{name:"Spearman IV",hp:1740},Melee:{name:"Rider IV",hp:870}},
+      G5:{Ranged:{name:"Archer V",hp:1560},Mounted:{name:"Spearman V",hp:3150},Melee:{name:"Rider V",hp:1560},Flyers:{name:"Battle griffin V",hp:30000}},
+      G6:{Ranged:{name:"Heavy arbalester VI",hp:2840},Mounted:{name:"Heavy halberdier VI",hp:5700},Melee:{name:"Mounted knight VI",hp:2840},Flyers:{name:"Battle griffin VI",hp:57000}},
+      G7:{Ranged:{name:"Heavy arbalester VII",hp:5100},Mounted:{name:"Heavy halberdier VII",hp:10200},Melee:{name:"Mounted knight VII",hp:5100},Flyers:{name:"Battle griffin VII",hp:102000}},
+      G8:{Ranged:{name:"Purifier I",hp:9180},Mounted:{name:"Punisher I",hp:18360},Melee:{name:"Smiter I",hp:9180},Flyers:{name:"Corax I",hp:183600}},
+      G9:{Ranged:{name:"Purifier II",hp:16530},Mounted:{name:"Punisher II",hp:33060},Melee:{name:"Smiter II",hp:16530},Flyers:{name:"Corax II",hp:330600}}
+    };
 
-    const els={leadership:document.getElementById("leadership"),authority:document.getElementById("authority"),dominance:document.getElementById("dominance"),troopLevel:document.getElementById("troopLevel"),calcBtn:document.getElementById("calcBtn"),resetBtn:document.getElementById("resetBtn"),typeFilter:document.getElementById("typeFilter"),outputBody:document.getElementById("outputBody"),guardTiers:document.getElementById("guardTiers"),monsterLevels:document.getElementById("monsterLevels"),flyerCap:document.getElementById("flyerCap"),rowCount:document.getElementById("rowCount"),messages:document.getElementById("messages")};
-    const fmt=n=>Number(n||0).toLocaleString();
-    const round10=n=>Math.max(Math.floor(n/10)*10,0);
-    const round1=n=>Math.max(Math.round(n),0);
-    const mode=()=>document.querySelector('input[name="stackMode"]:checked').value;
-    const modernisation=()=>document.querySelector('input[name="modernisation"]:checked').value;
+    const specialistData = {
+      S7:{Ranged:{name:"Deadshot VII",hp:5100},Mounted:{name:"Lion Rider VII",hp:10200},Melee:{name:"Heavy Knight VII",hp:5100},Flyers:{name:"Vulture VII",hp:5100}},
+      S8:{Ranged:{name:"Legitimist I",hp:9180},Mounted:{name:"Royal Lion I",hp:18360},Melee:{name:"Duelist I",hp:9180},Flyers:{name:"Whitemane I",hp:183600}},
+      S9:{Ranged:{name:"Legitimist II",hp:16530},Mounted:{name:"Royal Lion II",hp:33060},Melee:{name:"Duelist II",hp:16530},Flyers:{name:"Whitemane II",hp:330600}}
+    };
+
+    const monsterData = {
+      M4: [
+        ["Gorgon Medusa", "Ranged", 12000],
+        ["Magic Dragon", "Ranged", 15000],
+        ["Many Armed Guardian", "Melee", 13000],
+        ["Ice Phoenix", "Flying", 17000]
+      ],
+      M5: [
+        ["Desert Vanquisher V", "Mounted", 126000],
+        ["Flaming Centaur V", "Mounted", 132000],
+        ["Fearsome Manticore V", "Flying", 138000],
+        ["Ettin V", "Melee", 144000]
+      ],
+      M6: [
+        ["Troll Rider VI", "Mounted", 330000],
+        ["Crystal Dragon VI", "Melee", 360000],
+        ["Ruby Golem VI", "Melee", 390000],
+        ["Jungle Destroyer VI", "Melee", 390000]
+      ],
+      M7: [
+        ["Ancient Terror VII", "Mounted", 840000],
+        ["Destructive Colossus VII", "Ranged", 870000],
+        ["Black Dragon VII", "Flying", 900000],
+        ["Wind Lord VII", "Melee", 930000]
+      ],
+      M8: [
+        ["Trickster I", "Ranged", 1920000],
+        ["Devastator I", "Mounted", 1950000],
+        ["Fire Phoenix I", "Flying", 1980000],
+        ["Kraken I", "Melee", 2010000]
+      ],
+      M9: [
+        ["Trickster II", "Ranged", 3450000],
+        ["Devastator II", "Mounted", 3510000],
+        ["Fire Phoenix II", "Flying", 3570000],
+        ["Kraken II", "Melee", 3630000]
+      ]
+    };
+
+    const mercData = [
+      ["Deminonic Salamander",410000],["Warden",470000],["Eternal Cannoneer",440000],
+      ["Jago",220000],["Galloper",22000],["Scarface",11000],["Pounder",11000],
+      ["Warregal",220000],["Quicksand",22000],["Slavic Warrior",11000],["Highlander",11000],
+      ["Superior Epic Monster Hunter",25000],["Heavy Siege",55000],["Wyvern",690000]
+    ];
+
+    const els = {
+      leadership:document.getElementById("leadership"),
+      authority:document.getElementById("authority"),
+      dominance:document.getElementById("dominance"),
+      troopLevel:document.getElementById("troopLevel"),
+      calcBtn:document.getElementById("calcBtn"),
+      resetBtn:document.getElementById("resetBtn"),
+      typeFilter:document.getElementById("typeFilter"),
+      outputBody:document.getElementById("outputBody"),
+      guardTiers:document.getElementById("guardTiers"),
+      monsterLevels:document.getElementById("monsterLevels"),
+      flyerCap:document.getElementById("flyerCap"),
+      rowCount:document.getElementById("rowCount"),
+      messages:document.getElementById("messages")
+    };
+
+    const fmt = n => Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 0 });
+    const mode = () => document.querySelector('input[name="stackMode"]:checked').value;
+    const modernisation = () => document.querySelector('input[name="modernisation"]:checked').value;
 
     function tierCountsFromLeadership(L, high){
-      const low=Math.max(3, high-2);
-      const divider=low<=4?3:4;
-      const base=round10((Math.floor(L/1000)*1000)/2/divider);
-      const tiers={};
-      const tLow='G'+low,tMid='G'+(high-1),tTop='G'+high;
-      tiers[tLow]={Ranged:base,Mounted:round10(base/2),Melee:base,Flyers:round10(base/20)};
-      tiers[tMid]={Ranged:round10(tiers[tLow].Ranged/1.84),Mounted:round10(tiers[tLow].Mounted/1.84),Melee:round10(tiers[tLow].Melee/1.84),Flyers:round10(round10(tiers[tLow].Melee/1.84)/20)};
-      tiers[tTop]={Ranged:round10(tiers[tMid].Ranged/1.84),Mounted:round10(tiers[tMid].Mounted/1.84),Melee:round10(tiers[tMid].Melee/1.84),Flyers:round10(round10(tiers[tMid].Melee/1.84)/20)};
+      const low = Math.max(3, high - 2);
+      const divider = low <= 4 ? 3 : 3.7;
+
+      const tiers = {};
+      const tLow = 'G' + low;
+      const tMid = 'G' + (high - 1);
+      const tTop = 'G' + high;
+
+      function hpOf(tier, type){
+        return guardData[tier][type].hp;
+      }
+
+      function buildTierCountsFromBaseRanged(tier, rangedCount){
+        const rangedHP = hpOf(tier, 'Ranged');
+        const mountedHP = hpOf(tier, 'Mounted');
+        const flyersHP = guardData[tier].Flyers ? hpOf(tier, 'Flyers') : 0;
+
+        const targetTotalHP = rangedCount * rangedHP;
+
+        const counts = {
+          Ranged: rangedCount,
+          Mounted: targetTotalHP / mountedHP,
+          Melee: rangedCount
+        };
+
+        counts.Flyers = guardData[tier].Flyers ? (targetTotalHP / flyersHP) : 0;
+        return counts;
+      }
+
+      const lowBaseRanged = (L / 2) / divider;
+      tiers[tLow] = buildTierCountsFromBaseRanged(tLow, lowBaseRanged);
+
+      const midBaseRanged = tiers[tLow].Ranged / 1.84;
+      tiers[tMid] = buildTierCountsFromBaseRanged(tMid, midBaseRanged);
+
+      const topBaseRanged = tiers[tMid].Ranged / 1.84;
+      tiers[tTop] = buildTierCountsFromBaseRanged(tTop, topBaseRanged);
+
       return tiers;
     }
 
-   function selectedMonsterLevels(high){if (high === 5) return ["M4", "M5"];return ["M" + (high - 1), "M" + high];
-}
-    function specialistPlan(high){ if(high===7) return {top:"G7", spec:"S7", low:"G6"}; if(high===8) return {top:"G8", spec:"S8", low:"G7"}; if(high===9) return {top:"G9", spec:"S9", low:"G8"}; return null; }
+    function selectedMonsterLevels(high){
+      if (high === 5) return ["M4", "M5"];
+      return ["M" + (high - 1), "M" + high];
+    }
+
+    function specialistPlan(high){
+      if(high===7) return {top:"G7",spec:"S7",low:"G6"};
+      if(high===8) return {top:"G8",spec:"S8",low:"G7"};
+      if(high===9) return {top:"G9",spec:"S9",low:"G8"};
+      return null;
+    }
 
     function addTierRows(rows, orderStart, tier, source, counts, group){
-      let order=orderStart;
+      let order = orderStart;
       ["Ranged","Mounted","Melee","Flyers"].forEach(unit=>{
         if(source[tier] && source[tier][unit]){
-          const hp=source[tier][unit].hp, name=source[tier][unit].name, count=counts[unit]||0;
+          const hp = source[tier][unit].hp;
+          const name = source[tier][unit].name;
+          const count = counts[unit] || 0;
           rows.push({order:order++, tier, name, unitType:unit, count, hp, total:count*hp, group});
         }
       });
@@ -323,84 +484,132 @@
     }
 
     function buildRows(){
-      const L=Number(els.leadership.value||0), A=Number(els.authority.value||0), D=Number(els.dominance.value||0), high=Number(String(els.troopLevel.value).replace("G","")), stackMode=mode();
-      if(stackMode==="specialists" && modernisation()!=="yes") return {blocked:true, message:t('specBlocked')};
-      if(stackMode==="specialists" && high<7) return {blocked:true, message:t('specTierBlocked')};
+      const L = Number(els.leadership.value || 0);
+      const A = Number(els.authority.value || 0);
+      const D = Number(els.dominance.value || 0);
+      const high = Number(String(els.troopLevel.value).replace("G",""));
+      const stackMode = mode();
 
-      let rows=[], order=1, tiersLabel="", highestFlyerTotal=0;
-      const baseCounts=tierCountsFromLeadership(L, high);
+      if(stackMode==="specialists" && modernisation()!=="yes"){
+        return {blocked:true, message:t('specBlocked')};
+      }
+      if(stackMode==="specialists" && high<7){
+        return {blocked:true, message:t('specTierBlocked')};
+      }
+
+      let rows = [];
+      let order = 1;
+      let tiersLabel = "";
+      let highestFlyerTotal = 0;
+      const baseCounts = tierCountsFromLeadership(L, high);
 
       if(stackMode==="guards"){
-        const selected=["G"+high, "G"+(high-1), "G"+Math.max(3, high-2)];
-        tiersLabel=selected.join(" / ");
-        selected.forEach(t=>{ order=addTierRows(rows, order, t, guardData, baseCounts[t], "guardsmen"); });
-        highestFlyerTotal=rows.find(r=>r.tier==="G"+high && r.unitType==="Flyers")?.total||0;
+        const selected = ["G"+high, "G"+(high-1), "G"+Math.max(3, high-2)];
+        tiersLabel = selected.join(" / ");
+        selected.forEach(t => {
+          order = addTierRows(rows, order, t, guardData, baseCounts[t], "guardsmen");
+        });
+        highestFlyerTotal = rows.find(r => r.tier==="G"+high && r.unitType==="Flyers")?.total || 0;
       } else {
-        const plan=specialistPlan(high);
-        tiersLabel=plan.top+" / "+plan.spec+" / "+plan.low;
-        order=addTierRows(rows, order, plan.top, guardData, baseCounts[plan.top], "guardsmen");
-        highestFlyerTotal=rows.find(r=>r.tier===plan.top && r.unitType==="Flyers")?.total||0;
+        const plan = specialistPlan(high);
+        tiersLabel = plan.top+" / "+plan.spec+" / "+plan.low;
+        order = addTierRows(rows, order, plan.top, guardData, baseCounts[plan.top], "guardsmen");
+        highestFlyerTotal = rows.find(r => r.tier===plan.top && r.unitType==="Flyers")?.total || 0;
 
         if(high===7){
-          const g7Top=baseCounts.G7;
-          const s7Equal=round1(g7Top.Ranged*1.03);
-          const s7Base={Ranged:s7Equal, Melee:s7Equal, Flyers:s7Equal, Mounted:round1(s7Equal/2)};
-          const s7Totals={Ranged:s7Base.Ranged*5100, Melee:s7Base.Melee*5100, Flyers:s7Base.Flyers*5100, Mounted:s7Base.Mounted*10200};
-          const g6Base={Ranged:round1(g7Top.Ranged*1.84), Melee:round1(g7Top.Melee*1.84), Flyers:round1(g7Top.Flyers*1.84), Mounted:round1(g7Top.Mounted*1.84)};
-          const g6Adj={
-            Ranged:Math.max(g6Base.Ranged, Math.ceil((s7Totals.Ranged+1)/2840)),
-            Melee:Math.max(g6Base.Melee, Math.ceil((s7Totals.Melee+1)/2840)),
-            Flyers:Math.max(g6Base.Flyers, Math.ceil((s7Totals.Flyers+1)/57000)),
-            Mounted:Math.max(g6Base.Mounted, Math.ceil((s7Totals.Mounted+1)/5700))
+          const g7Top = baseCounts.G7;
+          const s7Equal = g7Top.Ranged * 1.03;
+          const s7Base = {
+            Ranged: s7Equal,
+            Melee: s7Equal,
+            Flyers: s7Equal,
+            Mounted: s7Equal / 2
           };
-          order=addTierRows(rows, order, "S7", specialistData, s7Base, "specialists");
-          order=addTierRows(rows, order, "G6", guardData, g6Adj, "guardsmen");
+          const s7Totals = {
+            Ranged: s7Base.Ranged * 5100,
+            Melee: s7Base.Melee * 5100,
+            Flyers: s7Base.Flyers * 5100,
+            Mounted: s7Base.Mounted * 10200
+          };
+          const g6Base = {
+            Ranged: g7Top.Ranged * 1.84,
+            Melee: g7Top.Melee * 1.84,
+            Flyers: g7Top.Flyers * 1.84,
+            Mounted: g7Top.Mounted * 1.84
+          };
+          const g6Adj = {
+            Ranged: Math.max(g6Base.Ranged, (s7Totals.Ranged + 1) / 2840),
+            Melee: Math.max(g6Base.Melee, (s7Totals.Melee + 1) / 2840),
+            Flyers: Math.max(g6Base.Flyers, (s7Totals.Flyers + 1) / 57000),
+            Mounted: Math.max(g6Base.Mounted, (s7Totals.Mounted + 1) / 5700)
+          };
+          order = addTierRows(rows, order, "S7", specialistData, s7Base, "specialists");
+          order = addTierRows(rows, order, "G6", guardData, g6Adj, "guardsmen");
         } else {
-          const specCounts={
-            Ranged:round1(baseCounts[plan.top].Ranged*1.03),
-            Melee:round1(baseCounts[plan.top].Melee*1.03),
-            Flyers:round1(baseCounts[plan.top].Flyers*1.03),
-            Mounted:round1(baseCounts[plan.top].Mounted*1.03)
+          const specCounts = {
+            Ranged: baseCounts[plan.top].Ranged * 1.03,
+            Melee: baseCounts[plan.top].Melee * 1.03,
+            Flyers: baseCounts[plan.top].Flyers * 1.03,
+            Mounted: baseCounts[plan.top].Mounted * 1.03
           };
-          order=addTierRows(rows, order, plan.spec, specialistData, specCounts, "specialists");
-          order=addTierRows(rows, order, plan.low, guardData, baseCounts[plan.low], "guardsmen");
+          order = addTierRows(rows, order, plan.spec, specialistData, specCounts, "specialists");
+          order = addTierRows(rows, order, plan.low, guardData, baseCounts[plan.low], "guardsmen");
         }
       }
 
-      const monLevels=selectedMonsterLevels(high), activeMonsterTotals=[];
-      monLevels.forEach((level, idx)=>{
+      const monLevels = selectedMonsterLevels(high);
+      const activeMonsterTotals = [];
+
+      monLevels.forEach((level, idx) => {
         if(!monsterData[level]) return;
-        const maxHP=Math.max(...monsterData[level].map(x=>x[2]));
-        let count=0;
-        if(monLevels.length===1){
-          count=round10(Math.min(round10(D/4), round10((highestFlyerTotal-1)/maxHP)));
-        } else if(idx===0){
-          const nextMax=Math.max(...monsterData[monLevels[1]].map(x=>x[2]));
-          count=Math.max(Math.min(round10(D/6), round10((highestFlyerTotal-1)/maxHP), round10(((highestFlyerTotal-1)/nextMax)*2)), 0);
+        const maxHP = Math.max(...monsterData[level].map(x => x[2]));
+        let count = 0;
+
+        if(monLevels.length === 1){
+          count = Math.min(D / 4, (highestFlyerTotal - 1) / maxHP);
+        } else if(idx === 0){
+          const nextMax = Math.max(...monsterData[monLevels[1]].map(x => x[2]));
+          count = Math.max(Math.min(D / 6, (highestFlyerTotal - 1) / maxHP, ((highestFlyerTotal - 1) / nextMax) * 2), 0);
         } else {
-          const firstCount=rows.find(r=>r.group==="monsters" && r.tier===monLevels[0])?.count||0;
-          count=firstCount ? round10(firstCount/2) : 0;
+          const firstCount = rows.find(r => r.group==="monsters" && r.tier===monLevels[0])?.count || 0;
+          count = firstCount ? firstCount / 2 : 0;
         }
-        monsterData[level].forEach(item=>{
-          const [name, unitType, hp]=item, total=count*hp;
-          if(count>0 && total<highestFlyerTotal){
+
+        monsterData[level].forEach(item => {
+          const [name, unitType, hp] = item;
+          const total = count * hp;
+          if(count > 0 && total < highestFlyerTotal){
             rows.push({order:order++, tier:level, name, unitType, count, hp, total, group:"monsters"});
             activeMonsterTotals.push(total);
           }
         });
       });
 
-      const mercAllowed=high>=6;
-      const mercCap=activeMonsterTotals.length?Math.min(...activeMonsterTotals):highestFlyerTotal;
-      const baseMerc=mercAllowed?round10(A/mercData.length):0;
-      mercData.forEach(item=>{
-        const [name,hp]=item, count=mercAllowed?Math.max(Math.min(baseMerc, round10((mercCap-1)/hp)),0):0, total=count*hp;
-        if(count>0) rows.push({order:order++, tier:"Merc", name, unitType:"Mercenary", count, hp, total, group:"mercs"});
+      const mercAllowed = high >= 6;
+      const mercCap = activeMonsterTotals.length ? Math.min(...activeMonsterTotals) : highestFlyerTotal;
+      const baseMerc = mercAllowed ? (A / mercData.length) : 0;
+
+      mercData.forEach(item => {
+        const [name, hp] = item;
+        const count = mercAllowed ? Math.max(Math.min(baseMerc, (mercCap - 1) / hp), 0) : 0;
+        const total = count * hp;
+        if(count > 0){
+          rows.push({order:order++, tier:"Merc", name, unitType:"Mercenary", count, hp, total, group:"mercs"});
+        }
       });
 
-      rows.sort((a,b)=>a.count-b.count || a.order-b.order);
+      rows.sort((a,b)=>a.count-b.count||a.order-b.order);
       rows.forEach((r,i)=>r.order=i+1);
-      return {blocked:false, rows, tiersLabel, monsterLevels:monLevels.join(" + "), highestFlyerTotal, monsterOK:activeMonsterTotals.length>0, mercAllowed};
+
+      return {
+        blocked:false,
+        rows,
+        tiersLabel,
+        monsterLevels:monLevels.join(" + "),
+        highestFlyerTotal,
+        monsterOK:activeMonsterTotals.length>0,
+        mercAllowed
+      };
     }
 
     function block(msg){
@@ -413,36 +622,68 @@
     }
 
     function render(){
-      const result=buildRows();
-      if(result.blocked){ block(result.message); return; }
-      els.guardTiers.textContent=result.tiersLabel;
-      els.monsterLevels.textContent=result.monsterLevels;
-      els.flyerCap.textContent=fmt(result.highestFlyerTotal);
-      els.messages.innerHTML='<span class="pill '+(result.monsterOK?'ok':'warn')+'">'+(result.monsterOK?t('monstersOk'):t('monstersWarn'))+'</span><span class="pill '+(result.mercAllowed?'ok':'warn')+'">'+(result.mercAllowed?t('mercsOk'):t('mercsWarn'))+'</span>';
-      const filter=els.typeFilter.value;
-      const filtered=result.rows.filter(r=>filter==='all'||(filter==='troops'&&(r.group==='guardsmen'||r.group==='specialists'))||r.group===filter);
-      els.rowCount.textContent=String(filtered.length);
-      els.outputBody.innerHTML=filtered.map(r=>'<tr><td>'+r.order+'</td><td class="mono">'+r.tier+'</td><td>'+r.name+'</td><td>'+r.unitType+'</td><td>'+fmt(r.count)+'</td><td>'+fmt(r.hp)+'</td><td>'+fmt(r.total)+'</td><td class="type-'+r.group+'">'+(r.group==='guardsmen'?t('groupGuardsmen'):r.group==='specialists'?t('groupSpecialists'):r.group==='monsters'?t('groupMonsters'):t('groupMercs'))+'</td></tr>').join('');
+      const result = buildRows();
+      if(result.blocked){
+        block(result.message);
+        return;
+      }
+
+      els.guardTiers.textContent = result.tiersLabel;
+      els.monsterLevels.textContent = result.monsterLevels;
+      els.flyerCap.textContent = fmt(result.highestFlyerTotal);
+      els.messages.innerHTML =
+        '<span class="pill '+(result.monsterOK?'ok':'warn')+'">'+(result.monsterOK?t('monstersOk'):t('monstersWarn'))+'</span>' +
+        '<span class="pill '+(result.mercAllowed?'ok':'warn')+'">'+(result.mercAllowed?t('mercsOk'):t('mercsWarn'))+'</span>';
+
+      const filter = els.typeFilter.value;
+      const filtered = result.rows.filter(r =>
+        filter==='all' ||
+        (filter==='troops' && (r.group==='guardsmen'||r.group==='specialists')) ||
+        r.group===filter
+      );
+
+      els.rowCount.textContent = String(filtered.length);
+      els.outputBody.innerHTML = filtered.map(r =>
+        '<tr>' +
+          '<td>'+r.order+'</td>' +
+          '<td class="mono">'+r.tier+'</td>' +
+          '<td>'+r.name+'</td>' +
+          '<td>'+r.unitType+'</td>' +
+          '<td>'+fmt(r.count)+'</td>' +
+          '<td>'+fmt(r.hp)+'</td>' +
+          '<td>'+fmt(r.total)+'</td>' +
+          '<td class="type-'+r.group+'">'+
+            (r.group==='guardsmen'?t('groupGuardsmen'):
+             r.group==='specialists'?t('groupSpecialists'):
+             r.group==='monsters'?t('groupMonsters'):
+             t('groupMercs')) +
+          '</td>' +
+        '</tr>'
+      ).join('');
     }
 
-    els.calcBtn.addEventListener('click',render);
-    els.resetBtn.addEventListener('click',()=>{
-      els.leadership.value=100000;
-      els.authority.value=1000;
-      els.dominance.value=1000;
-      els.troopLevel.value='G7';
-      document.querySelector('input[name="stackMode"][value="guards"]').checked=true;
-      document.querySelector('input[name="modernisation"][value="no"]').checked=true;
-      els.typeFilter.value='all';
+    els.calcBtn.addEventListener('click', render);
+    els.resetBtn.addEventListener('click', () => {
+      els.leadership.value = 100000;
+      els.authority.value = 1000;
+      els.dominance.value = 1000;
+      els.troopLevel.value = 'G7';
+      document.querySelector('input[name="stackMode"][value="guards"]').checked = true;
+      document.querySelector('input[name="modernisation"][value="no"]').checked = true;
+      els.typeFilter.value = 'all';
       render();
     });
-    els.typeFilter.addEventListener('change',render);
-    document.querySelectorAll('input[name="stackMode"]').forEach(el=>el.addEventListener('change',render));
-    document.querySelectorAll('input[name="modernisation"]').forEach(el=>el.addEventListener('change',render));
-    document.getElementById('language').addEventListener('change',()=>{applyLanguage();render();});
+    els.typeFilter.addEventListener('change', render);
+    document.querySelectorAll('input[name="stackMode"]').forEach(el => el.addEventListener('change', render));
+    document.querySelectorAll('input[name="modernisation"]').forEach(el => el.addEventListener('change', render));
+    document.getElementById('language').addEventListener('change', () => {
+      applyLanguage();
+      render();
+    });
 
     applyLanguage();
     render();
   </script>
 </body>
 </html>
+```
