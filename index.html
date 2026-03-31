@@ -6,48 +6,82 @@
   <title>WoA Troop Stacking Calculator</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --panel: #111827;
+      --bg: #0b1220;
+      --bg2: #0f172a;
+      --panel: rgba(17, 24, 39, 0.96);
       --panel2: #1f2937;
       --text: #e5e7eb;
       --muted: #94a3b8;
       --accent: #22c55e;
       --border: #334155;
       --input: #0b1220;
+      --ok: #86efac;
+      --warn: #fcd34d;
+      --bad: #fca5a5;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+      --radius: 18px;
     }
 
     * { box-sizing: border-box; }
 
     html, body {
       width: 100%;
+      margin: 0;
+      padding: 0;
       overflow-x: hidden;
     }
 
     body {
-      margin: 0;
-      font-family: Inter, Segoe UI, Arial, sans-serif;
-      background: linear-gradient(180deg, #0b1220, #0f172a);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
       color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(34,197,94,.08), transparent 28%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
     }
 
     .wrap {
-      max-width: 1440px;
-      width: 100%;
+      width: min(100%, 1500px);
       margin: 0 auto;
-      padding: 12px;
+      padding: 14px;
     }
+.hero-top {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
 
-    .hero {
-      background: linear-gradient(135deg, #0f172a, #111827 45%, #0b3b2e);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 20px;
-      overflow: hidden;
+.hero-top label {
+  font-weight: 700;
+  color: #cbd5e1;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.hero-top select {
+  width: 180px;
+  min-width: 180px;
+  max-width: 180px;
+}
+
+@media (max-width: 640px) {
+  .hero-top {
+    justify-content: stretch;
+  }
+
+  .hero-top label,
+  .hero-top select {
+    width: 100%;
+    max-width: 100%;
+  }
+}
     }
 
     h1 {
       margin: 0 0 8px;
-      font-size: 30px;
+      font-size: clamp(1.5rem, 2vw + 1rem, 2.2rem);
       line-height: 1.15;
       word-break: break-word;
     }
@@ -56,28 +90,29 @@
       color: var(--muted);
       line-height: 1.5;
       font-size: 14px;
+      max-width: 980px;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: minmax(0, 1fr);
+      grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
       gap: 18px;
       margin-top: 18px;
-    }
-
-    @media (min-width: 1101px) {
-      .grid {
-        grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
-      }
+      align-items: start;
     }
 
     .card {
-      background: rgba(17, 24, 39, .94);
+      background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 18px;
+      border-radius: var(--radius);
       padding: 16px;
       min-width: 0;
-      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
     }
 
     .field { margin-bottom: 14px; }
@@ -99,24 +134,58 @@
       background: var(--input);
       color: var(--text);
       font-size: 15px;
+      outline: none;
+      transition: border-color .18s ease, transform .18s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: #4ade80;
+      transform: translateY(-1px);
+    }
+
+    .inline-radio {
+      display: grid;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .inline-radio label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: #e5e7eb;
+      flex-wrap: wrap;
+      margin-bottom: 0;
+    }
+
+    .inline-radio input {
+      width: auto;
+      accent-color: #22c55e;
+      transform: scale(1.05);
     }
 
     .btns {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
     button {
-      padding: 12px 14px;
+      padding: 12px 16px;
       border: none;
       border-radius: 12px;
       background: var(--accent);
-      color: #06280f;
+      color: #052e16;
       font-weight: 800;
       cursor: pointer;
+      transition: transform .18s ease, opacity .18s ease;
+      min-width: 130px;
     }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
 
     button.secondary {
       background: #1e293b;
@@ -125,16 +194,51 @@
     }
 
     .hint {
-      margin-top: 10px;
+      margin-top: 12px;
       color: var(--muted);
       font-size: 13px;
-      line-height: 1.45;
+      line-height: 1.5;
       word-break: break-word;
+    }
+
+    .notice {
+      margin-top: 10px;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-right: 6px;
+      margin-bottom: 6px;
+      border: 1px solid transparent;
+      max-width: 100%;
+      word-break: break-word;
+    }
+
+    .ok {
+      background: rgba(34, 197, 94, .15);
+      color: var(--ok);
+      border-color: rgba(34, 197, 94, .25);
+    }
+
+    .warn {
+      background: rgba(245, 158, 11, .15);
+      color: var(--warn);
+      border-color: rgba(245, 158, 11, .25);
+    }
+
+    .bad {
+      background: rgba(239, 68, 68, .15);
+      color: var(--bad);
+      border-color: rgba(239, 68, 68, .25);
     }
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(4, minmax(140px, 1fr));
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
       gap: 12px;
       margin-bottom: 14px;
     }
@@ -154,7 +258,7 @@
     }
 
     .stat .v {
-      font-size: 20px;
+      font-size: clamp(1rem, 1.3vw, 1.35rem);
       font-weight: 800;
       word-break: break-word;
     }
@@ -168,42 +272,34 @@
       margin-bottom: 12px;
     }
 
-    .pill {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 800;
-      margin-right: 6px;
-      margin-bottom: 6px;
-      border: 1px solid transparent;
-      max-width: 100%;
-      word-break: break-word;
+    .toolbar .right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
-
-    .ok { background: rgba(34, 197, 94, .15); color: #86efac; border-color: rgba(34, 197, 94, .25); }
-    .warn { background: rgba(245, 158, 11, .15); color: #fcd34d; border-color: rgba(245, 158, 11, .25); }
-    .bad { background: rgba(239, 68, 68, .15); color: #fca5a5; border-color: rgba(239, 68, 68, .25); }
 
     .table-wrap {
       width: 100%;
-      overflow-x: auto;
-      overflow-y: auto;
+      overflow: auto;
       -webkit-overflow-scrolling: touch;
-      max-height: 70vh;
+      max-height: 72vh;
       border-radius: 12px;
+      border: 1px solid #253247;
     }
 
     table {
       width: 100%;
-      min-width: 760px;
+      min-width: 820px;
       border-collapse: collapse;
+      background: #0f172a;
     }
 
     th, td {
       padding: 10px 12px;
       border-bottom: 1px solid #253247;
       text-align: left;
+      vertical-align: middle;
     }
 
     th {
@@ -211,7 +307,16 @@
       color: #cfe3ff;
       position: sticky;
       top: 0;
-      z-index: 1;
+      z-index: 2;
+      white-space: nowrap;
+    }
+
+    tbody tr:hover {
+      background: rgba(255,255,255,0.025);
+    }
+
+    .mono {
+      font-family: ui-monospace, Consolas, monospace;
     }
 
     .type-guardsmen { color: #93c5fd; }
@@ -219,88 +324,41 @@
     .type-monsters { color: #fca5a5; }
     .type-mercs { color: #fde68a; }
 
-    .mono { font-family: ui-monospace, Consolas, monospace; }
-    .notice { margin-top: 8px; }
-
-    .inline-radio {
-      display: grid;
-      gap: 10px;
-      margin-top: 6px;
+    @media (max-width: 1180px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
     }
 
-    .inline-radio label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      color: #e5e7eb;
-      flex-wrap: wrap;
+    @media (max-width: 980px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
-    .inline-radio input {
-      width: auto;
-      accent-color: #22c55e;
-    }
-
-    .lang-row {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-    }
-
-    .lang-row label {
-      align-self: center;
-      font-weight: 700;
-      color: #cbd5e1;
-    }
-
-    .lang-row select {
-      width: 220px;
-      max-width: 100%;
-    }
-
-    @media (max-width: 1100px) {
-      .hero, .card { padding: 16px; }
-      h1 { font-size: 24px; }
-      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-
-    @media (max-width: 768px) {
-      .hero { padding: 16px; }
-      h1 { font-size: 22px; }
-      .sub { font-size: 13px; }
-      .stats { grid-template-columns: 1fr 1fr; }
+    @media (max-width: 640px) {
+      .wrap { padding: 10px; }
+      .hero, .card { padding: 14px; }
+      .stats { grid-template-columns: 1fr; }
+      .hero-top {
+        justify-content: stretch;
+      }
+      .hero-top label, .hero-top select {
+        width: 100%;
+      }
       .toolbar {
         flex-direction: column;
         align-items: stretch;
       }
       .toolbar .right {
         width: 100%;
+        display: grid;
       }
       .toolbar .right select {
         width: 100% !important;
       }
-      th, td {
-        white-space: nowrap;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .wrap { padding: 10px; }
-      .hero, .card { padding: 14px; }
-      .stats { grid-template-columns: 1fr; }
       .btns button {
-        flex: 1 1 auto;
-      }
-      h1 { font-size: 20px; }
-      .lang-row {
-        justify-content: stretch;
-      }
-      .lang-row label,
-      .lang-row select {
-        width: 100%;
+        flex: 1 1 100%;
       }
     }
   </style>
@@ -308,7 +366,7 @@
 <body>
   <div class="wrap">
     <div class="hero">
-      <div class="lang-row">
+      <div class="hero-top">
         <label for="language" id="langLabel">Language</label>
         <select id="language">
           <option value="en">English</option>
@@ -322,8 +380,11 @@
           <option value="pt">Português</option>
         </select>
       </div>
+
       <h1 id="heroTitle">WoA Troop Stacking Calculator</h1>
-      <div class="sub" id="heroSub">Enter Leadership, Authority, Dominance, troop level, and stack mode. The calculator builds your stack automatically and shows the final stack structure clearly.</div>
+      <div class="sub" id="heroSub">
+        Enter Leadership, Authority, Dominance, troop level, and stack mode. The calculator builds your stack automatically and shows the final stack structure clearly.
+      </div>
     </div>
 
     <div class="grid">
@@ -332,17 +393,17 @@
 
         <div class="field">
           <label for="leadership" id="leadershipLabel">Leadership</label>
-          <input id="leadership" type="number" value="100000" min="0" step="1">
+          <input id="leadership" type="number" value="100000" min="0" step="1" />
         </div>
 
         <div class="field">
           <label for="authority" id="authorityLabel">Authority</label>
-          <input id="authority" type="number" value="1000" min="0" step="1">
+          <input id="authority" type="number" value="1000" min="0" step="1" />
         </div>
 
         <div class="field">
           <label for="dominance" id="dominanceLabel">Dominance</label>
-          <input id="dominance" type="number" value="1000" min="0" step="1">
+          <input id="dominance" type="number" value="1000" min="0" step="1" />
         </div>
 
         <div class="field">
@@ -390,8 +451,10 @@
         </div>
 
         <div class="hint" style="margin-top:14px;padding-top:12px;border-top:1px solid #253247;">
-          <strong>Troop Calculator Disclaimer</strong><br>
-          This calculator provides a baseline setup to guide troop composition and firing order. Due to differences in player bonuses, research, gear, and other modifiers, results may vary. Players are encouraged to fine-tune and adjust their setup to achieve optimal performance based on their individual account.
+          <strong id="disclaimerTitle">Troop Calculator Disclaimer</strong><br>
+          <span id="disclaimerText">
+            This calculator provides a baseline setup to guide troop composition and firing order. Due to differences in player bonuses, research, gear, and other modifiers, results may vary. Players are encouraged to fine-tune and adjust their setup to achieve optimal performance based on their individual account.
+          </span>
         </div>
       </div>
 
@@ -401,6 +464,7 @@
           <div class="stat"><div class="k" id="statMon">Selected Monster Levels</div><div class="v" id="monsterLevels">-</div></div>
           <div class="stat"><div class="k" id="statFly">Highest Flyer Total HP</div><div class="v" id="flyerCap">-</div></div>
           <div class="stat"><div class="k" id="statRows">Stacks Returned</div><div class="v" id="rowCount">0</div></div>
+          <div class="stat"><div class="k" id="statBalance">Balance Added</div><div class="v" id="balanceAdded">0</div></div>
         </div>
 
         <div id="messages"></div>
@@ -408,8 +472,8 @@
         <div class="toolbar">
           <div></div>
           <div class="right">
-            <label for="typeFilter" id="filterLabel" style="margin-right:8px;font-weight:700;color:#cbd5e1">Quick Filter</label>
-            <select id="typeFilter" style="width:220px;display:inline-block">
+            <label for="typeFilter" id="filterLabel" style="font-weight:700;color:#cbd5e1;">Quick Filter</label>
+            <select id="typeFilter" style="width:220px;">
               <option value="all">All</option>
               <option value="troops">Guardsmen + Specialists</option>
               <option value="guardsmen">Guardsmen</option>
@@ -443,33 +507,243 @@
 
   <script>
     const i18n = {
-      en:{language:"Language",title:"WoA Troop Stacking Calculator",sub:"Enter Leadership, Authority, Dominance, troop level, and stack mode. The calculator builds your stack automatically and shows the final stack structure clearly.",inputs:"Inputs",leadership:"Leadership",authority:"Authority",dominance:"Dominance",troop:"Highest Troop Level",stackMode:"Stack Mode",guardsOnly:"Guardsmen Only",guardsSpecs:"Guardsmen + Specialists",modernisation:"Army Modernisation Completed",yes:"Yes",no:"No",calc:"Calculate",reset:"Reset",howTitle:"How to use:",how1:"1. Enter Leadership, Authority and Dominance.",how2:"2. Pick troop level and stack mode.",how3:"3. Specialists are blocked unless Army Modernisation is completed.",how4:"4. G7 specialists use special count balancing only for S7. G8 and G9 use standard specialist substitution.",modeNote:"Guardsmen + Specialists is only recommended when Army Modernisation is fully completed.",selectedTiers:"Selected Tiers",selectedMonsters:"Selected Monster Levels",highestFlyer:"Highest Flyer Total HP",stacksReturned:"Stacks Returned",quickFilter:"Quick Filter",all:"All",troops:"Guardsmen + Specialists",guardsmen:"Guardsmen",specialists:"Specialists",monsters:"Monsters",mercs:"Mercs",order:"Order",tier:"Tier",name:"Name",type:"Type",count:"Count",hp:"HP / Unit",total:"Total HP",group:"Group",monstersOk:"Monsters: included where cap allows",monstersWarn:"Monsters: limited / blocked by cap or dominance",mercsOk:"Mercs: enabled from this troop level",mercsWarn:"Mercs: start at G6",specBlocked:"Specialists require full Army Modernisation. Switch to Guardsmen Only or complete research.",specTierBlocked:"Specialists are only available for G7 to G9.",groupGuardsmen:"Guardsmen",groupSpecialists:"Specialists",groupMonsters:"Monsters",groupMercs:"Mercs"}
+      en: {
+        language: "Language",
+        title: "WoA Troop Stacking Calculator",
+        sub: "Enter Leadership, Authority, Dominance, troop level, and stack mode. The calculator builds your stack automatically and shows the final stack structure clearly.",
+        inputs: "Inputs",
+        leadership: "Leadership",
+        authority: "Authority",
+        dominance: "Dominance",
+        troop: "Highest Troop Level",
+        stackMode: "Stack Mode",
+        guardsOnly: "Guardsmen Only",
+        guardsSpecs: "Guardsmen + Specialists",
+        modernisation: "Army Modernisation Completed",
+        yes: "Yes",
+        no: "No",
+        calc: "Calculate",
+        reset: "Reset",
+        howTitle: "How to use:",
+        how1: "1. Enter Leadership, Authority and Dominance.",
+        how2: "2. Pick troop level and stack mode.",
+        how3: "3. Specialists are blocked unless Army Modernisation is completed.",
+        how4: "4. G7 specialists use special count balancing only for S7. G8 and G9 use standard specialist substitution.",
+        modeNote: "Guardsmen + Specialists is only recommended when Army Modernisation is fully completed.",
+        selectedTiers: "Selected Tiers",
+        selectedMonsters: "Selected Monster Levels",
+        highestFlyer: "Highest Flyer Total HP",
+        stacksReturned: "Stacks Returned",
+        balanceAdded: "Balance Added",
+        quickFilter: "Quick Filter",
+        all: "All",
+        troops: "Guardsmen + Specialists",
+        guardsmen: "Guardsmen",
+        specialists: "Specialists",
+        monsters: "Monsters",
+        mercs: "Mercs",
+        order: "Order",
+        tier: "Tier",
+        name: "Name",
+        type: "Type",
+        count: "Count",
+        hp: "HP / Unit",
+        total: "Total HP",
+        group: "Group",
+        monstersOk: "Monsters: included where cap allows",
+        monstersWarn: "Monsters: limited / blocked by cap or dominance",
+        mercsOk: "Mercs: enabled from this troop level",
+        mercsWarn: "Mercs: start at G6",
+        specBlocked: "Specialists require full Army Modernisation. Switch to Guardsmen Only or complete research.",
+        specTierBlocked: "Specialists are only available for G7 to G9.",
+        groupGuardsmen: "Guardsmen",
+        groupSpecialists: "Specialists",
+        groupMonsters: "Monsters",
+        groupMercs: "Mercs",
+        disclaimerTitle: "Troop Calculator Disclaimer",
+        disclaimerText: "This calculator provides a baseline setup to guide troop composition and firing order. Due to differences in player bonuses, research, gear, and other modifiers, results may vary. Players are encouraged to fine-tune and adjust their setup to achieve optimal performance based on their individual account.",
+        balanceAppliedMsg: "Rounded leadership balance was distributed proportionally to the lowest 3 stacks."
+      },
+      ru: {
+        language: "Язык", title: "Калькулятор построения войск WoA", sub: "Введите лидерство, авторитет, доминирование, уровень войск и режим стаков. Калькулятор автоматически соберёт ваш строй и покажет итоговую структуру.",
+        inputs: "Параметры", leadership: "Лидерство", authority: "Авторитет", dominance: "Доминирование", troop: "Максимальный уровень войск", stackMode: "Режим стаков",
+        guardsOnly: "Только гвардейцы", guardsSpecs: "Гвардейцы + специалисты", modernisation: "Армейская модернизация завершена", yes: "Да", no: "Нет", calc: "Рассчитать", reset: "Сброс",
+        howTitle: "Как использовать:", how1: "1. Введите лидерство, авторитет и доминирование.", how2: "2. Выберите уровень войск и режим стаков.", how3: "3. Специалисты недоступны без полной модернизации армии.", how4: "4. Для G7 особый баланс действует только для S7. Для G8 и G9 используется обычная замена специалистами.",
+        modeNote: "Режим Гвардейцы + Специалисты рекомендуется только при полной модернизации армии.", selectedTiers: "Выбранные уровни", selectedMonsters: "Выбранные уровни монстров", highestFlyer: "Макс. суммарное HP летающих", stacksReturned: "Возвращено стаков", balanceAdded: "Добавленный баланс",
+        quickFilter: "Быстрый фильтр", all: "Все", troops: "Гвардейцы + специалисты", guardsmen: "Гвардейцы", specialists: "Специалисты", monsters: "Монстры", mercs: "Наёмники",
+        order: "Порядок", tier: "Уровень", name: "Название", type: "Тип", count: "Количество", hp: "HP / юнит", total: "Общее HP", group: "Группа",
+        monstersOk: "Монстры: включены там, где позволяет лимит", monstersWarn: "Монстры: ограничены лимитом или доминированием", mercsOk: "Наёмники: доступны с этого уровня", mercsWarn: "Наёмники начинаются с G6",
+        specBlocked: "Для специалистов нужна полная армейская модернизация. Переключитесь на Только гвардейцы или завершите исследование.", specTierBlocked: "Специалисты доступны только для G7–G9.",
+        groupGuardsmen: "Гвардейцы", groupSpecialists: "Специалисты", groupMonsters: "Монстры", groupMercs: "Наёмники", disclaimerTitle: "Отказ от ответственности",
+        disclaimerText: "Этот калькулятор даёт базовую настройку для состава войск и порядка удара. Из-за различий в бонусах, исследованиях, снаряжении и других модификаторах результаты могут отличаться. Настраивайте состав под свой аккаунт.",
+        balanceAppliedMsg: "Баланс округлённого лидерства распределён пропорционально по нижним 3 стекам."
+      },
+      tr: {
+        language: "Dil", title: "WoA Birlik Dizilim Hesaplayıcısı", sub: "Liderlik, otorite, baskınlık, birlik seviyesi ve dizilim modunu girin. Hesaplayıcı dizilimi otomatik oluşturur ve yapıyı açıkça gösterir.",
+        inputs: "Girdiler", leadership: "Liderlik", authority: "Otorite", dominance: "Baskınlık", troop: "En Yüksek Birlik Seviyesi", stackMode: "Dizilim Modu",
+        guardsOnly: "Sadece Muhafızlar", guardsSpecs: "Muhafızlar + Uzmanlar", modernisation: "Ordu Modernizasyonu Tamamlandı", yes: "Evet", no: "Hayır", calc: "Hesapla", reset: "Sıfırla",
+        howTitle: "Nasıl kullanılır:", how1: "1. Liderlik, otorite ve baskınlık girin.", how2: "2. Birlik seviyesini ve dizilim modunu seçin.", how3: "3. Ordu modernizasyonu tamamlanmadan uzmanlar kullanılamaz.", how4: "4. G7 uzmanlarında özel dengeleme sadece S7 için geçerlidir. G8 ve G9 standart uzman değişimini kullanır.",
+        modeNote: "Muhafızlar + Uzmanlar yalnızca ordu modernizasyonu tam tamamlandıysa önerilir.", selectedTiers: "Seçilen Kademeler", selectedMonsters: "Seçilen Canavar Seviyeleri", highestFlyer: "En Yüksek Uçan Toplam HP", stacksReturned: "Dönen Yığınlar", balanceAdded: "Eklenen Bakiye",
+        quickFilter: "Hızlı Filtre", all: "Tümü", troops: "Muhafızlar + Uzmanlar", guardsmen: "Muhafızlar", specialists: "Uzmanlar", monsters: "Canavarlar", mercs: "Paralı askerler",
+        order: "Sıra", tier: "Kademe", name: "Ad", type: "Tür", count: "Sayı", hp: "Birim HP", total: "Toplam HP", group: "Grup",
+        monstersOk: "Canavarlar: limit izin verirse dahil edildi", monstersWarn: "Canavarlar: limit veya baskınlık nedeniyle kısıtlı", mercsOk: "Paralı askerler: bu seviyede açık", mercsWarn: "Paralı askerler G6'dan başlar",
+        specBlocked: "Uzmanlar için tam Ordu Modernizasyonu gerekir. Sadece Muhafızlar moduna geçin veya araştırmayı tamamlayın.", specTierBlocked: "Uzmanlar yalnızca G7–G9 için kullanılabilir.",
+        groupGuardsmen: "Muhafızlar", groupSpecialists: "Uzmanlar", groupMonsters: "Canavarlar", groupMercs: "Paralı askerler", disclaimerTitle: "Hesaplayıcı Uyarısı",
+        disclaimerText: "Bu hesaplayıcı birlik dizilimi ve saldırı sırası için temel bir yapı sunar. Oyuncu bonusları, araştırmalar, ekipman ve diğer değişkenler nedeniyle sonuçlar farklı olabilir. En iyi performans için kendi hesabınıza göre ince ayar yapın.",
+        balanceAppliedMsg: "Yuvarlanmış liderlik bakiyesi en alt 3 yığına orantılı şekilde dağıtıldı."
+      },
+      es: {
+        language: "Idioma", title: "Calculadora de Apilado de Tropas WoA", sub: "Introduce liderazgo, autoridad, dominancia, nivel de tropas y modo de apilado. La calculadora construye tu formación automáticamente y muestra la estructura final con claridad.",
+        inputs: "Entradas", leadership: "Liderazgo", authority: "Autoridad", dominance: "Dominancia", troop: "Nivel más alto de tropas", stackMode: "Modo de apilado",
+        guardsOnly: "Solo guardias", guardsSpecs: "Guardias + especialistas", modernisation: "Modernización del ejército completada", yes: "Sí", no: "No", calc: "Calcular", reset: "Restablecer",
+        howTitle: "Cómo usar:", how1: "1. Introduce liderazgo, autoridad y dominancia.", how2: "2. Elige el nivel de tropas y el modo de apilado.", how3: "3. Los especialistas se bloquean si no se completó la modernización del ejército.", how4: "4. Los especialistas G7 usan equilibrio especial solo para S7. G8 y G9 usan sustitución estándar.",
+        modeNote: "Guardias + especialistas solo se recomienda cuando la modernización del ejército está totalmente completada.", selectedTiers: "Niveles seleccionados", selectedMonsters: "Niveles de monstruos seleccionados", highestFlyer: "HP total más alto de voladores", stacksReturned: "Pilas devueltas", balanceAdded: "Balance Añadido",
+        quickFilter: "Filtro rápido", all: "Todos", troops: "Guardias + especialistas", guardsmen: "Guardias", specialists: "Especialistas", monsters: "Monstruos", mercs: "Mercenarios",
+        order: "Orden", tier: "Nivel", name: "Nombre", type: "Tipo", count: "Cantidad", hp: "HP / Unidad", total: "HP total", group: "Grupo",
+        monstersOk: "Monstruos: incluidos donde el límite lo permite", monstersWarn: "Monstruos: limitados o bloqueados por tope o dominancia", mercsOk: "Mercenarios: habilitados desde este nivel", mercsWarn: "Los mercenarios empiezan en G6",
+        specBlocked: "Los especialistas requieren modernización completa del ejército. Cambia a Solo guardias o completa la investigación.", specTierBlocked: "Los especialistas solo están disponibles para G7 a G9.",
+        groupGuardsmen: "Guardias", groupSpecialists: "Especialistas", groupMonsters: "Monstruos", groupMercs: "Mercenarios", disclaimerTitle: "Aviso de la calculadora",
+        disclaimerText: "Esta calculadora ofrece una configuración base para la composición y el orden de disparo. Debido a diferencias en bonos, investigación, equipo y otros modificadores, los resultados pueden variar. Ajusta la configuración según tu cuenta.",
+        balanceAppliedMsg: "El balance del liderazgo redondeado se distribuyó proporcionalmente en las 3 pilas más bajas."
+      },
+      pl: {
+        language: "Język", title: "Kalkulator Ustawienia Wojsk WoA", sub: "Wprowadź przywództwo, autorytet, dominację, poziom wojsk i tryb ustawienia. Kalkulator automatycznie zbuduje układ i pokaże końcową strukturę.",
+        inputs: "Dane wejściowe", leadership: "Przywództwo", authority: "Autorytet", dominance: "Dominacja", troop: "Najwyższy poziom wojsk", stackMode: "Tryb ustawienia",
+        guardsOnly: "Tylko strażnicy", guardsSpecs: "Strażnicy + specjaliści", modernisation: "Modernizacja armii ukończona", yes: "Tak", no: "Nie", calc: "Oblicz", reset: "Resetuj",
+        howTitle: "Jak używać:", how1: "1. Wprowadź przywództwo, autorytet i dominację.", how2: "2. Wybierz poziom wojsk i tryb ustawienia.", how3: "3. Specjaliści są zablokowani bez pełnej modernizacji armii.", how4: "4. Specjaliści G7 używają specjalnego bilansowania tylko dla S7. G8 i G9 używają standardowej zamiany specjalistów.",
+        modeNote: "Strażnicy + specjaliści są zalecani tylko przy pełnej modernizacji armii.", selectedTiers: "Wybrane poziomy", selectedMonsters: "Wybrane poziomy potworów", highestFlyer: "Najwyższe łączne HP latających", stacksReturned: "Zwrócone stosy", balanceAdded: "Dodany Bilans",
+        quickFilter: "Szybki filtr", all: "Wszystko", troops: "Strażnicy + specjaliści", guardsmen: "Strażnicy", specialists: "Specjaliści", monsters: "Potwory", mercs: "Najemnicy",
+        order: "Kolejność", tier: "Poziom", name: "Nazwa", type: "Typ", count: "Liczba", hp: "HP / Jednostkę", total: "Łączne HP", group: "Grupa",
+        monstersOk: "Potwory: dodane tam, gdzie pozwala limit", monstersWarn: "Potwory: ograniczone przez limit lub dominację", mercsOk: "Najemnicy: dostępni od tego poziomu", mercsWarn: "Najemnicy zaczynają się od G6",
+        specBlocked: "Specjaliści wymagają pełnej modernizacji armii. Przełącz na Tylko strażnicy lub dokończ badania.", specTierBlocked: "Specjaliści są dostępni tylko dla G7–G9.",
+        groupGuardsmen: "Strażnicy", groupSpecialists: "Specjaliści", groupMonsters: "Potwory", groupMercs: "Najemnicy", disclaimerTitle: "Zastrzeżenie",
+        disclaimerText: "Ten kalkulator daje bazowy układ składu wojsk i kolejności ataku. Ze względu na różnice w bonusach, badaniach, wyposażeniu i innych modyfikatorach wyniki mogą się różnić. Dostosuj układ do swojego konta.",
+        balanceAppliedMsg: "Bilans zaokrąglonego przywództwa został proporcjonalnie rozdzielony na 3 najniższe stosy."
+      },
+      ar: {
+        language: "اللغة", title: "حاسبة ترتيب القوات WoA", sub: "أدخل القيادة والسلطة والسيطرة ومستوى القوات ووضع الترتيب. ستقوم الحاسبة ببناء الترتيب تلقائياً وعرض الهيكل النهائي بوضوح.",
+        inputs: "المدخلات", leadership: "القيادة", authority: "السلطة", dominance: "السيطرة", troop: "أعلى مستوى للقوات", stackMode: "وضع الترتيب",
+        guardsOnly: "الحرس فقط", guardsSpecs: "الحرس + المتخصصون", modernisation: "تم إكمال تحديث الجيش", yes: "نعم", no: "لا", calc: "احسب", reset: "إعادة تعيين",
+        howTitle: "طريقة الاستخدام:", how1: "1. أدخل القيادة والسلطة والسيطرة.", how2: "2. اختر مستوى القوات ووضع الترتيب.", how3: "3. يتم حظر المتخصصين ما لم يكتمل تحديث الجيش.", how4: "4. يستخدم متخصصو G7 موازنة خاصة فقط لـ S7. أما G8 وG9 فيستخدمان الاستبدال القياسي.",
+        modeNote: "يوصى باستخدام الحرس + المتخصصون فقط عند اكتمال تحديث الجيش بالكامل.", selectedTiers: "المستويات المختارة", selectedMonsters: "مستويات الوحوش المختارة", highestFlyer: "أعلى إجمالي HP للطيران", stacksReturned: "عدد التشكيلات المعروضة", balanceAdded: "الرصيد المضاف",
+        quickFilter: "تصفية سريعة", all: "الكل", troops: "الحرس + المتخصصون", guardsmen: "الحرس", specialists: "المتخصصون", monsters: "الوحوش", mercs: "المرتزقة",
+        order: "الترتيب", tier: "المستوى", name: "الاسم", type: "النوع", count: "العدد", hp: "HP / للوحدة", total: "إجمالي HP", group: "المجموعة",
+        monstersOk: "الوحوش: تم تضمينها حيث يسمح الحد", monstersWarn: "الوحوش: محدودة أو محظورة بسبب الحد أو السيطرة", mercsOk: "المرتزقة: متاحة من هذا المستوى", mercsWarn: "المرتزقة تبدأ من G6",
+        specBlocked: "يتطلب المتخصصون تحديث الجيش بالكامل. انتقل إلى الحرس فقط أو أكمل البحث.", specTierBlocked: "المتخصصون متاحون فقط من G7 إلى G9.",
+        groupGuardsmen: "الحرس", groupSpecialists: "المتخصصون", groupMonsters: "الوحوش", groupMercs: "المرتزقة", disclaimerTitle: "إخلاء مسؤولية الحاسبة",
+        disclaimerText: "تقدم هذه الحاسبة إعداداً أساسياً لتكوين القوات وترتيب الإطلاق. قد تختلف النتائج بسبب اختلاف المكافآت والأبحاث والمعدات والعوامل الأخرى. يوصى بضبط النتائج بما يناسب حسابك.",
+        balanceAppliedMsg: "تم توزيع رصيد القيادة المقرب بشكل نسبي على أقل 3 تشكيلات."
+      },
+      uk: {
+        language: "Мова", title: "Калькулятор стеків військ WoA", sub: "Введіть лідерство, авторитет, домінування, рівень військ і режим стеків. Калькулятор автоматично збере побудову та покаже фінальну структуру.",
+        inputs: "Вхідні дані", leadership: "Лідерство", authority: "Авторитет", dominance: "Домінування", troop: "Найвищий рівень військ", stackMode: "Режим стеків",
+        guardsOnly: "Лише гвардія", guardsSpecs: "Гвардія + спеціалісти", modernisation: "Модернізацію армії завершено", yes: "Так", no: "Ні", calc: "Розрахувати", reset: "Скинути",
+        howTitle: "Як користуватися:", how1: "1. Введіть лідерство, авторитет і домінування.", how2: "2. Оберіть рівень військ і режим стеків.", how3: "3. Спеціалісти заблоковані, якщо модернізацію армії не завершено.", how4: "4. Для G7 спеціалісти використовують спеціальне балансування лише для S7. G8 і G9 використовують стандартну заміну.",
+        modeNote: "Гвардія + спеціалісти рекомендується лише при повністю завершеній модернізації армії.", selectedTiers: "Обрані рівні", selectedMonsters: "Обрані рівні монстрів", highestFlyer: "Найвище сумарне HP летючих", stacksReturned: "Повернуто стеків", balanceAdded: "Доданий Баланс",
+        quickFilter: "Швидкий фільтр", all: "Усі", troops: "Гвардія + спеціалісти", guardsmen: "Гвардія", specialists: "Спеціалісти", monsters: "Монстри", mercs: "Найманці",
+        order: "Порядок", tier: "Рівень", name: "Назва", type: "Тип", count: "Кількість", hp: "HP / одиницю", total: "Загальне HP", group: "Група",
+        monstersOk: "Монстри: додані там, де дозволяє ліміт", monstersWarn: "Монстри: обмежені лімітом або домінуванням", mercsOk: "Найманці: доступні з цього рівня", mercsWarn: "Найманці починаються з G6",
+        specBlocked: "Для спеціалістів потрібна повна модернізація армії. Перейдіть на Лише гвардія або завершіть дослідження.", specTierBlocked: "Спеціалісти доступні лише для G7–G9.",
+        groupGuardsmen: "Гвардія", groupSpecialists: "Спеціалісти", groupMonsters: "Монстри", groupMercs: "Найманці", disclaimerTitle: "Примітка калькулятора",
+        disclaimerText: "Цей калькулятор надає базову побудову для складу військ і порядку удару. Через різницю в бонусах, дослідженнях, спорядженні та інших модифікаторах результати можуть відрізнятися. Налаштуйте побудову під свій акаунт.",
+        balanceAppliedMsg: "Баланс округленого лідерства розподілено пропорційно між нижніми 3 стеками."
+      },
+      fr: {
+        language: "Langue", title: "Calculateur d’Empilement de Troupes WoA", sub: "Saisissez le leadership, l’autorité, la dominance, le niveau de troupes et le mode d’empilement. Le calculateur construit automatiquement votre composition et affiche clairement la structure finale.",
+        inputs: "Entrées", leadership: "Leadership", authority: "Autorité", dominance: "Dominance", troop: "Niveau de troupe le plus élevé", stackMode: "Mode d’empilement",
+        guardsOnly: "Gardes uniquement", guardsSpecs: "Gardes + spécialistes", modernisation: "Modernisation de l’armée terminée", yes: "Oui", no: "Non", calc: "Calculer", reset: "Réinitialiser",
+        howTitle: "Comment utiliser :", how1: "1. Saisissez leadership, autorité et dominance.", how2: "2. Choisissez le niveau de troupes et le mode d’empilement.", how3: "3. Les spécialistes sont bloqués tant que la modernisation de l’armée n’est pas terminée.", how4: "4. Les spécialistes G7 utilisent un équilibrage spécial uniquement pour S7. G8 et G9 utilisent une substitution standard.",
+        modeNote: "Gardes + spécialistes n’est recommandé que lorsque la modernisation de l’armée est totalement terminée.", selectedTiers: "Niveaux sélectionnés", selectedMonsters: "Niveaux de monstres sélectionnés", highestFlyer: "HP total le plus élevé des volants", stacksReturned: "Piles renvoyées", balanceAdded: "Solde Ajouté",
+        quickFilter: "Filtre rapide", all: "Tous", troops: "Gardes + spécialistes", guardsmen: "Gardes", specialists: "Spécialistes", monsters: "Monstres", mercs: "Mercenaires",
+        order: "Ordre", tier: "Niveau", name: "Nom", type: "Type", count: "Quantité", hp: "HP / unité", total: "HP total", group: "Groupe",
+        monstersOk: "Monstres : inclus lorsque la limite le permet", monstersWarn: "Monstres : limités ou bloqués par le plafond ou la dominance", mercsOk: "Mercenaires : activés à partir de ce niveau", mercsWarn: "Les mercenaires commencent à G6",
+        specBlocked: "Les spécialistes nécessitent une modernisation complète de l’armée. Passez à Gardes uniquement ou terminez la recherche.", specTierBlocked: "Les spécialistes sont disponibles uniquement de G7 à G9.",
+        groupGuardsmen: "Gardes", groupSpecialists: "Spécialistes", groupMonsters: "Monstres", groupMercs: "Mercenaires", disclaimerTitle: "Avertissement du calculateur",
+        disclaimerText: "Ce calculateur fournit une base de composition et d’ordre d’attaque. En raison des différences de bonus, recherches, équipements et autres modificateurs, les résultats peuvent varier. Ajustez selon votre compte.",
+        balanceAppliedMsg: "Le solde du leadership arrondi a été réparti proportionnellement sur les 3 piles les plus basses."
+      },
+      pt: {
+        language: "Idioma", title: "Calculadora de Formação de Tropas WoA", sub: "Insira liderança, autoridade, dominância, nível de tropas e modo de pilha. A calculadora monta a formação automaticamente e mostra a estrutura final com clareza.",
+        inputs: "Entradas", leadership: "Liderança", authority: "Autoridade", dominance: "Dominância", troop: "Nível mais alto de tropas", stackMode: "Modo de pilha",
+        guardsOnly: "Apenas guardas", guardsSpecs: "Guardas + especialistas", modernisation: "Modernização do exército concluída", yes: "Sim", no: "Não", calc: "Calcular", reset: "Redefinir",
+        howTitle: "Como usar:", how1: "1. Insira liderança, autoridade e dominância.", how2: "2. Escolha o nível de tropas e o modo de pilha.", how3: "3. Especialistas ficam bloqueados sem a modernização completa do exército.", how4: "4. Especialistas G7 usam balanceamento especial apenas para S7. G8 e G9 usam substituição padrão.",
+        modeNote: "Guardas + especialistas só é recomendado quando a modernização do exército estiver totalmente concluída.", selectedTiers: "Níveis selecionados", selectedMonsters: "Níveis de monstros selecionados", highestFlyer: "Maior HP total dos voadores", stacksReturned: "Pilhas retornadas", balanceAdded: "Saldo Adicionado",
+        quickFilter: "Filtro rápido", all: "Todos", troops: "Guardas + especialistas", guardsmen: "Guardas", specialists: "Especialistas", monsters: "Monstros", mercs: "Mercenários",
+        order: "Ordem", tier: "Nível", name: "Nome", type: "Tipo", count: "Quantidade", hp: "HP / unidade", total: "HP total", group: "Grupo",
+        monstersOk: "Monstros: incluídos onde o limite permite", monstersWarn: "Monstros: limitados ou bloqueados por teto ou dominância", mercsOk: "Mercenários: ativados neste nível", mercsWarn: "Mercenários começam em G6",
+        specBlocked: "Especialistas exigem modernização completa do exército. Mude para Apenas guardas ou conclua a pesquisa.", specTierBlocked: "Especialistas só estão disponíveis de G7 a G9.",
+        groupGuardsmen: "Guardas", groupSpecialists: "Especialistas", groupMonsters: "Monstros", groupMercs: "Mercenários", disclaimerTitle: "Aviso da calculadora",
+        disclaimerText: "Esta calculadora fornece uma base para composição de tropas e ordem de ataque. Devido a diferenças em bônus, pesquisas, equipamentos e outros modificadores, os resultados podem variar. Ajuste conforme a sua conta.",
+        balanceAppliedMsg: "O saldo da liderança arredondada foi distribuído proporcionalmente entre as 3 pilhas mais baixas."
+      }
     };
 
-    function t(k){
-      const lang=(document.getElementById('language')||{value:'en'}).value;
-      return (i18n[lang]&&i18n[lang][k])||i18n.en[k]||k;
+    function t(k) {
+      const lang = (document.getElementById("language") || { value: "en" }).value;
+      return (i18n[lang] && i18n[lang][k]) || i18n.en[k] || k;
     }
 
-    function applyLanguage(){
-      const lang=document.getElementById('language').value;
-      document.documentElement.lang=lang;
-      document.documentElement.dir=lang==='ar'?'rtl':'ltr';
-      const set=(id,key)=>{const el=document.getElementById(id); if(el) el.textContent=t(key);};
-      set('langLabel','language'); set('heroTitle','title'); set('heroSub','sub'); set('inputsTitle','inputs');
-      set('leadershipLabel','leadership'); set('authorityLabel','authority'); set('dominanceLabel','dominance'); set('troopLevelLabel','troop');
-      set('stackModeLabel','stackMode'); set('stackModeGuardsText','guardsOnly'); set('stackModeSpecsText','guardsSpecs');
-      set('modernisationLabel','modernisation'); set('modernisationNoText','no'); set('modernisationYesText','yes');
-      set('calcBtn','calc'); set('resetBtn','reset');
-      set('howTitle','howTitle'); set('how1','how1'); set('how2','how2'); set('how3','how3'); set('how4','how4');
-      set('modeNoteText','modeNote'); set('statGuard','selectedTiers'); set('statMon','selectedMonsters'); set('statFly','highestFlyer'); set('statRows','stacksReturned');
-      set('filterLabel','quickFilter'); set('thOrder','order'); set('thTier','tier'); set('thName','name'); set('thType','type'); set('thCount','count'); set('thHP','hp'); set('thTotal','total'); set('thGroup','group');
+    function applyLanguage() {
+      const lang = document.getElementById("language").value;
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
 
-      const filter=document.getElementById('typeFilter');
-      if(filter){
-        const prev=filter.value;
-        filter.innerHTML=`<option value="all">${t('all')}</option><option value="troops">${t('troops')}</option><option value="guardsmen">${t('guardsmen')}</option><option value="specialists">${t('specialists')}</option><option value="monsters">${t('monsters')}</option><option value="mercs">${t('mercs')}</option>`;
-        filter.value=prev;
+      const set = (id, key) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = t(key);
+      };
+
+      set("langLabel", "language");
+      set("heroTitle", "title");
+      set("heroSub", "sub");
+      set("inputsTitle", "inputs");
+      set("leadershipLabel", "leadership");
+      set("authorityLabel", "authority");
+      set("dominanceLabel", "dominance");
+      set("troopLevelLabel", "troop");
+      set("stackModeLabel", "stackMode");
+      set("stackModeGuardsText", "guardsOnly");
+      set("stackModeSpecsText", "guardsSpecs");
+      set("modernisationLabel", "modernisation");
+      set("modernisationNoText", "no");
+      set("modernisationYesText", "yes");
+      set("calcBtn", "calc");
+      set("resetBtn", "reset");
+      set("howTitle", "howTitle");
+      set("how1", "how1");
+      set("how2", "how2");
+      set("how3", "how3");
+      set("how4", "how4");
+      set("modeNoteText", "modeNote");
+      set("statGuard", "selectedTiers");
+      set("statMon", "selectedMonsters");
+      set("statFly", "highestFlyer");
+      set("statRows", "stacksReturned");
+      set("statBalance", "balanceAdded");
+      set("filterLabel", "quickFilter");
+      set("thOrder", "order");
+      set("thTier", "tier");
+      set("thName", "name");
+      set("thType", "type");
+      set("thCount", "count");
+      set("thHP", "hp");
+      set("thTotal", "total");
+      set("thGroup", "group");
+      set("disclaimerTitle", "disclaimerTitle");
+      set("disclaimerText", "disclaimerText");
+
+      const filter = document.getElementById("typeFilter");
+      if (filter) {
+        const prev = filter.value;
+        filter.innerHTML = `
+          <option value="all">${t("all")}</option>
+          <option value="troops">${t("troops")}</option>
+          <option value="guardsmen">${t("guardsmen")}</option>
+          <option value="specialists">${t("specialists")}</option>
+          <option value="monsters">${t("monsters")}</option>
+          <option value="mercs">${t("mercs")}</option>
+        `;
+        filter.value = prev;
       }
     }
 
@@ -536,53 +810,62 @@
     ];
 
     const els = {
-      leadership:document.getElementById("leadership"),
-      authority:document.getElementById("authority"),
-      dominance:document.getElementById("dominance"),
-      troopLevel:document.getElementById("troopLevel"),
-      calcBtn:document.getElementById("calcBtn"),
-      resetBtn:document.getElementById("resetBtn"),
-      typeFilter:document.getElementById("typeFilter"),
-      outputBody:document.getElementById("outputBody"),
-      guardTiers:document.getElementById("guardTiers"),
-      monsterLevels:document.getElementById("monsterLevels"),
-      flyerCap:document.getElementById("flyerCap"),
-      rowCount:document.getElementById("rowCount"),
-      messages:document.getElementById("messages")
+      leadership: document.getElementById("leadership"),
+      authority: document.getElementById("authority"),
+      dominance: document.getElementById("dominance"),
+      troopLevel: document.getElementById("troopLevel"),
+      calcBtn: document.getElementById("calcBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      typeFilter: document.getElementById("typeFilter"),
+      outputBody: document.getElementById("outputBody"),
+      guardTiers: document.getElementById("guardTiers"),
+      monsterLevels: document.getElementById("monsterLevels"),
+      flyerCap: document.getElementById("flyerCap"),
+      rowCount: document.getElementById("rowCount"),
+      balanceAdded: document.getElementById("balanceAdded"),
+      messages: document.getElementById("messages")
     };
 
     const fmt = n => Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 0 });
     const mode = () => document.querySelector('input[name="stackMode"]:checked').value;
     const modernisation = () => document.querySelector('input[name="modernisation"]:checked').value;
 
+    function getLeadershipCost(unitType){
+      if (unitType === "Flyers" || unitType === "Flying") return 20;
+      if (unitType === "Mounted") return 2;
+      return 1;
+    }
+
+    function roundedLeadership(value){
+      return Math.floor(Number(value || 0) / 1000) * 1000;
+    }
+
     function tierCountsFromLeadership(L, high){
       const low = Math.max(3, high - 2);
-      const divider = low <= 4 ? 3 : 3.7;
+      const divider = 3.7;
 
       const tiers = {};
-      const tLow = 'G' + low;
-      const tMid = 'G' + (high - 1);
-      const tTop = 'G' + high;
+      const tLow = "G" + low;
+      const tMid = "G" + (high - 1);
+      const tTop = "G" + high;
 
       function hpOf(tier, type){
         return guardData[tier][type].hp;
       }
 
       function buildTierCountsFromBaseRanged(tier, rangedCount){
-        const rangedHP = hpOf(tier, 'Ranged');
-        const mountedHP = hpOf(tier, 'Mounted');
-        const flyersHP = guardData[tier].Flyers ? hpOf(tier, 'Flyers') : 0;
+        const rangedHP = hpOf(tier, "Ranged");
+        const mountedHP = hpOf(tier, "Mounted");
+        const flyersHP = guardData[tier].Flyers ? hpOf(tier, "Flyers") : 0;
 
         const targetTotalHP = rangedCount * rangedHP;
 
-        const counts = {
+        return {
           Ranged: rangedCount,
           Mounted: targetTotalHP / mountedHP,
-          Melee: rangedCount
+          Melee: rangedCount,
+          Flyers: guardData[tier].Flyers ? (targetTotalHP / flyersHP) : 0
         };
-
-        counts.Flyers = guardData[tier].Flyers ? (targetTotalHP / flyersHP) : 0;
-        return counts;
       }
 
       const lowBaseRanged = (L / 2) / divider;
@@ -603,85 +886,153 @@
     }
 
     function specialistPlan(high){
-      if(high===7) return {top:"G7",spec:"S7",low:"G6"};
-      if(high===8) return {top:"G8",spec:"S8",low:"G7"};
-      if(high===9) return {top:"G9",spec:"S9",low:"G8"};
+      if (high === 7) return { top: "G7", spec: "S7", low: "G6" };
+      if (high === 8) return { top: "G8", spec: "S8", low: "G7" };
+      if (high === 9) return { top: "G9", spec: "S9", low: "G8" };
       return null;
     }
 
     function addTierRows(rows, orderStart, tier, source, counts, group){
       let order = orderStart;
-      ["Ranged","Mounted","Melee","Flyers"].forEach(unit=>{
-        if(source[tier] && source[tier][unit]){
+      ["Ranged", "Mounted", "Melee", "Flyers"].forEach(unit => {
+        if (source[tier] && source[tier][unit]) {
           const hp = source[tier][unit].hp;
           const name = source[tier][unit].name;
           const count = counts[unit] || 0;
-          rows.push({order:order++, tier, name, unitType:unit, count, hp, total:count*hp, group});
+          rows.push({
+            order: order++,
+            tier,
+            name,
+            unitType: unit,
+            count,
+            hp,
+            total: count * hp,
+            group
+          });
         }
       });
       return order;
     }
 
+    function calculateUsedLeadership(rows, groupName = "guardsmen"){
+      return rows.reduce((sum, r) => {
+        if (r.group !== groupName) return sum;
+        return sum + ((r.count || 0) * getLeadershipCost(r.unitType));
+      }, 0);
+    }
+
+    function applyProportionalBalanceToLowestTier(rows, roundedL, lowestTier){
+      const targetRows = rows.filter(r => r.group === "guardsmen" && r.tier === lowestTier);
+      if (targetRows.length !== 3) {
+        return { rows, balanceApplied: 0 };
+      }
+
+      const usedBefore = calculateUsedLeadership(rows, "guardsmen");
+      let balance = roundedL - usedBefore;
+
+      if (balance <= 0) {
+        return { rows, balanceApplied: 0 };
+      }
+
+      const leadershipWeights = targetRows.map(r => (r.count || 0) * getLeadershipCost(r.unitType));
+      const totalWeight = leadershipWeights.reduce((a, b) => a + b, 0);
+
+      if (totalWeight <= 0) {
+        return { rows, balanceApplied: 0 };
+      }
+
+      targetRows.forEach((r, index) => {
+        const shareLeadership = balance * (leadershipWeights[index] / totalWeight);
+        const addCount = shareLeadership / getLeadershipCost(r.unitType);
+        r.count += addCount;
+        r.total = r.count * r.hp;
+      });
+
+      return { rows, balanceApplied: balance };
+    }
+
     function buildRows(){
-      const L = Number(els.leadership.value || 0);
+      const actualLeadership = Number(els.leadership.value || 0);
+      const roundedL = roundedLeadership(actualLeadership);
       const A = Number(els.authority.value || 0);
       const D = Number(els.dominance.value || 0);
       const high = Number(String(els.troopLevel.value).replace("G",""));
       const stackMode = mode();
 
-      if(stackMode==="specialists" && modernisation()!=="yes"){
-        return {blocked:true, message:t('specBlocked')};
+      if (stackMode === "specialists" && modernisation() !== "yes") {
+        return { blocked: true, message: t("specBlocked") };
       }
-      if(stackMode==="specialists" && high<7){
-        return {blocked:true, message:t('specTierBlocked')};
+
+      if (stackMode === "specialists" && high < 7) {
+        return { blocked: true, message: t("specTierBlocked") };
       }
 
       let rows = [];
       let order = 1;
       let tiersLabel = "";
       let highestFlyerTotal = 0;
-      const baseCounts = tierCountsFromLeadership(L, high);
+      let balanceApplied = 0;
 
-      if(stackMode==="guards"){
-        const selected = ["G"+high, "G"+(high-1), "G"+Math.max(3, high-2)];
+      const baseCounts = tierCountsFromLeadership(roundedL, high);
+
+      if (stackMode === "guards") {
+        const selected = ["G" + high, "G" + (high - 1), "G" + Math.max(3, high - 2)];
         tiersLabel = selected.join(" / ");
-        selected.forEach(t => {
-          order = addTierRows(rows, order, t, guardData, baseCounts[t], "guardsmen");
+
+        selected.forEach(tier => {
+          order = addTierRows(rows, order, tier, guardData, baseCounts[tier], "guardsmen");
         });
-        highestFlyerTotal = rows.find(r => r.tier==="G"+high && r.unitType==="Flyers")?.total || 0;
+
+        highestFlyerTotal = rows.find(r => r.tier === "G" + high && r.unitType === "Flyers")?.total || 0;
+
+        if (high === 6) {
+          const result = applyProportionalBalanceToLowestTier(rows, roundedL, "G4");
+          rows = result.rows;
+          balanceApplied = result.balanceApplied;
+        } else if (high === 5) {
+          const result = applyProportionalBalanceToLowestTier(rows, roundedL, "G3");
+          rows = result.rows;
+          balanceApplied = result.balanceApplied;
+        }
       } else {
         const plan = specialistPlan(high);
-        tiersLabel = plan.top+" / "+plan.spec+" / "+plan.low;
-        order = addTierRows(rows, order, plan.top, guardData, baseCounts[plan.top], "guardsmen");
-        highestFlyerTotal = rows.find(r => r.tier===plan.top && r.unitType==="Flyers")?.total || 0;
+        tiersLabel = plan.top + " / " + plan.spec + " / " + plan.low;
 
-        if(high===7){
+        order = addTierRows(rows, order, plan.top, guardData, baseCounts[plan.top], "guardsmen");
+        highestFlyerTotal = rows.find(r => r.tier === plan.top && r.unitType === "Flyers")?.total || 0;
+
+        if (high === 7) {
           const g7Top = baseCounts.G7;
           const s7Equal = g7Top.Ranged * 1.03;
+
           const s7Base = {
             Ranged: s7Equal,
             Melee: s7Equal,
             Flyers: s7Equal,
             Mounted: s7Equal / 2
           };
+
           const s7Totals = {
             Ranged: s7Base.Ranged * 5100,
             Melee: s7Base.Melee * 5100,
             Flyers: s7Base.Flyers * 5100,
             Mounted: s7Base.Mounted * 10200
           };
+
           const g6Base = {
             Ranged: g7Top.Ranged * 1.84,
             Melee: g7Top.Melee * 1.84,
             Flyers: g7Top.Flyers * 1.84,
             Mounted: g7Top.Mounted * 1.84
           };
+
           const g6Adj = {
             Ranged: Math.max(g6Base.Ranged, (s7Totals.Ranged + 1) / 2840),
             Melee: Math.max(g6Base.Melee, (s7Totals.Melee + 1) / 2840),
             Flyers: Math.max(g6Base.Flyers, (s7Totals.Flyers + 1) / 57000),
             Mounted: Math.max(g6Base.Mounted, (s7Totals.Mounted + 1) / 5700)
           };
+
           order = addTierRows(rows, order, "S7", specialistData, s7Base, "specialists");
           order = addTierRows(rows, order, "G6", guardData, g6Adj, "guardsmen");
         } else {
@@ -691,6 +1042,7 @@
             Flyers: baseCounts[plan.top].Flyers * 1.03,
             Mounted: baseCounts[plan.top].Mounted * 1.03
           };
+
           order = addTierRows(rows, order, plan.spec, specialistData, specCounts, "specialists");
           order = addTierRows(rows, order, plan.low, guardData, baseCounts[plan.low], "guardsmen");
         }
@@ -700,25 +1052,43 @@
       const activeMonsterTotals = [];
 
       monLevels.forEach((level, idx) => {
-        if(!monsterData[level]) return;
+        if (!monsterData[level]) return;
+
         const maxHP = Math.max(...monsterData[level].map(x => x[2]));
         let count = 0;
 
-        if(monLevels.length === 1){
+        if (monLevels.length === 1) {
           count = Math.min(D / 4, (highestFlyerTotal - 1) / maxHP);
-        } else if(idx === 0){
+        } else if (idx === 0) {
           const nextMax = Math.max(...monsterData[monLevels[1]].map(x => x[2]));
-          count = Math.max(Math.min(D / 6, (highestFlyerTotal - 1) / maxHP, ((highestFlyerTotal - 1) / nextMax) * 2), 0);
+          count = Math.max(
+            Math.min(
+              D / 6,
+              (highestFlyerTotal - 1) / maxHP,
+              ((highestFlyerTotal - 1) / nextMax) * 2
+            ),
+            0
+          );
         } else {
-          const firstCount = rows.find(r => r.group==="monsters" && r.tier===monLevels[0])?.count || 0;
+          const firstCount = rows.find(r => r.group === "monsters" && r.tier === monLevels[0])?.count || 0;
           count = firstCount ? firstCount / 2 : 0;
         }
 
         monsterData[level].forEach(item => {
           const [name, unitType, hp] = item;
           const total = count * hp;
-          if(count > 0 && total < highestFlyerTotal){
-            rows.push({order:order++, tier:level, name, unitType, count, hp, total, group:"monsters"});
+
+          if (count > 0 && total < highestFlyerTotal) {
+            rows.push({
+              order: order++,
+              tier: level,
+              name,
+              unitType,
+              count,
+              hp,
+              total,
+              group: "monsters"
+            });
             activeMonsterTotals.push(total);
           }
         });
@@ -732,37 +1102,50 @@
         const [name, hp] = item;
         const count = mercAllowed ? Math.max(Math.min(baseMerc, (mercCap - 1) / hp), 0) : 0;
         const total = count * hp;
-        if(count > 0){
-          rows.push({order:order++, tier:"Merc", name, unitType:"Mercenary", count, hp, total, group:"mercs"});
+
+        if (count > 0) {
+          rows.push({
+            order: order++,
+            tier: "Merc",
+            name,
+            unitType: "Mercenary",
+            count,
+            hp,
+            total,
+            group: "mercs"
+          });
         }
       });
 
-      rows.sort((a,b)=>a.count-b.count||a.order-b.order);
-      rows.forEach((r,i)=>r.order=i+1);
+      rows.sort((a, b) => a.count - b.count || a.order - b.order);
+      rows.forEach((r, i) => r.order = i + 1);
 
       return {
-        blocked:false,
+        blocked: false,
         rows,
         tiersLabel,
-        monsterLevels:monLevels.join(" + "),
+        monsterLevels: monLevels.join(" + "),
         highestFlyerTotal,
-        monsterOK:activeMonsterTotals.length>0,
-        mercAllowed
+        monsterOK: activeMonsterTotals.length > 0,
+        mercAllowed,
+        balanceApplied
       };
     }
 
     function block(msg){
-      els.guardTiers.textContent='-';
-      els.monsterLevels.textContent='-';
-      els.flyerCap.textContent='-';
-      els.rowCount.textContent='0';
-      els.outputBody.innerHTML='';
-      els.messages.innerHTML='<span class="pill bad">'+msg+'</span>';
+      els.guardTiers.textContent = "-";
+      els.monsterLevels.textContent = "-";
+      els.flyerCap.textContent = "-";
+      els.rowCount.textContent = "0";
+      els.balanceAdded.textContent = "0";
+      els.outputBody.innerHTML = "";
+      els.messages.innerHTML = `<span class="pill bad">${msg}</span>`;
     }
 
     function render(){
       const result = buildRows();
-      if(result.blocked){
+
+      if (result.blocked) {
         block(result.message);
         return;
       }
@@ -770,52 +1153,65 @@
       els.guardTiers.textContent = result.tiersLabel;
       els.monsterLevels.textContent = result.monsterLevels;
       els.flyerCap.textContent = fmt(result.highestFlyerTotal);
-      els.messages.innerHTML =
-        '<span class="pill '+(result.monsterOK?'ok':'warn')+'">'+(result.monsterOK?t('monstersOk'):t('monstersWarn'))+'</span>' +
-        '<span class="pill '+(result.mercAllowed?'ok':'warn')+'">'+(result.mercAllowed?t('mercsOk'):t('mercsWarn'))+'</span>';
+      els.balanceAdded.textContent = fmt(result.balanceApplied);
+
+      let msgHtml =
+        `<span class="pill ${result.monsterOK ? "ok" : "warn"}">${result.monsterOK ? t("monstersOk") : t("monstersWarn")}</span>` +
+        `<span class="pill ${result.mercAllowed ? "ok" : "warn"}">${result.mercAllowed ? t("mercsOk") : t("mercsWarn")}</span>`;
+
+      if (result.balanceApplied > 0) {
+        msgHtml += `<span class="pill ok">${t("balanceAppliedMsg")}</span>`;
+      }
+
+      els.messages.innerHTML = msgHtml;
 
       const filter = els.typeFilter.value;
       const filtered = result.rows.filter(r =>
-        filter==='all' ||
-        (filter==='troops' && (r.group==='guardsmen'||r.group==='specialists')) ||
-        r.group===filter
+        filter === "all" ||
+        (filter === "troops" && (r.group === "guardsmen" || r.group === "specialists")) ||
+        r.group === filter
       );
 
       els.rowCount.textContent = String(filtered.length);
-      els.outputBody.innerHTML = filtered.map(r =>
-        '<tr>' +
-          '<td>'+r.order+'</td>' +
-          '<td class="mono">'+r.tier+'</td>' +
-          '<td>'+r.name+'</td>' +
-          '<td>'+r.unitType+'</td>' +
-          '<td>'+fmt(r.count)+'</td>' +
-          '<td>'+fmt(r.hp)+'</td>' +
-          '<td>'+fmt(r.total)+'</td>' +
-          '<td class="type-'+r.group+'">'+
-            (r.group==='guardsmen'?t('groupGuardsmen'):
-             r.group==='specialists'?t('groupSpecialists'):
-             r.group==='monsters'?t('groupMonsters'):
-             t('groupMercs')) +
-          '</td>' +
-        '</tr>'
-      ).join('');
+
+      els.outputBody.innerHTML = filtered.map(r => `
+        <tr>
+          <td>${r.order}</td>
+          <td class="mono">${r.tier}</td>
+          <td>${r.name}</td>
+          <td>${r.unitType}</td>
+          <td>${fmt(r.count)}</td>
+          <td>${fmt(r.hp)}</td>
+          <td>${fmt(r.total)}</td>
+          <td class="type-${r.group}">
+            ${r.group === "guardsmen" ? t("groupGuardsmen") :
+              r.group === "specialists" ? t("groupSpecialists") :
+              r.group === "monsters" ? t("groupMonsters") :
+              t("groupMercs")}
+          </td>
+        </tr>
+      `).join("");
     }
 
-    els.calcBtn.addEventListener('click', render);
-    els.resetBtn.addEventListener('click', () => {
+    els.calcBtn.addEventListener("click", render);
+
+    els.resetBtn.addEventListener("click", () => {
       els.leadership.value = 100000;
       els.authority.value = 1000;
       els.dominance.value = 1000;
-      els.troopLevel.value = 'G7';
+      els.troopLevel.value = "G7";
       document.querySelector('input[name="stackMode"][value="guards"]').checked = true;
       document.querySelector('input[name="modernisation"][value="no"]').checked = true;
-      els.typeFilter.value = 'all';
+      els.typeFilter.value = "all";
+      document.getElementById("language").value = "en";
+      applyLanguage();
       render();
     });
-    els.typeFilter.addEventListener('change', render);
-    document.querySelectorAll('input[name="stackMode"]').forEach(el => el.addEventListener('change', render));
-    document.querySelectorAll('input[name="modernisation"]').forEach(el => el.addEventListener('change', render));
-    document.getElementById('language').addEventListener('change', () => {
+
+    els.typeFilter.addEventListener("change", render);
+    document.querySelectorAll('input[name="stackMode"]').forEach(el => el.addEventListener("change", render));
+    document.querySelectorAll('input[name="modernisation"]').forEach(el => el.addEventListener("change", render));
+    document.getElementById("language").addEventListener("change", () => {
       applyLanguage();
       render();
     });
