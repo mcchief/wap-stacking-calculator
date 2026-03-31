@@ -14,7 +14,7 @@
       --muted: #94a3b8;
       --accent: #22c55e;
       --border: #334155;
-      --input: #0b1220;
+      --input: #08111f;
       --ok: #86efac;
       --warn: #fcd34d;
       --bad: #fca5a5;
@@ -44,39 +44,35 @@
       margin: 0 auto;
       padding: 14px;
     }
-.hero-top {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-}
 
-.hero-top label {
-  font-weight: 700;
-  color: #cbd5e1;
-  font-size: 13px;
-  white-space: nowrap;
-}
+    .hero {
+      background: linear-gradient(135deg, #0f172a, #111827 50%, #0b3b2e);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
 
-.hero-top select {
-  width: 180px;
-  min-width: 180px;
-  max-width: 180px;
-}
+    .hero-top {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
 
-@media (max-width: 640px) {
-  .hero-top {
-    justify-content: stretch;
-  }
+    .hero-top label {
+      font-weight: 700;
+      color: #cbd5e1;
+      font-size: 13px;
+      white-space: nowrap;
+    }
 
-  .hero-top label,
-  .hero-top select {
-    width: 100%;
-    max-width: 100%;
-  }
-}
+    .hero-top select {
+      width: 180px;
+      min-width: 180px;
+      max-width: 180px;
     }
 
     h1 {
@@ -290,7 +286,7 @@
 
     table {
       width: 100%;
-      min-width: 820px;
+      min-width: 900px;
       border-collapse: collapse;
       background: #0f172a;
     }
@@ -343,8 +339,10 @@
       .hero-top {
         justify-content: stretch;
       }
-      .hero-top label, .hero-top select {
+      .hero-top label,
+      .hero-top select {
         width: 100%;
+        max-width: 100%;
       }
       .toolbar {
         flex-direction: column;
@@ -443,7 +441,7 @@
           <span id="how1">1. Enter Leadership, Authority and Dominance.</span><br>
           <span id="how2">2. Pick troop level and stack mode.</span><br>
           <span id="how3">3. Specialists are blocked unless Army Modernisation is completed.</span><br>
-          <span id="how4">4. G7 specialists use special count balancing only for S7. G8 and G9 use standard specialist substitution.</span>
+          <span id="how4">4. Leadership is rounded down to the nearest 1,000 for the calculation basis.</span>
         </div>
 
         <div class="notice">
@@ -464,7 +462,7 @@
           <div class="stat"><div class="k" id="statMon">Selected Monster Levels</div><div class="v" id="monsterLevels">-</div></div>
           <div class="stat"><div class="k" id="statFly">Highest Flyer Total HP</div><div class="v" id="flyerCap">-</div></div>
           <div class="stat"><div class="k" id="statRows">Stacks Returned</div><div class="v" id="rowCount">0</div></div>
-          <div class="stat"><div class="k" id="statBalance">Balance Added</div><div class="v" id="balanceAdded">0</div></div>
+          <div class="stat"><div class="k" id="statRounded">Rounded Leadership</div><div class="v" id="roundedLeadership">-</div></div>
         </div>
 
         <div id="messages"></div>
@@ -508,179 +506,34 @@
   <script>
     const i18n = {
       en: {
-        language: "Language",
-        title: "WoA Troop Stacking Calculator",
-        sub: "Enter Leadership, Authority, Dominance, troop level, and stack mode. The calculator builds your stack automatically and shows the final stack structure clearly.",
-        inputs: "Inputs",
-        leadership: "Leadership",
-        authority: "Authority",
-        dominance: "Dominance",
-        troop: "Highest Troop Level",
-        stackMode: "Stack Mode",
-        guardsOnly: "Guardsmen Only",
-        guardsSpecs: "Guardsmen + Specialists",
-        modernisation: "Army Modernisation Completed",
-        yes: "Yes",
-        no: "No",
-        calc: "Calculate",
-        reset: "Reset",
-        howTitle: "How to use:",
-        how1: "1. Enter Leadership, Authority and Dominance.",
-        how2: "2. Pick troop level and stack mode.",
-        how3: "3. Specialists are blocked unless Army Modernisation is completed.",
-        how4: "4. G7 specialists use special count balancing only for S7. G8 and G9 use standard specialist substitution.",
-        modeNote: "Guardsmen + Specialists is only recommended when Army Modernisation is fully completed.",
-        selectedTiers: "Selected Tiers",
-        selectedMonsters: "Selected Monster Levels",
-        highestFlyer: "Highest Flyer Total HP",
-        stacksReturned: "Stacks Returned",
-        balanceAdded: "Balance Added",
-        quickFilter: "Quick Filter",
-        all: "All",
-        troops: "Guardsmen + Specialists",
-        guardsmen: "Guardsmen",
-        specialists: "Specialists",
-        monsters: "Monsters",
-        mercs: "Mercs",
-        order: "Order",
-        tier: "Tier",
-        name: "Name",
-        type: "Type",
-        count: "Count",
-        hp: "HP / Unit",
-        total: "Total HP",
-        group: "Group",
-        monstersOk: "Monsters: included where cap allows",
-        monstersWarn: "Monsters: limited / blocked by cap or dominance",
-        mercsOk: "Mercs: enabled from this troop level",
-        mercsWarn: "Mercs: start at G6",
-        specBlocked: "Specialists require full Army Modernisation. Switch to Guardsmen Only or complete research.",
-        specTierBlocked: "Specialists are only available for G7 to G9.",
-        groupGuardsmen: "Guardsmen",
-        groupSpecialists: "Specialists",
-        groupMonsters: "Monsters",
-        groupMercs: "Mercs",
-        disclaimerTitle: "Troop Calculator Disclaimer",
-        disclaimerText: "This calculator provides a baseline setup to guide troop composition and firing order. Due to differences in player bonuses, research, gear, and other modifiers, results may vary. Players are encouraged to fine-tune and adjust their setup to achieve optimal performance based on their individual account.",
-        balanceAppliedMsg: "Rounded leadership balance was distributed proportionally to the lowest 3 stacks."
+        language:"Language", title:"WoA Troop Stacking Calculator", sub:"Enter Leadership, Authority, Dominance, troop level, and stack mode. The calculator builds your stack automatically and shows the final stack structure clearly.",
+        inputs:"Inputs", leadership:"Leadership", authority:"Authority", dominance:"Dominance", troop:"Highest Troop Level", stackMode:"Stack Mode",
+        guardsOnly:"Guardsmen Only", guardsSpecs:"Guardsmen + Specialists", modernisation:"Army Modernisation Completed", yes:"Yes", no:"No",
+        calc:"Calculate", reset:"Reset", howTitle:"How to use:", how1:"1. Enter Leadership, Authority and Dominance.", how2:"2. Pick troop level and stack mode.",
+        how3:"3. Specialists are blocked unless Army Modernisation is completed.", how4:"4. Leadership is rounded down to the nearest 1,000 for the calculation basis.",
+        modeNote:"Guardsmen + Specialists is only recommended when Army Modernisation is fully completed.", selectedTiers:"Selected Tiers", selectedMonsters:"Selected Monster Levels",
+        highestFlyer:"Highest Flyer Total HP", stacksReturned:"Stacks Returned", roundedLead:"Rounded Leadership", quickFilter:"Quick Filter", all:"All",
+        troops:"Guardsmen + Specialists", guardsmen:"Guardsmen", specialists:"Specialists", monsters:"Monsters", mercs:"Mercs", order:"Order", tier:"Tier",
+        name:"Name", type:"Type", count:"Count", hp:"HP / Unit", total:"Total HP", group:"Group", monstersOk:"Monsters: included where cap allows",
+        monstersWarn:"Monsters: limited / blocked by cap or dominance", mercsOk:"Mercs: enabled from this troop level", mercsWarn:"Mercs: start at G6",
+        specBlocked:"Specialists require full Army Modernisation. Switch to Guardsmen Only or complete research.", specTierBlocked:"Specialists are only available for G7 to G9.",
+        groupGuardsmen:"Guardsmen", groupSpecialists:"Specialists", groupMonsters:"Monsters", groupMercs:"Mercs",
+        disclaimerTitle:"Troop Calculator Disclaimer", disclaimerText:"This calculator provides a baseline setup to guide troop composition and firing order. Due to differences in player bonuses, research, gear, and other modifiers, results may vary. Players are encouraged to fine-tune and adjust their setup to achieve optimal performance based on their individual account.",
+        advG6:"Advanced G6 maximization applied", advG5:"Advanced G5 maximization applied"
       },
-      ru: {
-        language: "Язык", title: "Калькулятор построения войск WoA", sub: "Введите лидерство, авторитет, доминирование, уровень войск и режим стаков. Калькулятор автоматически соберёт ваш строй и покажет итоговую структуру.",
-        inputs: "Параметры", leadership: "Лидерство", authority: "Авторитет", dominance: "Доминирование", troop: "Максимальный уровень войск", stackMode: "Режим стаков",
-        guardsOnly: "Только гвардейцы", guardsSpecs: "Гвардейцы + специалисты", modernisation: "Армейская модернизация завершена", yes: "Да", no: "Нет", calc: "Рассчитать", reset: "Сброс",
-        howTitle: "Как использовать:", how1: "1. Введите лидерство, авторитет и доминирование.", how2: "2. Выберите уровень войск и режим стаков.", how3: "3. Специалисты недоступны без полной модернизации армии.", how4: "4. Для G7 особый баланс действует только для S7. Для G8 и G9 используется обычная замена специалистами.",
-        modeNote: "Режим Гвардейцы + Специалисты рекомендуется только при полной модернизации армии.", selectedTiers: "Выбранные уровни", selectedMonsters: "Выбранные уровни монстров", highestFlyer: "Макс. суммарное HP летающих", stacksReturned: "Возвращено стаков", balanceAdded: "Добавленный баланс",
-        quickFilter: "Быстрый фильтр", all: "Все", troops: "Гвардейцы + специалисты", guardsmen: "Гвардейцы", specialists: "Специалисты", monsters: "Монстры", mercs: "Наёмники",
-        order: "Порядок", tier: "Уровень", name: "Название", type: "Тип", count: "Количество", hp: "HP / юнит", total: "Общее HP", group: "Группа",
-        monstersOk: "Монстры: включены там, где позволяет лимит", monstersWarn: "Монстры: ограничены лимитом или доминированием", mercsOk: "Наёмники: доступны с этого уровня", mercsWarn: "Наёмники начинаются с G6",
-        specBlocked: "Для специалистов нужна полная армейская модернизация. Переключитесь на Только гвардейцы или завершите исследование.", specTierBlocked: "Специалисты доступны только для G7–G9.",
-        groupGuardsmen: "Гвардейцы", groupSpecialists: "Специалисты", groupMonsters: "Монстры", groupMercs: "Наёмники", disclaimerTitle: "Отказ от ответственности",
-        disclaimerText: "Этот калькулятор даёт базовую настройку для состава войск и порядка удара. Из-за различий в бонусах, исследованиях, снаряжении и других модификаторах результаты могут отличаться. Настраивайте состав под свой аккаунт.",
-        balanceAppliedMsg: "Баланс округлённого лидерства распределён пропорционально по нижним 3 стекам."
-      },
-      tr: {
-        language: "Dil", title: "WoA Birlik Dizilim Hesaplayıcısı", sub: "Liderlik, otorite, baskınlık, birlik seviyesi ve dizilim modunu girin. Hesaplayıcı dizilimi otomatik oluşturur ve yapıyı açıkça gösterir.",
-        inputs: "Girdiler", leadership: "Liderlik", authority: "Otorite", dominance: "Baskınlık", troop: "En Yüksek Birlik Seviyesi", stackMode: "Dizilim Modu",
-        guardsOnly: "Sadece Muhafızlar", guardsSpecs: "Muhafızlar + Uzmanlar", modernisation: "Ordu Modernizasyonu Tamamlandı", yes: "Evet", no: "Hayır", calc: "Hesapla", reset: "Sıfırla",
-        howTitle: "Nasıl kullanılır:", how1: "1. Liderlik, otorite ve baskınlık girin.", how2: "2. Birlik seviyesini ve dizilim modunu seçin.", how3: "3. Ordu modernizasyonu tamamlanmadan uzmanlar kullanılamaz.", how4: "4. G7 uzmanlarında özel dengeleme sadece S7 için geçerlidir. G8 ve G9 standart uzman değişimini kullanır.",
-        modeNote: "Muhafızlar + Uzmanlar yalnızca ordu modernizasyonu tam tamamlandıysa önerilir.", selectedTiers: "Seçilen Kademeler", selectedMonsters: "Seçilen Canavar Seviyeleri", highestFlyer: "En Yüksek Uçan Toplam HP", stacksReturned: "Dönen Yığınlar", balanceAdded: "Eklenen Bakiye",
-        quickFilter: "Hızlı Filtre", all: "Tümü", troops: "Muhafızlar + Uzmanlar", guardsmen: "Muhafızlar", specialists: "Uzmanlar", monsters: "Canavarlar", mercs: "Paralı askerler",
-        order: "Sıra", tier: "Kademe", name: "Ad", type: "Tür", count: "Sayı", hp: "Birim HP", total: "Toplam HP", group: "Grup",
-        monstersOk: "Canavarlar: limit izin verirse dahil edildi", monstersWarn: "Canavarlar: limit veya baskınlık nedeniyle kısıtlı", mercsOk: "Paralı askerler: bu seviyede açık", mercsWarn: "Paralı askerler G6'dan başlar",
-        specBlocked: "Uzmanlar için tam Ordu Modernizasyonu gerekir. Sadece Muhafızlar moduna geçin veya araştırmayı tamamlayın.", specTierBlocked: "Uzmanlar yalnızca G7–G9 için kullanılabilir.",
-        groupGuardsmen: "Muhafızlar", groupSpecialists: "Uzmanlar", groupMonsters: "Canavarlar", groupMercs: "Paralı askerler", disclaimerTitle: "Hesaplayıcı Uyarısı",
-        disclaimerText: "Bu hesaplayıcı birlik dizilimi ve saldırı sırası için temel bir yapı sunar. Oyuncu bonusları, araştırmalar, ekipman ve diğer değişkenler nedeniyle sonuçlar farklı olabilir. En iyi performans için kendi hesabınıza göre ince ayar yapın.",
-        balanceAppliedMsg: "Yuvarlanmış liderlik bakiyesi en alt 3 yığına orantılı şekilde dağıtıldı."
-      },
-      es: {
-        language: "Idioma", title: "Calculadora de Apilado de Tropas WoA", sub: "Introduce liderazgo, autoridad, dominancia, nivel de tropas y modo de apilado. La calculadora construye tu formación automáticamente y muestra la estructura final con claridad.",
-        inputs: "Entradas", leadership: "Liderazgo", authority: "Autoridad", dominance: "Dominancia", troop: "Nivel más alto de tropas", stackMode: "Modo de apilado",
-        guardsOnly: "Solo guardias", guardsSpecs: "Guardias + especialistas", modernisation: "Modernización del ejército completada", yes: "Sí", no: "No", calc: "Calcular", reset: "Restablecer",
-        howTitle: "Cómo usar:", how1: "1. Introduce liderazgo, autoridad y dominancia.", how2: "2. Elige el nivel de tropas y el modo de apilado.", how3: "3. Los especialistas se bloquean si no se completó la modernización del ejército.", how4: "4. Los especialistas G7 usan equilibrio especial solo para S7. G8 y G9 usan sustitución estándar.",
-        modeNote: "Guardias + especialistas solo se recomienda cuando la modernización del ejército está totalmente completada.", selectedTiers: "Niveles seleccionados", selectedMonsters: "Niveles de monstruos seleccionados", highestFlyer: "HP total más alto de voladores", stacksReturned: "Pilas devueltas", balanceAdded: "Balance Añadido",
-        quickFilter: "Filtro rápido", all: "Todos", troops: "Guardias + especialistas", guardsmen: "Guardias", specialists: "Especialistas", monsters: "Monstruos", mercs: "Mercenarios",
-        order: "Orden", tier: "Nivel", name: "Nombre", type: "Tipo", count: "Cantidad", hp: "HP / Unidad", total: "HP total", group: "Grupo",
-        monstersOk: "Monstruos: incluidos donde el límite lo permite", monstersWarn: "Monstruos: limitados o bloqueados por tope o dominancia", mercsOk: "Mercenarios: habilitados desde este nivel", mercsWarn: "Los mercenarios empiezan en G6",
-        specBlocked: "Los especialistas requieren modernización completa del ejército. Cambia a Solo guardias o completa la investigación.", specTierBlocked: "Los especialistas solo están disponibles para G7 a G9.",
-        groupGuardsmen: "Guardias", groupSpecialists: "Especialistas", groupMonsters: "Monstruos", groupMercs: "Mercenarios", disclaimerTitle: "Aviso de la calculadora",
-        disclaimerText: "Esta calculadora ofrece una configuración base para la composición y el orden de disparo. Debido a diferencias en bonos, investigación, equipo y otros modificadores, los resultados pueden variar. Ajusta la configuración según tu cuenta.",
-        balanceAppliedMsg: "El balance del liderazgo redondeado se distribuyó proporcionalmente en las 3 pilas más bajas."
-      },
-      pl: {
-        language: "Język", title: "Kalkulator Ustawienia Wojsk WoA", sub: "Wprowadź przywództwo, autorytet, dominację, poziom wojsk i tryb ustawienia. Kalkulator automatycznie zbuduje układ i pokaże końcową strukturę.",
-        inputs: "Dane wejściowe", leadership: "Przywództwo", authority: "Autorytet", dominance: "Dominacja", troop: "Najwyższy poziom wojsk", stackMode: "Tryb ustawienia",
-        guardsOnly: "Tylko strażnicy", guardsSpecs: "Strażnicy + specjaliści", modernisation: "Modernizacja armii ukończona", yes: "Tak", no: "Nie", calc: "Oblicz", reset: "Resetuj",
-        howTitle: "Jak używać:", how1: "1. Wprowadź przywództwo, autorytet i dominację.", how2: "2. Wybierz poziom wojsk i tryb ustawienia.", how3: "3. Specjaliści są zablokowani bez pełnej modernizacji armii.", how4: "4. Specjaliści G7 używają specjalnego bilansowania tylko dla S7. G8 i G9 używają standardowej zamiany specjalistów.",
-        modeNote: "Strażnicy + specjaliści są zalecani tylko przy pełnej modernizacji armii.", selectedTiers: "Wybrane poziomy", selectedMonsters: "Wybrane poziomy potworów", highestFlyer: "Najwyższe łączne HP latających", stacksReturned: "Zwrócone stosy", balanceAdded: "Dodany Bilans",
-        quickFilter: "Szybki filtr", all: "Wszystko", troops: "Strażnicy + specjaliści", guardsmen: "Strażnicy", specialists: "Specjaliści", monsters: "Potwory", mercs: "Najemnicy",
-        order: "Kolejność", tier: "Poziom", name: "Nazwa", type: "Typ", count: "Liczba", hp: "HP / Jednostkę", total: "Łączne HP", group: "Grupa",
-        monstersOk: "Potwory: dodane tam, gdzie pozwala limit", monstersWarn: "Potwory: ograniczone przez limit lub dominację", mercsOk: "Najemnicy: dostępni od tego poziomu", mercsWarn: "Najemnicy zaczynają się od G6",
-        specBlocked: "Specjaliści wymagają pełnej modernizacji armii. Przełącz na Tylko strażnicy lub dokończ badania.", specTierBlocked: "Specjaliści są dostępni tylko dla G7–G9.",
-        groupGuardsmen: "Strażnicy", groupSpecialists: "Specjaliści", groupMonsters: "Potwory", groupMercs: "Najemnicy", disclaimerTitle: "Zastrzeżenie",
-        disclaimerText: "Ten kalkulator daje bazowy układ składu wojsk i kolejności ataku. Ze względu na różnice w bonusach, badaniach, wyposażeniu i innych modyfikatorach wyniki mogą się różnić. Dostosuj układ do swojego konta.",
-        balanceAppliedMsg: "Bilans zaokrąglonego przywództwa został proporcjonalnie rozdzielony na 3 najniższe stosy."
-      },
-      ar: {
-        language: "اللغة", title: "حاسبة ترتيب القوات WoA", sub: "أدخل القيادة والسلطة والسيطرة ومستوى القوات ووضع الترتيب. ستقوم الحاسبة ببناء الترتيب تلقائياً وعرض الهيكل النهائي بوضوح.",
-        inputs: "المدخلات", leadership: "القيادة", authority: "السلطة", dominance: "السيطرة", troop: "أعلى مستوى للقوات", stackMode: "وضع الترتيب",
-        guardsOnly: "الحرس فقط", guardsSpecs: "الحرس + المتخصصون", modernisation: "تم إكمال تحديث الجيش", yes: "نعم", no: "لا", calc: "احسب", reset: "إعادة تعيين",
-        howTitle: "طريقة الاستخدام:", how1: "1. أدخل القيادة والسلطة والسيطرة.", how2: "2. اختر مستوى القوات ووضع الترتيب.", how3: "3. يتم حظر المتخصصين ما لم يكتمل تحديث الجيش.", how4: "4. يستخدم متخصصو G7 موازنة خاصة فقط لـ S7. أما G8 وG9 فيستخدمان الاستبدال القياسي.",
-        modeNote: "يوصى باستخدام الحرس + المتخصصون فقط عند اكتمال تحديث الجيش بالكامل.", selectedTiers: "المستويات المختارة", selectedMonsters: "مستويات الوحوش المختارة", highestFlyer: "أعلى إجمالي HP للطيران", stacksReturned: "عدد التشكيلات المعروضة", balanceAdded: "الرصيد المضاف",
-        quickFilter: "تصفية سريعة", all: "الكل", troops: "الحرس + المتخصصون", guardsmen: "الحرس", specialists: "المتخصصون", monsters: "الوحوش", mercs: "المرتزقة",
-        order: "الترتيب", tier: "المستوى", name: "الاسم", type: "النوع", count: "العدد", hp: "HP / للوحدة", total: "إجمالي HP", group: "المجموعة",
-        monstersOk: "الوحوش: تم تضمينها حيث يسمح الحد", monstersWarn: "الوحوش: محدودة أو محظورة بسبب الحد أو السيطرة", mercsOk: "المرتزقة: متاحة من هذا المستوى", mercsWarn: "المرتزقة تبدأ من G6",
-        specBlocked: "يتطلب المتخصصون تحديث الجيش بالكامل. انتقل إلى الحرس فقط أو أكمل البحث.", specTierBlocked: "المتخصصون متاحون فقط من G7 إلى G9.",
-        groupGuardsmen: "الحرس", groupSpecialists: "المتخصصون", groupMonsters: "الوحوش", groupMercs: "المرتزقة", disclaimerTitle: "إخلاء مسؤولية الحاسبة",
-        disclaimerText: "تقدم هذه الحاسبة إعداداً أساسياً لتكوين القوات وترتيب الإطلاق. قد تختلف النتائج بسبب اختلاف المكافآت والأبحاث والمعدات والعوامل الأخرى. يوصى بضبط النتائج بما يناسب حسابك.",
-        balanceAppliedMsg: "تم توزيع رصيد القيادة المقرب بشكل نسبي على أقل 3 تشكيلات."
-      },
-      uk: {
-        language: "Мова", title: "Калькулятор стеків військ WoA", sub: "Введіть лідерство, авторитет, домінування, рівень військ і режим стеків. Калькулятор автоматично збере побудову та покаже фінальну структуру.",
-        inputs: "Вхідні дані", leadership: "Лідерство", authority: "Авторитет", dominance: "Домінування", troop: "Найвищий рівень військ", stackMode: "Режим стеків",
-        guardsOnly: "Лише гвардія", guardsSpecs: "Гвардія + спеціалісти", modernisation: "Модернізацію армії завершено", yes: "Так", no: "Ні", calc: "Розрахувати", reset: "Скинути",
-        howTitle: "Як користуватися:", how1: "1. Введіть лідерство, авторитет і домінування.", how2: "2. Оберіть рівень військ і режим стеків.", how3: "3. Спеціалісти заблоковані, якщо модернізацію армії не завершено.", how4: "4. Для G7 спеціалісти використовують спеціальне балансування лише для S7. G8 і G9 використовують стандартну заміну.",
-        modeNote: "Гвардія + спеціалісти рекомендується лише при повністю завершеній модернізації армії.", selectedTiers: "Обрані рівні", selectedMonsters: "Обрані рівні монстрів", highestFlyer: "Найвище сумарне HP летючих", stacksReturned: "Повернуто стеків", balanceAdded: "Доданий Баланс",
-        quickFilter: "Швидкий фільтр", all: "Усі", troops: "Гвардія + спеціалісти", guardsmen: "Гвардія", specialists: "Спеціалісти", monsters: "Монстри", mercs: "Найманці",
-        order: "Порядок", tier: "Рівень", name: "Назва", type: "Тип", count: "Кількість", hp: "HP / одиницю", total: "Загальне HP", group: "Група",
-        monstersOk: "Монстри: додані там, де дозволяє ліміт", monstersWarn: "Монстри: обмежені лімітом або домінуванням", mercsOk: "Найманці: доступні з цього рівня", mercsWarn: "Найманці починаються з G6",
-        specBlocked: "Для спеціалістів потрібна повна модернізація армії. Перейдіть на Лише гвардія або завершіть дослідження.", specTierBlocked: "Спеціалісти доступні лише для G7–G9.",
-        groupGuardsmen: "Гвардія", groupSpecialists: "Спеціалісти", groupMonsters: "Монстри", groupMercs: "Найманці", disclaimerTitle: "Примітка калькулятора",
-        disclaimerText: "Цей калькулятор надає базову побудову для складу військ і порядку удару. Через різницю в бонусах, дослідженнях, спорядженні та інших модифікаторах результати можуть відрізнятися. Налаштуйте побудову під свій акаунт.",
-        balanceAppliedMsg: "Баланс округленого лідерства розподілено пропорційно між нижніми 3 стеками."
-      },
-      fr: {
-        language: "Langue", title: "Calculateur d’Empilement de Troupes WoA", sub: "Saisissez le leadership, l’autorité, la dominance, le niveau de troupes et le mode d’empilement. Le calculateur construit automatiquement votre composition et affiche clairement la structure finale.",
-        inputs: "Entrées", leadership: "Leadership", authority: "Autorité", dominance: "Dominance", troop: "Niveau de troupe le plus élevé", stackMode: "Mode d’empilement",
-        guardsOnly: "Gardes uniquement", guardsSpecs: "Gardes + spécialistes", modernisation: "Modernisation de l’armée terminée", yes: "Oui", no: "Non", calc: "Calculer", reset: "Réinitialiser",
-        howTitle: "Comment utiliser :", how1: "1. Saisissez leadership, autorité et dominance.", how2: "2. Choisissez le niveau de troupes et le mode d’empilement.", how3: "3. Les spécialistes sont bloqués tant que la modernisation de l’armée n’est pas terminée.", how4: "4. Les spécialistes G7 utilisent un équilibrage spécial uniquement pour S7. G8 et G9 utilisent une substitution standard.",
-        modeNote: "Gardes + spécialistes n’est recommandé que lorsque la modernisation de l’armée est totalement terminée.", selectedTiers: "Niveaux sélectionnés", selectedMonsters: "Niveaux de monstres sélectionnés", highestFlyer: "HP total le plus élevé des volants", stacksReturned: "Piles renvoyées", balanceAdded: "Solde Ajouté",
-        quickFilter: "Filtre rapide", all: "Tous", troops: "Gardes + spécialistes", guardsmen: "Gardes", specialists: "Spécialistes", monsters: "Monstres", mercs: "Mercenaires",
-        order: "Ordre", tier: "Niveau", name: "Nom", type: "Type", count: "Quantité", hp: "HP / unité", total: "HP total", group: "Groupe",
-        monstersOk: "Monstres : inclus lorsque la limite le permet", monstersWarn: "Monstres : limités ou bloqués par le plafond ou la dominance", mercsOk: "Mercenaires : activés à partir de ce niveau", mercsWarn: "Les mercenaires commencent à G6",
-        specBlocked: "Les spécialistes nécessitent une modernisation complète de l’armée. Passez à Gardes uniquement ou terminez la recherche.", specTierBlocked: "Les spécialistes sont disponibles uniquement de G7 à G9.",
-        groupGuardsmen: "Gardes", groupSpecialists: "Spécialistes", groupMonsters: "Monstres", groupMercs: "Mercenaires", disclaimerTitle: "Avertissement du calculateur",
-        disclaimerText: "Ce calculateur fournit une base de composition et d’ordre d’attaque. En raison des différences de bonus, recherches, équipements et autres modificateurs, les résultats peuvent varier. Ajustez selon votre compte.",
-        balanceAppliedMsg: "Le solde du leadership arrondi a été réparti proportionnellement sur les 3 piles les plus basses."
-      },
-      pt: {
-        language: "Idioma", title: "Calculadora de Formação de Tropas WoA", sub: "Insira liderança, autoridade, dominância, nível de tropas e modo de pilha. A calculadora monta a formação automaticamente e mostra a estrutura final com clareza.",
-        inputs: "Entradas", leadership: "Liderança", authority: "Autoridade", dominance: "Dominância", troop: "Nível mais alto de tropas", stackMode: "Modo de pilha",
-        guardsOnly: "Apenas guardas", guardsSpecs: "Guardas + especialistas", modernisation: "Modernização do exército concluída", yes: "Sim", no: "Não", calc: "Calcular", reset: "Redefinir",
-        howTitle: "Como usar:", how1: "1. Insira liderança, autoridade e dominância.", how2: "2. Escolha o nível de tropas e o modo de pilha.", how3: "3. Especialistas ficam bloqueados sem a modernização completa do exército.", how4: "4. Especialistas G7 usam balanceamento especial apenas para S7. G8 e G9 usam substituição padrão.",
-        modeNote: "Guardas + especialistas só é recomendado quando a modernização do exército estiver totalmente concluída.", selectedTiers: "Níveis selecionados", selectedMonsters: "Níveis de monstros selecionados", highestFlyer: "Maior HP total dos voadores", stacksReturned: "Pilhas retornadas", balanceAdded: "Saldo Adicionado",
-        quickFilter: "Filtro rápido", all: "Todos", troops: "Guardas + especialistas", guardsmen: "Guardas", specialists: "Especialistas", monsters: "Monstros", mercs: "Mercenários",
-        order: "Ordem", tier: "Nível", name: "Nome", type: "Tipo", count: "Quantidade", hp: "HP / unidade", total: "HP total", group: "Grupo",
-        monstersOk: "Monstros: incluídos onde o limite permite", monstersWarn: "Monstros: limitados ou bloqueados por teto ou dominância", mercsOk: "Mercenários: ativados neste nível", mercsWarn: "Mercenários começam em G6",
-        specBlocked: "Especialistas exigem modernização completa do exército. Mude para Apenas guardas ou conclua a pesquisa.", specTierBlocked: "Especialistas só estão disponíveis de G7 a G9.",
-        groupGuardsmen: "Guardas", groupSpecialists: "Especialistas", groupMonsters: "Monstros", groupMercs: "Mercenários", disclaimerTitle: "Aviso da calculadora",
-        disclaimerText: "Esta calculadora fornece uma base para composição de tropas e ordem de ataque. Devido a diferenças em bônus, pesquisas, equipamentos e outros modificadores, os resultados podem variar. Ajuste conforme a sua conta.",
-        balanceAppliedMsg: "O saldo da liderança arredondada foi distribuído proporcionalmente entre as 3 pilhas mais baixas."
-      }
+      ru: { language:"Язык", title:"Калькулятор стеков войск WoA", sub:"Введите лидерство, авторитет, доминирование, уровень войск и режим стека. Калькулятор автоматически строит стек и показывает финальную структуру.", inputs:"Параметры", leadership:"Лидерство", authority:"Авторитет", dominance:"Доминирование", troop:"Максимальный уровень войск", stackMode:"Режим стека", guardsOnly:"Только гвардейцы", guardsSpecs:"Гвардейцы + специалисты", modernisation:"Армейская модернизация завершена", yes:"Да", no:"Нет", calc:"Рассчитать", reset:"Сброс", howTitle:"Как использовать:", how1:"1. Введите лидерство, авторитет и доминирование.", how2:"2. Выберите уровень войск и режим стека.", how3:"3. Специалисты заблокированы без полной модернизации армии.", how4:"4. Для расчёта лидерство округляется вниз до ближайшей 1 000.", modeNote:"Гвардейцы + специалисты рекомендуются только при полной модернизации армии.", selectedTiers:"Выбранные уровни", selectedMonsters:"Выбранные уровни монстров", highestFlyer:"Макс. суммарное HP летающих", stacksReturned:"Возвращено стеков", roundedLead:"Округлённое лидерство", quickFilter:"Быстрый фильтр", all:"Все", troops:"Гвардейцы + специалисты", guardsmen:"Гвардейцы", specialists:"Специалисты", monsters:"Монстры", mercs:"Наёмники", order:"Порядок", tier:"Уровень", name:"Название", type:"Тип", count:"Количество", hp:"HP / юнит", total:"Общее HP", group:"Группа", monstersOk:"Монстры: включены там, где позволяет лимит", monstersWarn:"Монстры: ограничены лимитом или доминированием", mercsOk:"Наёмники: доступны с этого уровня войск", mercsWarn:"Наёмники: начинаются с G6", specBlocked:"Для специалистов нужна полная модернизация армии. Переключитесь на «Только гвардейцы» или завершите исследование.", specTierBlocked:"Специалисты доступны только для G7–G9.", groupGuardsmen:"Гвардейцы", groupSpecialists:"Специалисты", groupMonsters:"Монстры", groupMercs:"Наёмники", disclaimerTitle:"Предупреждение калькулятора", disclaimerText:"Этот калькулятор даёт базовую настройку для состава войск и порядка удара. Из-за различий в бонусах, исследованиях, снаряжении и других модификаторах результаты могут отличаться. Настраивайте состав под свой аккаунт.", advG6:"Применена расширенная максимизация G6", advG5:"Применена расширенная максимизация G5" },
+      tr: { language:"Dil", title:"WoA Birlik Dizilim Hesaplayıcısı", sub:"Liderlik, otorite, baskınlık, birlik seviyesi ve dizilim modunu girin. Hesaplayıcı dizilimi otomatik oluşturur ve son yapıyı gösterir.", inputs:"Girdiler", leadership:"Liderlik", authority:"Otorite", dominance:"Baskınlık", troop:"En Yüksek Birlik Seviyesi", stackMode:"Dizilim Modu", guardsOnly:"Sadece Muhafızlar", guardsSpecs:"Muhafızlar + Uzmanlar", modernisation:"Ordu Modernizasyonu Tamamlandı", yes:"Evet", no:"Hayır", calc:"Hesapla", reset:"Sıfırla", howTitle:"Nasıl kullanılır:", how1:"1. Liderlik, otorite ve baskınlık girin.", how2:"2. Birlik seviyesini ve dizilim modunu seçin.", how3:"3. Ordu modernizasyonu tamamlanmadan uzmanlar engellenir.", how4:"4. Hesaplama için liderlik en yakın alt 1.000’e yuvarlanır.", modeNote:"Muhafızlar + Uzmanlar yalnızca ordu modernizasyonu tamamlandığında önerilir.", selectedTiers:"Seçilen Kademeler", selectedMonsters:"Seçilen Canavar Seviyeleri", highestFlyer:"En Yüksek Uçan Toplam HP", stacksReturned:"Dönen Yığınlar", roundedLead:"Yuvarlanmış Liderlik", quickFilter:"Hızlı Filtre", all:"Tümü", troops:"Muhafızlar + Uzmanlar", guardsmen:"Muhafızlar", specialists:"Uzmanlar", monsters:"Canavarlar", mercs:"Paralı askerler", order:"Sıra", tier:"Kademe", name:"Ad", type:"Tür", count:"Sayı", hp:"Birim HP", total:"Toplam HP", group:"Grup", monstersOk:"Canavarlar: limit izin verirse dahil", monstersWarn:"Canavarlar: limit veya baskınlık nedeniyle kısıtlı", mercsOk:"Paralı askerler: bu seviyede açık", mercsWarn:"Paralı askerler G6’dan başlar", specBlocked:"Uzmanlar için tam Ordu Modernizasyonu gerekir. Sadece Muhafızlar moduna geçin veya araştırmayı tamamlayın.", specTierBlocked:"Uzmanlar yalnızca G7–G9 için kullanılabilir.", groupGuardsmen:"Muhafızlar", groupSpecialists:"Uzmanlar", groupMonsters:"Canavarlar", groupMercs:"Paralı askerler", disclaimerTitle:"Hesaplayıcı Uyarısı", disclaimerText:"Bu hesaplayıcı birlik düzeni ve saldırı sırası için temel bir yapı sunar. Bonuslar, araştırmalar, ekipman ve diğer değişkenler nedeniyle sonuçlar farklı olabilir. Kendi hesabınıza göre ince ayar yapın.", advG6:"G6 gelişmiş maksimizasyon uygulandı", advG5:"G5 gelişmiş maksimizasyon uygulandı" },
+      es: { language:"Idioma", title:"Calculadora de Apilado de Tropas WoA", sub:"Introduce liderazgo, autoridad, dominancia, nivel de tropas y modo de apilado. La calculadora arma tu estructura automáticamente.", inputs:"Entradas", leadership:"Liderazgo", authority:"Autoridad", dominance:"Dominancia", troop:"Nivel Más Alto de Tropa", stackMode:"Modo de Apilado", guardsOnly:"Solo Guardias", guardsSpecs:"Guardias + Especialistas", modernisation:"Modernización del Ejército Completada", yes:"Sí", no:"No", calc:"Calcular", reset:"Reiniciar", howTitle:"Cómo usar:", how1:"1. Introduce liderazgo, autoridad y dominancia.", how2:"2. Elige nivel de tropas y modo de apilado.", how3:"3. Los especialistas se bloquean si no se completó la modernización.", how4:"4. El liderazgo se redondea hacia abajo al 1.000 más cercano para el cálculo.", modeNote:"Guardias + Especialistas solo se recomienda con la modernización completa.", selectedTiers:"Niveles Seleccionados", selectedMonsters:"Niveles de Monstruos Seleccionados", highestFlyer:"HP Total Más Alto de Voladores", stacksReturned:"Pilas Devueltas", roundedLead:"Liderazgo Redondeado", quickFilter:"Filtro Rápido", all:"Todo", troops:"Guardias + Especialistas", guardsmen:"Guardias", specialists:"Especialistas", monsters:"Monstruos", mercs:"Mercenarios", order:"Orden", tier:"Nivel", name:"Nombre", type:"Tipo", count:"Cantidad", hp:"HP / Unidad", total:"HP Total", group:"Grupo", monstersOk:"Monstruos: incluidos donde el límite lo permite", monstersWarn:"Monstruos: limitados por tope o dominancia", mercsOk:"Mercenarios: habilitados desde este nivel", mercsWarn:"Mercenarios: comienzan en G6", specBlocked:"Los especialistas requieren modernización completa. Cambia a Solo Guardias o completa la investigación.", specTierBlocked:"Los especialistas solo están disponibles para G7 a G9.", groupGuardsmen:"Guardias", groupSpecialists:"Especialistas", groupMonsters:"Monstruos", groupMercs:"Mercenarios", disclaimerTitle:"Aviso de la calculadora", disclaimerText:"Esta calculadora ofrece una configuración base para composición y orden de ataque. Los resultados pueden variar según bonos, investigación, equipo y otros modificadores.", advG6:"Se aplicó la maximización avanzada G6", advG5:"Se aplicó la maximización avanzada G5" },
+      pl: { language:"Język", title:"Kalkulator Ustawienia Wojsk WoA", sub:"Wprowadź przywództwo, autorytet, dominację, poziom wojsk i tryb ustawienia. Kalkulator automatycznie zbuduje układ.", inputs:"Dane wejściowe", leadership:"Przywództwo", authority:"Autorytet", dominance:"Dominacja", troop:"Najwyższy poziom wojsk", stackMode:"Tryb ustawienia", guardsOnly:"Tylko strażnicy", guardsSpecs:"Strażnicy + specjaliści", modernisation:"Modernizacja armii ukończona", yes:"Tak", no:"Nie", calc:"Oblicz", reset:"Resetuj", howTitle:"Jak używać:", how1:"1. Wprowadź przywództwo, autorytet i dominację.", how2:"2. Wybierz poziom wojsk i tryb ustawienia.", how3:"3. Specjaliści są zablokowani bez pełnej modernizacji armii.", how4:"4. Przywództwo do obliczeń jest zaokrąglane w dół do najbliższego 1000.", modeNote:"Strażnicy + specjaliści są zalecani tylko przy pełnej modernizacji armii.", selectedTiers:"Wybrane poziomy", selectedMonsters:"Wybrane poziomy potworów", highestFlyer:"Najwyższe łączne HP latających", stacksReturned:"Zwrócone stosy", roundedLead:"Zaokrąglone przywództwo", quickFilter:"Szybki filtr", all:"Wszystko", troops:"Strażnicy + specjaliści", guardsmen:"Strażnicy", specialists:"Specjaliści", monsters:"Potwory", mercs:"Najemnicy", order:"Kolejność", tier:"Poziom", name:"Nazwa", type:"Typ", count:"Liczba", hp:"HP / Jednostkę", total:"Łączne HP", group:"Grupa", monstersOk:"Potwory: dodane tam, gdzie pozwala limit", monstersWarn:"Potwory: ograniczone przez limit lub dominację", mercsOk:"Najemnicy: dostępni od tego poziomu", mercsWarn:"Najemnicy zaczynają się od G6", specBlocked:"Specjaliści wymagają pełnej modernizacji armii. Przełącz na Tylko strażnicy lub dokończ badania.", specTierBlocked:"Specjaliści są dostępni tylko dla G7–G9.", groupGuardsmen:"Strażnicy", groupSpecialists:"Specjaliści", groupMonsters:"Potwory", groupMercs:"Najemnicy", disclaimerTitle:"Zastrzeżenie", disclaimerText:"Ten kalkulator daje bazowy układ składu wojsk i kolejności ataku. Ze względu na różnice w bonusach, badaniach, wyposażeniu i innych modyfikatorach wyniki mogą się różnić. Dostosuj układ do swojego konta.", advG6:"Zastosowano zaawansowaną maksymalizację G6", advG5:"Zastosowano zaawansowaną maksymalizację G5" },
+      ar: { language:"اللغة", title:"حاسبة ترتيب القوات WoA", sub:"أدخل القيادة والسلطة والسيطرة ومستوى القوات ووضع الترتيب. ستقوم الحاسبة ببناء الترتيب تلقائياً.", inputs:"المدخلات", leadership:"القيادة", authority:"السلطة", dominance:"السيطرة", troop:"أعلى مستوى للقوات", stackMode:"وضع الترتيب", guardsOnly:"الحرس فقط", guardsSpecs:"الحرس + المتخصصون", modernisation:"تم إكمال تحديث الجيش", yes:"نعم", no:"لا", calc:"احسب", reset:"إعادة تعيين", howTitle:"طريقة الاستخدام:", how1:"1. أدخل القيادة والسلطة والسيطرة.", how2:"2. اختر مستوى القوات ووضع الترتيب.", how3:"3. يتم حظر المتخصصين ما لم يكتمل تحديث الجيش.", how4:"4. يتم تقريب القيادة لأسفل إلى أقرب 1000 كأساس للحساب.", modeNote:"يوصى باستخدام الحرس + المتخصصون فقط عند اكتمال تحديث الجيش بالكامل.", selectedTiers:"المستويات المختارة", selectedMonsters:"مستويات الوحوش المختارة", highestFlyer:"أعلى إجمالي HP للطيران", stacksReturned:"عدد التشكيلات المعروضة", roundedLead:"القيادة بعد التقريب", quickFilter:"تصفية سريعة", all:"الكل", troops:"الحرس + المتخصصون", guardsmen:"الحرس", specialists:"المتخصصون", monsters:"الوحوش", mercs:"المرتزقة", order:"الترتيب", tier:"المستوى", name:"الاسم", type:"النوع", count:"العدد", hp:"HP / للوحدة", total:"إجمالي HP", group:"المجموعة", monstersOk:"الوحوش: تم تضمينها حيث يسمح الحد", monstersWarn:"الوحوش: محدودة بسبب الحد أو السيطرة", mercsOk:"المرتزقة: متاحة من هذا المستوى", mercsWarn:"المرتزقة تبدأ من G6", specBlocked:"يتطلب المتخصصون تحديث الجيش بالكامل. انتقل إلى الحرس فقط أو أكمل البحث.", specTierBlocked:"المتخصصون متاحون فقط من G7 إلى G9.", groupGuardsmen:"الحرس", groupSpecialists:"المتخصصون", groupMonsters:"الوحوش", groupMercs:"المرتزقة", disclaimerTitle:"إخلاء مسؤولية الحاسبة", disclaimerText:"تقدم هذه الحاسبة إعداداً أساسياً لتكوين القوات وترتيب الإطلاق. قد تختلف النتائج بسبب اختلاف المكافآت والأبحاث والمعدات والعوامل الأخرى. يوصى بضبط النتائج بما يناسب حسابك.", advG6:"تم تطبيق تعظيم G6 المتقدم", advG5:"تم تطبيق تعظيم G5 المتقدم" },
+      uk: { language:"Мова", title:"Калькулятор стеків військ WoA", sub:"Введіть лідерство, авторитет, домінування, рівень військ і режим стеків. Калькулятор автоматично збере побудову.", inputs:"Вхідні дані", leadership:"Лідерство", authority:"Авторитет", dominance:"Домінування", troop:"Найвищий рівень військ", stackMode:"Режим стеків", guardsOnly:"Лише гвардія", guardsSpecs:"Гвардія + спеціалісти", modernisation:"Модернізацію армії завершено", yes:"Так", no:"Ні", calc:"Розрахувати", reset:"Скинути", howTitle:"Як користуватися:", how1:"1. Введіть лідерство, авторитет і домінування.", how2:"2. Оберіть рівень військ і режим стеків.", how3:"3. Спеціалісти заблоковані, якщо модернізацію армії не завершено.", how4:"4. Лідерство для розрахунку округлюється вниз до найближчої 1000.", modeNote:"Гвардія + спеціалісти рекомендується лише при повністю завершеній модернізації армії.", selectedTiers:"Обрані рівні", selectedMonsters:"Обрані рівні монстрів", highestFlyer:"Найвище сумарне HP летючих", stacksReturned:"Повернуто стеків", roundedLead:"Округлене лідерство", quickFilter:"Швидкий фільтр", all:"Усі", troops:"Гвардія + спеціалісти", guardsmen:"Гвардія", specialists:"Спеціалісти", monsters:"Монстри", mercs:"Найманці", order:"Порядок", tier:"Рівень", name:"Назва", type:"Тип", count:"Кількість", hp:"HP / одиницю", total:"Загальне HP", group:"Група", monstersOk:"Монстри: додані там, де дозволяє ліміт", monstersWarn:"Монстри: обмежені лімітом або домінуванням", mercsOk:"Найманці: доступні з цього рівня", mercsWarn:"Найманці починаються з G6", specBlocked:"Для спеціалістів потрібна повна модернізація армії. Перейдіть на Лише гвардія або завершіть дослідження.", specTierBlocked:"Спеціалісти доступні лише для G7–G9.", groupGuardsmen:"Гвардія", groupSpecialists:"Спеціалісти", groupMonsters:"Монстри", groupMercs:"Найманці", disclaimerTitle:"Примітка калькулятора", disclaimerText:"Цей калькулятор надає базову побудову для складу військ і порядку удару. Через різницю в бонусах, дослідженнях, спорядженні та інших модифікаторах результати можуть відрізнятися. Налаштуйте побудову під свій акаунт.", advG6:"Застосовано розширену максимізацію G6", advG5:"Застосовано розширену максимізацію G5" },
+      fr: { language:"Langue", title:"Calculateur d’Empilement de Troupes WoA", sub:"Saisissez le leadership, l’autorité, la dominance, le niveau de troupes et le mode d’empilement. Le calculateur construit automatiquement votre composition.", inputs:"Entrées", leadership:"Leadership", authority:"Autorité", dominance:"Dominance", troop:"Niveau de troupe le plus élevé", stackMode:"Mode d’empilement", guardsOnly:"Gardes uniquement", guardsSpecs:"Gardes + spécialistes", modernisation:"Modernisation de l’armée terminée", yes:"Oui", no:"Non", calc:"Calculer", reset:"Réinitialiser", howTitle:"Comment utiliser :", how1:"1. Saisissez leadership, autorité et dominance.", how2:"2. Choisissez le niveau de troupes et le mode d’empilement.", how3:"3. Les spécialistes sont bloqués tant que la modernisation de l’armée n’est pas terminée.", how4:"4. Le leadership est arrondi vers le bas au millier le plus proche pour le calcul.", modeNote:"Gardes + spécialistes n’est recommandé que lorsque la modernisation de l’armée est totalement terminée.", selectedTiers:"Niveaux sélectionnés", selectedMonsters:"Niveaux de monstres sélectionnés", highestFlyer:"HP total le plus élevé des volants", stacksReturned:"Piles renvoyées", roundedLead:"Leadership arrondi", quickFilter:"Filtre rapide", all:"Tous", troops:"Gardes + spécialistes", guardsmen:"Gardes", specialists:"Spécialistes", monsters:"Monstres", mercs:"Mercenaires", order:"Ordre", tier:"Niveau", name:"Nom", type:"Type", count:"Quantité", hp:"HP / unité", total:"HP total", group:"Groupe", monstersOk:"Monstres : inclus lorsque la limite le permet", monstersWarn:"Monstres : limités par le plafond ou la dominance", mercsOk:"Mercenaires : activés à partir de ce niveau", mercsWarn:"Les mercenaires commencent à G6", specBlocked:"Les spécialistes nécessitent une modernisation complète de l’armée. Passez à Gardes uniquement ou terminez la recherche.", specTierBlocked:"Les spécialistes sont disponibles uniquement de G7 à G9.", groupGuardsmen:"Gardes", groupSpecialists:"Spécialistes", groupMonsters:"Monstres", groupMercs:"Mercenaires", disclaimerTitle:"Avertissement du calculateur", disclaimerText:"Ce calculateur fournit une base de composition et d’ordre d’attaque. En raison des différences de bonus, recherches, équipements et autres modificateurs, les résultats peuvent varier. Ajustez selon votre compte.", advG6:"Maximisation avancée G6 appliquée", advG5:"Maximisation avancée G5 appliquée" },
+      pt: { language:"Idioma", title:"Calculadora de Formação de Tropas WoA", sub:"Insira liderança, autoridade, dominância, nível de tropas e modo de pilha. A calculadora monta a formação automaticamente.", inputs:"Entradas", leadership:"Liderança", authority:"Autoridade", dominance:"Dominância", troop:"Nível mais alto de tropas", stackMode:"Modo de pilha", guardsOnly:"Apenas guardas", guardsSpecs:"Guardas + especialistas", modernisation:"Modernização do exército concluída", yes:"Sim", no:"Não", calc:"Calcular", reset:"Redefinir", howTitle:"Como usar:", how1:"1. Insira liderança, autoridade e dominância.", how2:"2. Escolha o nível de tropas e o modo de pilha.", how3:"3. Especialistas ficam bloqueados sem a modernização completa do exército.", how4:"4. A liderança é arredondada para baixo para o milhar mais próximo no cálculo.", modeNote:"Guardas + especialistas só é recomendado quando a modernização do exército estiver totalmente concluída.", selectedTiers:"Níveis selecionados", selectedMonsters:"Níveis de monstros selecionados", highestFlyer:"Maior HP total dos voadores", stacksReturned:"Pilhas retornadas", roundedLead:"Liderança arredondada", quickFilter:"Filtro rápido", all:"Todos", troops:"Guardas + especialistas", guardsmen:"Guardas", specialists:"Especialistas", monsters:"Monstros", mercs:"Mercenários", order:"Ordem", tier:"Nível", name:"Nome", type:"Tipo", count:"Quantidade", hp:"HP / unidade", total:"HP total", group:"Grupo", monstersOk:"Monstros: incluídos onde o limite permite", monstersWarn:"Monstros: limitados por teto ou dominância", mercsOk:"Mercenários: ativados neste nível", mercsWarn:"Mercenários começam em G6", specBlocked:"Especialistas exigem modernização completa do exército. Mude para Apenas guardas ou conclua a pesquisa.", specTierBlocked:"Especialistas só estão disponíveis de G7 a G9.", groupGuardsmen:"Guardas", groupSpecialists:"Especialistas", groupMonsters:"Monstros", groupMercs:"Mercenários", disclaimerTitle:"Aviso da calculadora", disclaimerText:"Esta calculadora fornece uma base para composição de tropas e ordem de ataque. Devido a diferenças em bônus, pesquisas, equipamentos e outros modificadores, os resultados podem variar. Ajuste conforme a sua conta.", advG6:"Maximização avançada G6 aplicada", advG5:"Maximização avançada G5 aplicada" }
     };
 
-    function t(k) {
+    function t(key) {
       const lang = (document.getElementById("language") || { value: "en" }).value;
-      return (i18n[lang] && i18n[lang][k]) || i18n.en[k] || k;
+      return (i18n[lang] && i18n[lang][key]) || i18n.en[key] || key;
     }
 
     function applyLanguage() {
@@ -719,7 +572,7 @@
       set("statMon", "selectedMonsters");
       set("statFly", "highestFlyer");
       set("statRows", "stacksReturned");
-      set("statBalance", "balanceAdded");
+      set("statRounded", "roundedLead");
       set("filterLabel", "quickFilter");
       set("thOrder", "order");
       set("thTier", "tier");
@@ -822,7 +675,7 @@
       monsterLevels: document.getElementById("monsterLevels"),
       flyerCap: document.getElementById("flyerCap"),
       rowCount: document.getElementById("rowCount"),
-      balanceAdded: document.getElementById("balanceAdded"),
+      roundedLeadership: document.getElementById("roundedLeadership"),
       messages: document.getElementById("messages")
     };
 
@@ -830,14 +683,15 @@
     const mode = () => document.querySelector('input[name="stackMode"]:checked').value;
     const modernisation = () => document.querySelector('input[name="modernisation"]:checked').value;
 
+    function roundedLeadership(value){
+      return Math.floor(Number(value || 0) / 1000) * 1000;
+	  
+    }
+
     function getLeadershipCost(unitType){
       if (unitType === "Flyers" || unitType === "Flying") return 20;
       if (unitType === "Mounted") return 2;
       return 1;
-    }
-
-    function roundedLeadership(value){
-      return Math.floor(Number(value || 0) / 1000) * 1000;
     }
 
     function tierCountsFromLeadership(L, high){
@@ -857,7 +711,6 @@
         const rangedHP = hpOf(tier, "Ranged");
         const mountedHP = hpOf(tier, "Mounted");
         const flyersHP = guardData[tier].Flyers ? hpOf(tier, "Flyers") : 0;
-
         const targetTotalHP = rangedCount * rangedHP;
 
         return {
@@ -886,15 +739,15 @@
     }
 
     function specialistPlan(high){
-      if (high === 7) return { top: "G7", spec: "S7", low: "G6" };
-      if (high === 8) return { top: "G8", spec: "S8", low: "G7" };
-      if (high === 9) return { top: "G9", spec: "S9", low: "G8" };
+      if (high === 7) return { top:"G7", spec:"S7", low:"G6" };
+      if (high === 8) return { top:"G8", spec:"S8", low:"G7" };
+      if (high === 9) return { top:"G9", spec:"S9", low:"G8" };
       return null;
     }
 
     function addTierRows(rows, orderStart, tier, source, counts, group){
       let order = orderStart;
-      ["Ranged", "Mounted", "Melee", "Flyers"].forEach(unit => {
+      ["Ranged","Mounted","Melee","Flyers"].forEach(unit => {
         if (source[tier] && source[tier][unit]) {
           const hp = source[tier][unit].hp;
           const name = source[tier][unit].name;
@@ -921,34 +774,65 @@
       }, 0);
     }
 
-    function applyProportionalBalanceToLowestTier(rows, roundedL, lowestTier){
-      const targetRows = rows.filter(r => r.group === "guardsmen" && r.tier === lowestTier);
-      if (targetRows.length !== 3) {
-        return { rows, balanceApplied: 0 };
-      }
+    function applyProportionalAcrossAllGuardsmen(rows, roundedL){
+      const guardRows = rows.filter(r => r.group === "guardsmen");
+      const used = calculateUsedLeadership(rows, "guardsmen");
+      const balance = roundedL - used;
 
-      const usedBefore = calculateUsedLeadership(rows, "guardsmen");
-      let balance = roundedL - usedBefore;
+      if (balance <= 0 || !guardRows.length) return 0;
 
-      if (balance <= 0) {
-        return { rows, balanceApplied: 0 };
-      }
+      const weights = guardRows.map(r => (r.count || 0) * getLeadershipCost(r.unitType));
+      const totalWeight = weights.reduce((a, b) => a + b, 0);
+      if (totalWeight <= 0) return 0;
 
-      const leadershipWeights = targetRows.map(r => (r.count || 0) * getLeadershipCost(r.unitType));
-      const totalWeight = leadershipWeights.reduce((a, b) => a + b, 0);
-
-      if (totalWeight <= 0) {
-        return { rows, balanceApplied: 0 };
-      }
-
-      targetRows.forEach((r, index) => {
-        const shareLeadership = balance * (leadershipWeights[index] / totalWeight);
+      guardRows.forEach((r, i) => {
+        const shareLeadership = balance * (weights[i] / totalWeight);
         const addCount = shareLeadership / getLeadershipCost(r.unitType);
         r.count += addCount;
         r.total = r.count * r.hp;
       });
 
-      return { rows, balanceApplied: balance };
+      return balance;
+    }
+
+    function rebalanceFlyerToRangedMelee(rows, tier){
+      const flyer = rows.find(r => r.group === "guardsmen" && r.tier === tier && r.unitType === "Flyers");
+      const ranged = rows.find(r => r.group === "guardsmen" && r.tier === tier && r.unitType === "Ranged");
+      const melee = rows.find(r => r.group === "guardsmen" && r.tier === tier && r.unitType === "Melee");
+
+      if (!flyer || !ranged || !melee) return;
+
+      const diff = flyer.total - ranged.total;
+      if (diff <= 0) return;
+
+      const halfShift = diff / 2;
+
+      flyer.count -= (diff / flyer.hp);
+      ranged.count += (halfShift / ranged.hp);
+      melee.count += (halfShift / melee.hp);
+
+      flyer.total = flyer.count * flyer.hp;
+      ranged.total = ranged.count * ranged.hp;
+      melee.total = melee.count * melee.hp;
+    }
+
+    function suppressFlyerBelowMounted(rows, tier){
+      const flyer = rows.find(r => r.group === "guardsmen" && r.tier === tier && r.unitType === "Flyers");
+      const mounted = rows.find(r => r.group === "guardsmen" && r.tier === tier && r.unitType === "Mounted");
+      if (!flyer || !mounted) return;
+
+      if (flyer.total >= mounted.total) {
+        const targetFlyerTotal = mounted.total - (flyer.hp * 0.5);
+        flyer.count = Math.max(targetFlyerTotal / flyer.hp, 0);
+        flyer.total = flyer.count * flyer.hp;
+      }
+    }
+
+    function roundCounts(rows){
+      rows.forEach(r => {
+        r.count = Math.max(Math.round(r.count), 0);
+        r.total = r.count * r.hp;
+      });
     }
 
     function buildRows(){
@@ -960,18 +844,18 @@
       const stackMode = mode();
 
       if (stackMode === "specialists" && modernisation() !== "yes") {
-        return { blocked: true, message: t("specBlocked") };
+        return { blocked:true, message:t("specBlocked") };
       }
 
       if (stackMode === "specialists" && high < 7) {
-        return { blocked: true, message: t("specTierBlocked") };
+        return { blocked:true, message:t("specTierBlocked") };
       }
 
       let rows = [];
       let order = 1;
       let tiersLabel = "";
       let highestFlyerTotal = 0;
-      let balanceApplied = 0;
+      let advancedMsg = "";
 
       const baseCounts = tierCountsFromLeadership(roundedL, high);
 
@@ -983,18 +867,25 @@
           order = addTierRows(rows, order, tier, guardData, baseCounts[tier], "guardsmen");
         });
 
-        highestFlyerTotal = rows.find(r => r.tier === "G" + high && r.unitType === "Flyers")?.total || 0;
-
         if (high === 6) {
-          const result = applyProportionalBalanceToLowestTier(rows, roundedL, "G4");
-          rows = result.rows;
-          balanceApplied = result.balanceApplied;
+          applyProportionalAcrossAllGuardsmen(rows, roundedL);
+          rebalanceFlyerToRangedMelee(rows, "G5");
+          suppressFlyerBelowMounted(rows, "G6");
+          roundCounts(rows);
+          advancedMsg = t("advG6");
         } else if (high === 5) {
-          const result = applyProportionalBalanceToLowestTier(rows, roundedL, "G3");
-          rows = result.rows;
-          balanceApplied = result.balanceApplied;
+          applyProportionalAcrossAllGuardsmen(rows, roundedL);
+          rebalanceFlyerToRangedMelee(rows, "G5");
+          suppressFlyerBelowMounted(rows, "G5");
+          roundCounts(rows);
+          advancedMsg = t("advG5");
+        } else {
+          roundCounts(rows);
         }
+
+        highestFlyerTotal = rows.find(r => r.tier === "G" + high && r.unitType === "Flyers")?.total || 0;
       } else {
+        // unchanged specialist logic for G7-G9
         const plan = specialistPlan(high);
         tiersLabel = plan.top + " / " + plan.spec + " / " + plan.low;
 
@@ -1046,6 +937,8 @@
           order = addTierRows(rows, order, plan.spec, specialistData, specCounts, "specialists");
           order = addTierRows(rows, order, plan.low, guardData, baseCounts[plan.low], "guardsmen");
         }
+
+        roundCounts(rows);
       }
 
       const monLevels = selectedMonsterLevels(high);
@@ -1062,11 +955,7 @@
         } else if (idx === 0) {
           const nextMax = Math.max(...monsterData[monLevels[1]].map(x => x[2]));
           count = Math.max(
-            Math.min(
-              D / 6,
-              (highestFlyerTotal - 1) / maxHP,
-              ((highestFlyerTotal - 1) / nextMax) * 2
-            ),
+            Math.min(D / 6, (highestFlyerTotal - 1) / maxHP, ((highestFlyerTotal - 1) / nextMax) * 2),
             0
           );
         } else {
@@ -1077,16 +966,15 @@
         monsterData[level].forEach(item => {
           const [name, unitType, hp] = item;
           const total = count * hp;
-
           if (count > 0 && total < highestFlyerTotal) {
             rows.push({
               order: order++,
               tier: level,
               name,
               unitType,
-              count,
+              count: Math.round(count),
               hp,
-              total,
+              total: Math.round(count) * hp,
               group: "monsters"
             });
             activeMonsterTotals.push(total);
@@ -1101,17 +989,17 @@
       mercData.forEach(item => {
         const [name, hp] = item;
         const count = mercAllowed ? Math.max(Math.min(baseMerc, (mercCap - 1) / hp), 0) : 0;
-        const total = count * hp;
+        const roundedCount = Math.round(count);
 
-        if (count > 0) {
+        if (roundedCount > 0) {
           rows.push({
             order: order++,
             tier: "Merc",
             name,
             unitType: "Mercenary",
-            count,
+            count: roundedCount,
             hp,
-            total,
+            total: roundedCount * hp,
             group: "mercs"
           });
         }
@@ -1121,14 +1009,15 @@
       rows.forEach((r, i) => r.order = i + 1);
 
       return {
-        blocked: false,
+        blocked:false,
         rows,
         tiersLabel,
-        monsterLevels: monLevels.join(" + "),
+        monsterLevels:monLevels.join(" + "),
         highestFlyerTotal,
-        monsterOK: activeMonsterTotals.length > 0,
+        monsterOK:activeMonsterTotals.length > 0,
         mercAllowed,
-        balanceApplied
+        roundedL,
+        advancedMsg
       };
     }
 
@@ -1137,7 +1026,7 @@
       els.monsterLevels.textContent = "-";
       els.flyerCap.textContent = "-";
       els.rowCount.textContent = "0";
-      els.balanceAdded.textContent = "0";
+      els.roundedLeadership.textContent = "-";
       els.outputBody.innerHTML = "";
       els.messages.innerHTML = `<span class="pill bad">${msg}</span>`;
     }
@@ -1145,7 +1034,7 @@
     function render(){
       const result = buildRows();
 
-      if (result.blocked) {
+      if(result.blocked){
         block(result.message);
         return;
       }
@@ -1153,14 +1042,20 @@
       els.guardTiers.textContent = result.tiersLabel;
       els.monsterLevels.textContent = result.monsterLevels;
       els.flyerCap.textContent = fmt(result.highestFlyerTotal);
-      els.balanceAdded.textContent = fmt(result.balanceApplied);
+      els.rowCount.textContent = String(result.rows.filter(r => {
+        const filter = els.typeFilter.value;
+        return filter === "all" ||
+          (filter === "troops" && (r.group === "guardsmen" || r.group === "specialists")) ||
+          r.group === filter;
+      }).length);
+      els.roundedLeadership.textContent = fmt(result.roundedL);
 
       let msgHtml =
         `<span class="pill ${result.monsterOK ? "ok" : "warn"}">${result.monsterOK ? t("monstersOk") : t("monstersWarn")}</span>` +
         `<span class="pill ${result.mercAllowed ? "ok" : "warn"}">${result.mercAllowed ? t("mercsOk") : t("mercsWarn")}</span>`;
 
-      if (result.balanceApplied > 0) {
-        msgHtml += `<span class="pill ok">${t("balanceAppliedMsg")}</span>`;
+      if (result.advancedMsg) {
+        msgHtml += `<span class="pill ok">${result.advancedMsg}</span>`;
       }
 
       els.messages.innerHTML = msgHtml;
@@ -1171,8 +1066,6 @@
         (filter === "troops" && (r.group === "guardsmen" || r.group === "specialists")) ||
         r.group === filter
       );
-
-      els.rowCount.textContent = String(filtered.length);
 
       els.outputBody.innerHTML = filtered.map(r => `
         <tr>
