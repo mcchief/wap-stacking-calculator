@@ -5,473 +5,922 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WoA Troop Stacking Calculator</title>
   <style>
-    :root {
-      --bg: #0b1220;
-      --bg2: #0f172a;
-      --panel: rgba(17, 24, 39, 0.96);
-      --panel2: #1f2937;
-      --text: #e5e7eb;
-      --muted: #94a3b8;
-      --accent: #22c55e;
-      --border: #334155;
-      --input: #08111f;
-      --ok: #86efac;
-      --warn: #fcd34d;
-      --bad: #fca5a5;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
-      --radius: 18px;
+    :root{
+      --bg:#06101d;
+      --bg2:#0b1730;
+      --panel:rgba(9,18,34,.68);
+      --panel-strong:rgba(10,20,38,.84);
+      --panel-soft:rgba(255,255,255,.04);
+      --text:#eef4ff;
+      --muted:#9cb1d3;
+      --gold:#d7ad5a;
+      --gold2:#f2d38d;
+      --blue:#6fb0ff;
+      --green:#22c55e;
+      --orange:#f59e0b;
+      --red:#ef4444;
+      --border:rgba(255,255,255,.10);
+      --border-strong:rgba(255,255,255,.16);
+      --shadow:0 20px 60px rgba(0,0,0,.35);
+      --shadow-soft:0 10px 30px rgba(0,0,0,.22);
+      --blur:16px;
+      --radius:22px;
+      --radius-sm:16px;
+      --max:1520px;
     }
 
-    * { box-sizing: border-box; }
-
-    html, body {
-      width: 100%;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    html,body{
+      width:100%;
+      margin:0;
+      padding:0;
+      overflow-x:hidden;
     }
 
-    body {
-      font-family: Inter, "Segoe UI", Arial, sans-serif;
-      color: var(--text);
+    body{
+      font-family:Inter,"Segoe UI",Arial,sans-serif;
+      color:var(--text);
+      min-height:100vh;
       background:
-        radial-gradient(circle at top right, rgba(34,197,94,.08), transparent 28%),
-        linear-gradient(180deg, var(--bg), var(--bg2));
+        radial-gradient(circle at 12% 16%, rgba(111,176,255,.18), transparent 0 22%),
+        radial-gradient(circle at 88% 10%, rgba(215,173,90,.18), transparent 0 24%),
+        radial-gradient(circle at 70% 82%, rgba(34,197,94,.08), transparent 0 18%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
     }
 
-    .wrap {
-      width: min(100%, 1500px);
-      margin: 0 auto;
-      padding: 14px;
+    body::before,
+    body::after{
+      content:"";
+      position:fixed;
+      width:32rem;
+      height:32rem;
+      border-radius:50%;
+      filter:blur(80px);
+      opacity:.14;
+      pointer-events:none;
+      z-index:0;
+      animation:floatGlow 18s ease-in-out infinite;
     }
 
-    .hero {
-      background: linear-gradient(135deg, #0f172a, #111827 50%, #0b3b2e);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 18px;
-      box-shadow: var(--shadow);
+    body::before{
+      top:-10rem;
+      right:-10rem;
+      background:var(--blue);
     }
 
-    .hero-top {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
+    body::after{
+      bottom:-12rem;
+      left:-10rem;
+      background:var(--gold);
+      animation-delay:-8s;
     }
 
-    .hero-top label {
-      font-weight: 700;
-      color: #cbd5e1;
-      font-size: 13px;
-      white-space: nowrap;
+    @keyframes floatGlow{
+      0%,100%{transform:translate(0,0) scale(1)}
+      50%{transform:translate(14px,18px) scale(1.08)}
     }
 
-    .hero-top select {
-      width: 180px;
-      min-width: 180px;
-      max-width: 180px;
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(18px)}
+      to{opacity:1;transform:translateY(0)}
     }
 
-    h1 {
-      margin: 0 0 8px;
-      font-size: clamp(1.5rem, 2vw + 1rem, 2.2rem);
-      line-height: 1.15;
-      word-break: break-word;
+    @keyframes pulseSoft{
+      0%,100%{box-shadow:0 0 0 0 rgba(215,173,90,.18)}
+      50%{box-shadow:0 0 0 12px rgba(215,173,90,0)}
     }
 
-    .sub {
-      color: var(--muted);
-      line-height: 1.5;
-      font-size: 14px;
-      max-width: 980px;
+    .app{
+      position:relative;
+      z-index:1;
+      width:min(var(--max), 95vw);
+      margin:0 auto;
+      padding:18px 0 40px;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
-      gap: 18px;
-      margin-top: 18px;
-      align-items: start;
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:14px 16px;
+      margin-bottom:18px;
+      border:1px solid var(--border);
+      border-radius:22px;
+      background:rgba(7,17,31,.62);
+      backdrop-filter:blur(var(--blur));
+      box-shadow:var(--shadow-soft);
+      animation:fadeUp .55s ease both;
     }
 
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      min-width: 0;
-      box-shadow: var(--shadow);
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
     }
 
-    h2 {
-      margin: 0 0 14px;
-      font-size: 20px;
+    .brand-badge{
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      font-size:1rem;
+      color:#161616;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));
+      box-shadow:0 8px 24px rgba(215,173,90,.28);
+      flex:0 0 auto;
+      animation:pulseSoft 3.2s ease-in-out infinite;
     }
 
-    .field { margin-bottom: 14px; }
-
-    .field label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 14px;
-      font-weight: 700;
-      color: #cbd5e1;
+    .brand-copy{min-width:0}
+    .eyebrow{
+      display:block;
+      font-size:.74rem;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--gold);
+      font-weight:800;
+      margin-bottom:2px;
     }
 
-    input, select {
-      width: 100%;
-      max-width: 100%;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--input);
-      color: var(--text);
-      font-size: 15px;
-      outline: none;
-      transition: border-color .18s ease, transform .18s ease;
+    .brand-title{
+      font-size:1rem;
+      font-weight:800;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
-    input:focus, select:focus {
-      border-color: #4ade80;
-      transform: translateY(-1px);
+    .topbar-actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
     }
 
-    .inline-radio {
-      display: grid;
-      gap: 10px;
-      margin-top: 6px;
+    .btn{
+      appearance:none;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      border-radius:14px;
+      padding:11px 16px;
+      font-size:.95rem;
+      font-weight:800;
+      cursor:pointer;
+      transition:transform .22s ease, background .22s ease, border-color .22s ease, box-shadow .22s ease, opacity .22s ease;
+      backdrop-filter:blur(10px);
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
     }
 
-    .inline-radio label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      color: #e5e7eb;
-      flex-wrap: wrap;
-      margin-bottom: 0;
+    .btn:hover{
+      transform:translateY(-1px);
+      border-color:var(--border-strong);
+      background:rgba(255,255,255,.07);
     }
 
-    .inline-radio input {
-      width: auto;
-      accent-color: #22c55e;
-      transform: scale(1.05);
+    .btn:active{transform:translateY(0)}
+
+    .btn-home{
+      color:#161616;
+      border:none;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));
+      box-shadow:0 12px 30px rgba(215,173,90,.24);
     }
 
-    .btns {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 10px;
+    .btn-ghost{
+      background:rgba(255,255,255,.03);
     }
 
-    button {
-      padding: 12px 16px;
-      border: none;
-      border-radius: 12px;
-      background: var(--accent);
-      color: #052e16;
-      font-weight: 800;
-      cursor: pointer;
-      transition: transform .18s ease, opacity .18s ease;
-      min-width: 130px;
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border:1px solid var(--border);
+      border-radius:30px;
+      padding:28px;
+      background:
+        linear-gradient(135deg, rgba(215,173,90,.10), rgba(111,176,255,.08)),
+        rgba(10,18,32,.62);
+      backdrop-filter:blur(var(--blur));
+      box-shadow:var(--shadow);
+      display:grid;
+      gap:20px;
+      animation:fadeUp .65s ease both;
     }
 
-    button:hover { transform: translateY(-1px); }
-    button:active { transform: translateY(0); }
-
-    button.secondary {
-      background: #1e293b;
-      color: var(--text);
-      border: 1px solid var(--border);
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:auto -60px -60px auto;
+      width:220px;
+      height:220px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(111,176,255,.22), transparent 65%);
+      pointer-events:none;
     }
 
-    .hint {
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-      word-break: break-word;
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.35fr .95fr;
+      gap:18px;
+      align-items:start;
     }
 
-    .notice {
-      margin-top: 10px;
+    .hero-copy h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 3.2vw, 3.2rem);
+      line-height:1.05;
+      letter-spacing:-.04em;
+      max-width:860px;
     }
 
-    .pill {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 800;
-      margin-right: 6px;
-      margin-bottom: 6px;
-      border: 1px solid transparent;
-      max-width: 100%;
-      word-break: break-word;
+    .hero-copy p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.65;
+      max-width:900px;
+      font-size:1rem;
     }
 
-    .ok {
-      background: rgba(34, 197, 94, .15);
-      color: var(--ok);
-      border-color: rgba(34, 197, 94, .25);
+    .hero-side{
+      display:grid;
+      gap:12px;
+      align-content:start;
     }
 
-    .warn {
-      background: rgba(245, 158, 11, .15);
-      color: var(--warn);
-      border-color: rgba(245, 158, 11, .25);
+    .hero-pill-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:flex-end;
     }
 
-    .bad {
-      background: rgba(239, 68, 68, .15);
-      color: var(--bad);
-      border-color: rgba(239, 68, 68, .25);
+    .pill{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:.82rem;
+      font-weight:800;
+      backdrop-filter:blur(10px);
+      white-space:nowrap;
     }
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(120px, 1fr));
-      gap: 12px;
-      margin-bottom: 14px;
+    .hero-note{
+      justify-self:end;
+      max-width:430px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      border-radius:18px;
+      padding:14px 16px;
+      color:var(--muted);
+      line-height:1.55;
+      font-size:.92rem;
     }
 
-    .stat {
-      background: var(--panel2);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      min-width: 0;
+    .toolbar{
+      display:grid;
+      grid-template-columns:1fr 220px 220px auto auto;
+      gap:12px;
+      align-items:end;
     }
 
-    .stat .k {
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 6px;
+    .field{
+      display:grid;
+      gap:7px;
     }
 
-    .stat .v {
-      font-size: clamp(1rem, 1.3vw, 1.35rem);
-      font-weight: 800;
-      word-break: break-word;
+    .field label{
+      color:var(--muted);
+      font-size:.88rem;
+      font-weight:700;
     }
 
-    .toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
+    .control{
+      width:100%;
+      border:1px solid var(--border);
+      background:rgba(7,17,31,.72);
+      color:var(--text);
+      border-radius:16px;
+      padding:13px 14px;
+      font-size:.96rem;
+      outline:none;
+      transition:border-color .22s ease, background .22s ease, box-shadow .22s ease, transform .22s ease;
+      backdrop-filter:blur(8px);
     }
 
-    .toolbar .right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+    .control:focus{
+      border-color:rgba(111,176,255,.55);
+      box-shadow:0 0 0 4px rgba(111,176,255,.10);
+      transform:translateY(-1px);
     }
 
-    .table-wrap {
-      width: 100%;
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
-      max-height: 72vh;
-      border-radius: 12px;
-      border: 1px solid #253247;
+    .hero-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      align-items:end;
     }
 
-    table {
-      width: 100%;
-      min-width: 900px;
-      border-collapse: collapse;
-      background: #0f172a;
+    .sticky-kpis{
+      position:sticky;
+      top:12px;
+      z-index:20;
+      margin-top:18px;
+      padding:12px;
+      border-radius:24px;
+      border:1px solid var(--border);
+      background:rgba(8,16,30,.70);
+      backdrop-filter:blur(16px);
+      box-shadow:var(--shadow-soft);
+      animation:fadeUp .8s ease both;
     }
 
-    th, td {
-      padding: 10px 12px;
-      border-bottom: 1px solid #253247;
-      text-align: left;
-      vertical-align: middle;
+    .grid-kpi{
+      display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:12px;
     }
 
-    th {
-      background: #132033;
-      color: #cfe3ff;
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      white-space: nowrap;
+    .kpi{
+      position:relative;
+      overflow:hidden;
+      border:1px solid var(--border);
+      border-radius:20px;
+      padding:16px;
+      min-height:108px;
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow:var(--shadow-soft);
+      transition:transform .25s ease, border-color .25s ease, background .25s ease;
     }
 
-    tbody tr:hover {
-      background: rgba(255,255,255,0.025);
+    .kpi:hover{
+      transform:translateY(-3px);
+      border-color:var(--border-strong);
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
     }
 
-    .mono {
-      font-family: ui-monospace, Consolas, monospace;
+    .kpi::after{
+      content:"";
+      position:absolute;
+      right:-18px;
+      bottom:-18px;
+      width:72px;
+      height:72px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,255,255,.10), transparent 70%);
+      pointer-events:none;
     }
 
-    .type-guardsmen { color: #93c5fd; }
-    .type-specialists { color: #c4b5fd; }
-    .type-monsters { color: #fca5a5; }
-    .type-mercs { color: #fde68a; }
+    .kpi-label{
+      color:var(--muted);
+      font-size:.82rem;
+      font-weight:700;
+      line-height:1.35;
+    }
 
-    @media (max-width: 1180px) {
-      .grid {
-        grid-template-columns: 1fr;
+    .kpi-value{
+      margin-top:10px;
+      font-size:clamp(1.35rem, 2vw, 2.05rem);
+      font-weight:900;
+      line-height:1;
+      letter-spacing:-.03em;
+      word-break:break-word;
+    }
+
+    .kpi-hint{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:.78rem;
+      line-height:1.4;
+    }
+
+    .main-grid{
+      display:grid;
+      grid-template-columns:minmax(320px, 410px) minmax(0, 1fr);
+      gap:18px;
+      margin-top:18px;
+      align-items:start;
+    }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:18px;
+      min-width:0;
+      box-shadow:var(--shadow-soft);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)),
+        var(--panel);
+      backdrop-filter:blur(var(--blur));
+      animation:fadeUp .85s ease both;
+    }
+
+    .card h2{
+      margin:0 0 14px;
+      font-size:1.16rem;
+      letter-spacing:-.02em;
+    }
+
+    .stack{
+      display:grid;
+      gap:18px;
+      min-width:0;
+    }
+
+    .inline-radio{
+      display:grid;
+      gap:10px;
+      margin-top:4px;
+    }
+
+    .choice{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      border-radius:16px;
+      transition:border-color .2s ease, background .2s ease, transform .2s ease;
+    }
+
+    .choice:hover{
+      transform:translateY(-1px);
+      border-color:var(--border-strong);
+      background:rgba(255,255,255,.05);
+    }
+
+    .choice input{
+      width:auto;
+      accent-color:var(--gold);
+      transform:scale(1.05);
+      margin:0;
+    }
+
+    .choice span{
+      font-weight:700;
+      color:var(--text);
+    }
+
+    .btns{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+
+    .hint{
+      margin-top:12px;
+      color:var(--muted);
+      font-size:.84rem;
+      line-height:1.6;
+    }
+
+    .divider{
+      margin-top:14px;
+      padding-top:14px;
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+
+    .notice{
+      margin-top:12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .status-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      font-size:.78rem;
+      font-weight:800;
+      border:1px solid transparent;
+      white-space:nowrap;
+    }
+
+    .ok{
+      background:rgba(34,197,94,.15);
+      color:#baf7cd;
+      border-color:rgba(34,197,94,.24);
+    }
+
+    .warn{
+      background:rgba(245,158,11,.15);
+      color:#ffd992;
+      border-color:rgba(245,158,11,.24);
+    }
+
+    .bad{
+      background:rgba(239,68,68,.15);
+      color:#ffc4c4;
+      border-color:rgba(239,68,68,.24);
+    }
+
+    .toolbar-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+
+    .toolbar-row .right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .table-wrap{
+      width:100%;
+      overflow:auto;
+      -webkit-overflow-scrolling:touch;
+      max-height:72vh;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.02);
+    }
+
+    table{
+      width:100%;
+      min-width:920px;
+      border-collapse:collapse;
+      background:rgba(10,18,32,.45);
+    }
+
+    th,td{
+      padding:11px 12px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      text-align:left;
+      vertical-align:middle;
+    }
+
+    th{
+      position:sticky;
+      top:0;
+      z-index:2;
+      background:rgba(10,20,36,.96);
+      color:#dce8ff;
+      backdrop-filter:blur(10px);
+      white-space:nowrap;
+    }
+
+    tbody tr{
+      transition:background .18s ease, transform .18s ease;
+    }
+
+    tbody tr:hover{
+      background:rgba(255,255,255,.04);
+    }
+
+    .mono{font-family:ui-monospace,Consolas,monospace}
+    .type-guardsmen{color:#93c5fd}
+    .type-specialists{color:#d8c4ff}
+    .type-monsters{color:#fbb6b6}
+    .type-mercs{color:#fde68a}
+
+    .to-top{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      z-index:96;
+      width:52px;
+      height:52px;
+      border-radius:50%;
+      border:none;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));
+      color:#151515;
+      font-size:1.4rem;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 12px 30px rgba(215,173,90,.30);
+      display:grid;
+      place-items:center;
+      opacity:0;
+      pointer-events:none;
+      transform:translateY(10px);
+      transition:opacity .25s ease, transform .25s ease;
+    }
+
+    .to-top.show{
+      opacity:1;
+      pointer-events:auto;
+      transform:translateY(0);
+    }
+
+    @media (max-width:1280px){
+      .hero-grid{grid-template-columns:1fr}
+      .hero-pill-row,.hero-note{justify-self:start;justify-content:flex-start}
+      .grid-kpi{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .main-grid{grid-template-columns:1fr}
+      .sticky-kpis{position:relative;top:auto}
+    }
+
+    @media (max-width:980px){
+      .toolbar{grid-template-columns:1fr 1fr}
+      .grid-kpi{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .topbar{
+        flex-direction:column;
+        align-items:stretch;
+      }
+      .topbar-actions{
+        justify-content:stretch;
+      }
+      .topbar-actions .btn{
+        flex:1 1 auto;
       }
     }
 
-    @media (max-width: 980px) {
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    @media (max-width:760px){
+      .app{
+        width:min(100%, 94vw);
+        padding-top:14px;
+      }
+      .hero{
+        border-radius:24px;
+        padding:20px;
+      }
+      .toolbar{
+        grid-template-columns:1fr;
+      }
+      .brand-title{
+        white-space:normal;
+      }
+      .hero-actions{
+        justify-content:stretch;
+      }
+      .hero-actions .btn{
+        flex:1 1 auto;
+      }
+      .grid-kpi{
+        grid-template-columns:1fr 1fr;
+      }
+      .card{
+        padding:15px;
+        border-radius:20px;
+      }
+      .toolbar-row{
+        flex-direction:column;
+        align-items:stretch;
+      }
+      .toolbar-row .right{
+        width:100%;
+        display:grid;
+      }
+      .table-wrap{
+        max-height:64vh;
+      }
+      table{
+        min-width:860px;
       }
     }
 
-    @media (max-width: 640px) {
-      .wrap { padding: 10px; }
-      .hero, .card { padding: 14px; }
-      .stats { grid-template-columns: 1fr; }
-      .hero-top {
-        justify-content: stretch;
+    @media (max-width:480px){
+      .grid-kpi{
+        grid-template-columns:1fr;
       }
-      .hero-top label,
-      .hero-top select {
-        width: 100%;
-        max-width: 100%;
+      .kpi{
+        min-height:96px;
+        padding:14px;
       }
-      .toolbar {
-        flex-direction: column;
-        align-items: stretch;
+      .hero-copy h1{
+        font-size:1.8rem;
       }
-      .toolbar .right {
-        width: 100%;
-        display: grid;
-      }
-      .toolbar .right select {
-        width: 100% !important;
-      }
-      .btns button {
-        flex: 1 1 100%;
+      .to-top{
+        right:14px;
+        bottom:14px;
+        width:48px;
+        height:48px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="hero">
-      <div class="hero-top">
-        <label for="language" id="langLabel">Language</label>
-        <select id="language">
-          <option value="en">English</option>
-          <option value="ru">Русский</option>
-          <option value="tr">Türkçe</option>
-          <option value="es">Español</option>
-          <option value="pl">Polski</option>
-          <option value="ar">العربية</option>
-          <option value="uk">Українська</option>
-          <option value="fr">Français</option>
-          <option value="pt">Português</option>
-        </select>
+  <div class="app" id="top">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">WOA</div>
+        <div class="brand-copy">
+          <span class="eyebrow">WOA Command Center</span>
+          <div class="brand-title">WoA Troop Stacking Calculator</div>
+        </div>
       </div>
 
-      <h1 id="heroTitle">WoA Troop Stacking Calculator</h1>
-      <div class="sub" id="heroSub">
-        Enter Leadership, Authority, Dominance, troop level, and stack mode. The calculator builds your stack automatically and shows the final stack structure clearly.
+      <div class="topbar-actions">
+        <a class="btn btn-home" href="https://sites.google.com/view/woa-command-center/home">Home</a>
+        <button class="btn btn-ghost" id="scrollToResultsBtn" type="button">View Results</button>
+        <button class="btn btn-ghost" id="refreshVisualBtn" type="button">Refresh View</button>
       </div>
-    </div>
+    </header>
 
-    <div class="grid">
-      <div class="card">
-        <h2 id="inputsTitle">Inputs</h2>
+    <section class="hero">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">Battle Stack Intelligence</span>
+          <h1 id="heroTitle">WoA Troop Stacking Calculator</h1>
+          <p id="heroSub">
+            Enter Leadership, Authority, Dominance, troop level, and stack mode. The calculator builds your stack automatically and presents the final structure in a cleaner command view.
+          </p>
+        </div>
 
+        <div class="hero-side">
+          <div class="hero-pill-row">
+            <div class="pill">Troop Stack Logic</div>
+            <div class="pill">Leadership Based</div>
+            <div class="pill">Monster & Merc Layers</div>
+          </div>
+          <div class="hero-note">
+            Designed for direct GitHub hosting, better readability on mobile, and faster troop planning without container layout issues.
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar">
         <div class="field">
-          <label for="leadership" id="leadershipLabel">Leadership</label>
-          <input id="leadership" type="number" value="100000" min="0" step="1" />
+          <label for="searchUnit">Search unit in results</label>
+          <input id="searchUnit" class="control" type="text" placeholder="Type unit or tier name..." />
         </div>
 
         <div class="field">
-          <label for="authority" id="authorityLabel">Authority</label>
-          <input id="authority" type="number" value="1000" min="0" step="1" />
-        </div>
-
-        <div class="field">
-          <label for="dominance" id="dominanceLabel">Dominance</label>
-          <input id="dominance" type="number" value="1000" min="0" step="1" />
-        </div>
-
-        <div class="field">
-          <label for="troopLevel" id="troopLevelLabel">Highest Troop Level</label>
-          <select id="troopLevel">
-            <option>G5</option>
-            <option>G6</option>
-            <option selected>G7</option>
-            <option>G8</option>
-            <option>G9</option>
+          <label for="language" id="langLabel">Language</label>
+          <select id="language" class="control">
+            <option value="en">English</option>
+            <option value="ru">Русский</option>
+            <option value="tr">Türkçe</option>
+            <option value="es">Español</option>
+            <option value="pl">Polski</option>
+            <option value="ar">العربية</option>
+            <option value="uk">Українська</option>
+            <option value="fr">Français</option>
+            <option value="pt">Português</option>
           </select>
         </div>
 
         <div class="field">
-          <label id="stackModeLabel">Stack Mode</label>
-          <div class="inline-radio">
-            <label><input type="radio" name="stackMode" value="guards" checked> <span id="stackModeGuardsText">Guardsmen Only</span></label>
-            <label><input type="radio" name="stackMode" value="specialists"> <span id="stackModeSpecsText">Guardsmen + Specialists</span></label>
-          </div>
+          <label for="typeFilterHero">Quick result filter</label>
+          <select id="typeFilterHero" class="control">
+            <option value="all">All</option>
+            <option value="troops">Guardsmen + Specialists</option>
+            <option value="guardsmen">Guardsmen</option>
+            <option value="specialists">Specialists</option>
+            <option value="monsters">Monsters</option>
+            <option value="mercs">Mercs</option>
+          </select>
         </div>
 
-        <div class="field">
-          <label id="modernisationLabel">Army Modernisation Completed</label>
-          <div class="inline-radio">
-            <label><input type="radio" name="modernisation" value="no" checked> <span id="modernisationNoText">No</span></label>
-            <label><input type="radio" name="modernisation" value="yes"> <span id="modernisationYesText">Yes</span></label>
-          </div>
-        </div>
-
-        <div class="btns">
-          <button id="calcBtn">Calculate</button>
-          <button class="secondary" id="resetBtn">Reset</button>
-        </div>
-
-        <div class="hint">
-          <strong id="howTitle">How to use:</strong><br>
-          <span id="how1">1. Enter Leadership, Authority and Dominance.</span><br>
-          <span id="how2">2. Pick troop level and stack mode.</span><br>
-          <span id="how3">3. Specialists are blocked unless Army Modernisation is completed.</span><br>
-          <span id="how4">4. Leadership is rounded down to the nearest 1,000 for the calculation basis.</span>
-        </div>
-
-        <div class="notice">
-          <span class="pill warn" id="modeNoteText">Guardsmen + Specialists is only recommended when Army Modernisation is fully completed.</span>
-        </div>
-
-        <div class="hint" style="margin-top:14px;padding-top:12px;border-top:1px solid #253247;">
-          <strong id="disclaimerTitle">Troop Calculator Disclaimer</strong><br>
-          <span id="disclaimerText">
-            This calculator provides a baseline setup to guide troop composition and firing order. Due to differences in player bonuses, research, gear, and other modifiers, results may vary. Players are encouraged to fine-tune and adjust their setup to achieve optimal performance based on their individual account.
-          </span>
+        <div class="hero-actions">
+          <button class="btn btn-ghost" id="heroResetBtn" type="button">Reset</button>
+          <button class="btn btn-home" id="heroCalcBtn" type="button">Calculate</button>
         </div>
       </div>
+    </section>
 
-      <div class="card">
-        <div class="stats">
-          <div class="stat"><div class="k" id="statGuard">Selected Tiers</div><div class="v" id="guardTiers">-</div></div>
-          <div class="stat"><div class="k" id="statMon">Selected Monster Levels</div><div class="v" id="monsterLevels">-</div></div>
-          <div class="stat"><div class="k" id="statFly">Highest Flyer Total HP</div><div class="v" id="flyerCap">-</div></div>
-          <div class="stat"><div class="k" id="statRows">Stacks Returned</div><div class="v" id="rowCount">0</div></div>
-          <div class="stat"><div class="k" id="statRounded">Rounded Leadership</div><div class="v" id="roundedLeadership">-</div></div>
+    <section class="sticky-kpis">
+      <div class="grid-kpi">
+        <article class="kpi">
+          <div class="kpi-label" id="statGuard">Selected Tiers</div>
+          <div class="kpi-value" id="guardTiers">-</div>
+          <div class="kpi-hint">Top three troop layers currently used in the stack.</div>
+        </article>
+
+        <article class="kpi">
+          <div class="kpi-label" id="statMon">Selected Monster Levels</div>
+          <div class="kpi-value" id="monsterLevels">-</div>
+          <div class="kpi-hint">Top available monster pairing included in the output.</div>
+        </article>
+
+        <article class="kpi">
+          <div class="kpi-label" id="statFly">Highest Flyer Total HP</div>
+          <div class="kpi-value" id="flyerCap">-</div>
+          <div class="kpi-hint">Upper HP reference used to control later stack layers.</div>
+        </article>
+
+        <article class="kpi">
+          <div class="kpi-label" id="statRows">Stacks Returned</div>
+          <div class="kpi-value" id="rowCount">0</div>
+          <div class="kpi-hint">Rows shown after filters are applied.</div>
+        </article>
+
+        <article class="kpi">
+          <div class="kpi-label" id="statRounded">Rounded Leadership</div>
+          <div class="kpi-value" id="roundedLeadership">-</div>
+          <div class="kpi-hint">Leadership basis rounded down to the nearest 1,000.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="main-grid">
+      <aside class="card">
+        <h2 id="inputsTitle">Inputs</h2>
+
+        <div class="stack">
+          <div class="field">
+            <label for="leadership" id="leadershipLabel">Leadership</label>
+            <input id="leadership" class="control" type="number" value="100000" min="0" step="1" />
+          </div>
+
+          <div class="field">
+            <label for="authority" id="authorityLabel">Authority</label>
+            <input id="authority" class="control" type="number" value="1000" min="0" step="1" />
+          </div>
+
+          <div class="field">
+            <label for="dominance" id="dominanceLabel">Dominance</label>
+            <input id="dominance" class="control" type="number" value="1000" min="0" step="1" />
+          </div>
+
+          <div class="field">
+            <label for="troopLevel" id="troopLevelLabel">Highest Troop Level</label>
+            <select id="troopLevel" class="control">
+              <option>G5</option>
+              <option>G6</option>
+              <option selected>G7</option>
+              <option>G8</option>
+              <option>G9</option>
+            </select>
+          </div>
+		            <div class="field">
+            <label id="stackModeLabel">Stack Mode</label>
+            <div class="inline-radio">
+              <label class="choice">
+                <input type="radio" name="stackMode" value="guards" checked />
+                <span id="stackModeGuardsText">Guardsmen Only</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="stackMode" value="specialists" />
+                <span id="stackModeSpecsText">Guardsmen + Specialists</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label id="modernisationLabel">Army Modernisation Completed</label>
+            <div class="inline-radio">
+              <label class="choice">
+                <input type="radio" name="modernisation" value="no" checked />
+                <span id="modernisationNoText">No</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="modernisation" value="yes" />
+                <span id="modernisationYesText">Yes</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="btns">
+            <button class="btn btn-home" id="calcBtn" type="button">Calculate</button>
+            <button class="btn btn-ghost" id="resetBtn" type="button">Reset</button>
+          </div>
+
+          <div class="hint">
+            <strong id="howTitle">How to use:</strong><br>
+            <span id="how1">1. Enter Leadership, Authority and Dominance.</span><br>
+            <span id="how2">2. Pick troop level and stack mode.</span><br>
+            <span id="how3">3. Specialists are blocked unless Army Modernisation is completed.</span><br>
+            <span id="how4">4. Leadership is rounded down to the nearest 1,000 for the calculation basis.</span>
+          </div>
+
+          <div class="notice" id="messages">
+            <span class="status-pill warn" id="modeNoteText">Guardsmen + Specialists is only recommended when Army Modernisation is fully completed.</span>
+          </div>
+
+          <div class="hint divider">
+            <strong id="disclaimerTitle">Troop Calculator Disclaimer</strong><br>
+            <span id="disclaimerText">
+              This calculator provides a baseline setup to guide troop composition and firing order. Due to differences in player bonuses, research, gear, and other modifiers, results may vary. Players are encouraged to fine-tune and adjust their setup to achieve optimal performance based on their individual account.
+            </span>
+          </div>
         </div>
+      </aside>
 
-        <div id="messages"></div>
+      <section class="card" id="resultsStart">
+        <div class="toolbar-row">
+          <div>
+            <h2 style="margin:0;">Stack Output</h2>
+            <div style="margin-top:6px;color:var(--muted);font-size:.9rem;line-height:1.5;">
+              Full troop, monster, and mercenary structure based on the selected stack mode and rounded leadership.
+            </div>
+          </div>
 
-        <div class="toolbar">
-          <div></div>
           <div class="right">
             <label for="typeFilter" id="filterLabel" style="font-weight:700;color:#cbd5e1;">Quick Filter</label>
-            <select id="typeFilter" style="width:220px;">
+            <select id="typeFilter" class="control" style="width:220px;">
               <option value="all">All</option>
               <option value="troops">Guardsmen + Specialists</option>
               <option value="guardsmen">Guardsmen</option>
@@ -499,27 +948,71 @@
             <tbody id="outputBody"></tbody>
           </table>
         </div>
-      </div>
-    </div>
+      </section>
+    </section>
   </div>
+
+  <button class="to-top" id="toTopBtn" type="button" aria-label="Back to top">↑</button>
 
   <script>
     const i18n = {
       en: {
-        language:"Language", title:"WoA Troop Stacking Calculator", sub:"Enter Leadership, Authority, Dominance, troop level, and stack mode. The calculator builds your stack automatically and shows the final stack structure clearly.",
-        inputs:"Inputs", leadership:"Leadership", authority:"Authority", dominance:"Dominance", troop:"Highest Troop Level", stackMode:"Stack Mode",
-        guardsOnly:"Guardsmen Only", guardsSpecs:"Guardsmen + Specialists", modernisation:"Army Modernisation Completed", yes:"Yes", no:"No",
-        calc:"Calculate", reset:"Reset", howTitle:"How to use:", how1:"1. Enter Leadership, Authority and Dominance.", how2:"2. Pick troop level and stack mode.",
-        how3:"3. Specialists are blocked unless Army Modernisation is completed.", how4:"4. Leadership is rounded down to the nearest 1,000 for the calculation basis.",
-        modeNote:"Guardsmen + Specialists is only recommended when Army Modernisation is fully completed.", selectedTiers:"Selected Tiers", selectedMonsters:"Selected Monster Levels",
-        highestFlyer:"Highest Flyer Total HP", stacksReturned:"Stacks Returned", roundedLead:"Rounded Leadership", quickFilter:"Quick Filter", all:"All",
-        troops:"Guardsmen + Specialists", guardsmen:"Guardsmen", specialists:"Specialists", monsters:"Monsters", mercs:"Mercs", order:"Order", tier:"Tier",
-        name:"Name", type:"Type", count:"Count", hp:"HP / Unit", total:"Total HP", group:"Group", monstersOk:"Monsters: included where cap allows",
-        monstersWarn:"Monsters: limited / blocked by cap or dominance", mercsOk:"Mercs: enabled from this troop level", mercsWarn:"Mercs: start at G6",
-        specBlocked:"Specialists require full Army Modernisation. Switch to Guardsmen Only or complete research.", specTierBlocked:"Specialists are only available for G7 to G9.",
-        groupGuardsmen:"Guardsmen", groupSpecialists:"Specialists", groupMonsters:"Monsters", groupMercs:"Mercs",
-        disclaimerTitle:"Troop Calculator Disclaimer", disclaimerText:"This calculator provides a baseline setup to guide troop composition and firing order. Due to differences in player bonuses, research, gear, and other modifiers, results may vary. Players are encouraged to fine-tune and adjust their setup to achieve optimal performance based on their individual account.",
-        advG6:"Advanced G6 maximization applied", advG5:"Advanced G5 maximization applied"
+        language:"Language",
+        title:"WoA Troop Stacking Calculator",
+        sub:"Enter Leadership, Authority, Dominance, troop level, and stack mode. The calculator builds your stack automatically and shows the final stack structure clearly.",
+        inputs:"Inputs",
+        leadership:"Leadership",
+        authority:"Authority",
+        dominance:"Dominance",
+        troop:"Highest Troop Level",
+        stackMode:"Stack Mode",
+        guardsOnly:"Guardsmen Only",
+        guardsSpecs:"Guardsmen + Specialists",
+        modernisation:"Army Modernisation Completed",
+        yes:"Yes",
+        no:"No",
+        calc:"Calculate",
+        reset:"Reset",
+        howTitle:"How to use:",
+        how1:"1. Enter Leadership, Authority and Dominance.",
+        how2:"2. Pick troop level and stack mode.",
+        how3:"3. Specialists are blocked unless Army Modernisation is completed.",
+        how4:"4. Leadership is rounded down to the nearest 1,000 for the calculation basis.",
+        modeNote:"Guardsmen + Specialists is only recommended when Army Modernisation is fully completed.",
+        selectedTiers:"Selected Tiers",
+        selectedMonsters:"Selected Monster Levels",
+        highestFlyer:"Highest Flyer Total HP",
+        stacksReturned:"Stacks Returned",
+        roundedLead:"Rounded Leadership",
+        quickFilter:"Quick Filter",
+        all:"All",
+        troops:"Guardsmen + Specialists",
+        guardsmen:"Guardsmen",
+        specialists:"Specialists",
+        monsters:"Monsters",
+        mercs:"Mercs",
+        order:"Order",
+        tier:"Tier",
+        name:"Name",
+        type:"Type",
+        count:"Count",
+        hp:"HP / Unit",
+        total:"Total HP",
+        group:"Group",
+        monstersOk:"Monsters: included where cap allows",
+        monstersWarn:"Monsters: limited / blocked by cap or dominance",
+        mercsOk:"Mercs: enabled from this troop level",
+        mercsWarn:"Mercs: start at G6",
+        specBlocked:"Specialists require full Army Modernisation. Switch to Guardsmen Only or complete research.",
+        specTierBlocked:"Specialists are only available for G7 to G9.",
+        groupGuardsmen:"Guardsmen",
+        groupSpecialists:"Specialists",
+        groupMonsters:"Monsters",
+        groupMercs:"Mercs",
+        disclaimerTitle:"Troop Calculator Disclaimer",
+        disclaimerText:"This calculator provides a baseline setup to guide troop composition and firing order. Due to differences in player bonuses, research, gear, and other modifiers, results may vary. Players are encouraged to fine-tune and adjust their setup to achieve optimal performance based on their individual account.",
+        advG6:"Advanced G6 maximization applied",
+        advG5:"Advanced G5 maximization applied"
       },
       ru: { language:"Язык", title:"Калькулятор стеков войск WoA", sub:"Введите лидерство, авторитет, доминирование, уровень войск и режим стека. Калькулятор автоматически строит стек и показывает финальную структуру.", inputs:"Параметры", leadership:"Лидерство", authority:"Авторитет", dominance:"Доминирование", troop:"Максимальный уровень войск", stackMode:"Режим стека", guardsOnly:"Только гвардейцы", guardsSpecs:"Гвардейцы + специалисты", modernisation:"Армейская модернизация завершена", yes:"Да", no:"Нет", calc:"Рассчитать", reset:"Сброс", howTitle:"Как использовать:", how1:"1. Введите лидерство, авторитет и доминирование.", how2:"2. Выберите уровень войск и режим стека.", how3:"3. Специалисты заблокированы без полной модернизации армии.", how4:"4. Для расчёта лидерство округляется вниз до ближайшей 1 000.", modeNote:"Гвардейцы + специалисты рекомендуются только при полной модернизации армии.", selectedTiers:"Выбранные уровни", selectedMonsters:"Выбранные уровни монстров", highestFlyer:"Макс. суммарное HP летающих", stacksReturned:"Возвращено стеков", roundedLead:"Округлённое лидерство", quickFilter:"Быстрый фильтр", all:"Все", troops:"Гвардейцы + специалисты", guardsmen:"Гвардейцы", specialists:"Специалисты", monsters:"Монстры", mercs:"Наёмники", order:"Порядок", tier:"Уровень", name:"Название", type:"Тип", count:"Количество", hp:"HP / юнит", total:"Общее HP", group:"Группа", monstersOk:"Монстры: включены там, где позволяет лимит", monstersWarn:"Монстры: ограничены лимитом или доминированием", mercsOk:"Наёмники: доступны с этого уровня войск", mercsWarn:"Наёмники: начинаются с G6", specBlocked:"Для специалистов нужна полная модернизация армии. Переключитесь на «Только гвардейцы» или завершите исследование.", specTierBlocked:"Специалисты доступны только для G7–G9.", groupGuardsmen:"Гвардейцы", groupSpecialists:"Специалисты", groupMonsters:"Монстры", groupMercs:"Наёмники", disclaimerTitle:"Предупреждение калькулятора", disclaimerText:"Этот калькулятор даёт базовую настройку для состава войск и порядка удара. Из-за различий в бонусах, исследованиях, снаряжении и других модификаторах результаты могут отличаться. Настраивайте состав под свой аккаунт.", advG6:"Применена расширенная максимизация G6", advG5:"Применена расширенная максимизация G5" },
       tr: { language:"Dil", title:"WoA Birlik Dizilim Hesaplayıcısı", sub:"Liderlik, otorite, baskınlık, birlik seviyesi ve dizilim modunu girin. Hesaplayıcı dizilimi otomatik oluşturur ve son yapıyı gösterir.", inputs:"Girdiler", leadership:"Liderlik", authority:"Otorite", dominance:"Baskınlık", troop:"En Yüksek Birlik Seviyesi", stackMode:"Dizilim Modu", guardsOnly:"Sadece Muhafızlar", guardsSpecs:"Muhafızlar + Uzmanlar", modernisation:"Ordu Modernizasyonu Tamamlandı", yes:"Evet", no:"Hayır", calc:"Hesapla", reset:"Sıfırla", howTitle:"Nasıl kullanılır:", how1:"1. Liderlik, otorite ve baskınlık girin.", how2:"2. Birlik seviyesini ve dizilim modunu seçin.", how3:"3. Ordu modernizasyonu tamamlanmadan uzmanlar engellenir.", how4:"4. Hesaplama için liderlik en yakın alt 1.000’e yuvarlanır.", modeNote:"Muhafızlar + Uzmanlar yalnızca ordu modernizasyonu tamamlandığında önerilir.", selectedTiers:"Seçilen Kademeler", selectedMonsters:"Seçilen Canavar Seviyeleri", highestFlyer:"En Yüksek Uçan Toplam HP", stacksReturned:"Dönen Yığınlar", roundedLead:"Yuvarlanmış Liderlik", quickFilter:"Hızlı Filtre", all:"Tümü", troops:"Muhafızlar + Uzmanlar", guardsmen:"Muhafızlar", specialists:"Uzmanlar", monsters:"Canavarlar", mercs:"Paralı askerler", order:"Sıra", tier:"Kademe", name:"Ad", type:"Tür", count:"Sayı", hp:"Birim HP", total:"Toplam HP", group:"Grup", monstersOk:"Canavarlar: limit izin verirse dahil", monstersWarn:"Canavarlar: limit veya baskınlık nedeniyle kısıtlı", mercsOk:"Paralı askerler: bu seviyede açık", mercsWarn:"Paralı askerler G6’dan başlar", specBlocked:"Uzmanlar için tam Ordu Modernizasyonu gerekir. Sadece Muhafızlar moduna geçin veya araştırmayı tamamlayın.", specTierBlocked:"Uzmanlar yalnızca G7–G9 için kullanılabilir.", groupGuardsmen:"Muhafızlar", groupSpecialists:"Uzmanlar", groupMonsters:"Canavarlar", groupMercs:"Paralı askerler", disclaimerTitle:"Hesaplayıcı Uyarısı", disclaimerText:"Bu hesaplayıcı birlik düzeni ve saldırı sırası için temel bir yapı sunar. Bonuslar, araştırmalar, ekipman ve diğer değişkenler nedeniyle sonuçlar farklı olabilir. Kendi hesabınıza göre ince ayar yapın.", advG6:"G6 gelişmiş maksimizasyon uygulandı", advG5:"G5 gelişmiş maksimizasyon uygulandı" },
@@ -531,12 +1024,12 @@
       pt: { language:"Idioma", title:"Calculadora de Formação de Tropas WoA", sub:"Insira liderança, autoridade, dominância, nível de tropas e modo de pilha. A calculadora monta a formação automaticamente.", inputs:"Entradas", leadership:"Liderança", authority:"Autoridade", dominance:"Dominância", troop:"Nível mais alto de tropas", stackMode:"Modo de pilha", guardsOnly:"Apenas guardas", guardsSpecs:"Guardas + especialistas", modernisation:"Modernização do exército concluída", yes:"Sim", no:"Não", calc:"Calcular", reset:"Redefinir", howTitle:"Como usar:", how1:"1. Insira liderança, autoridade e dominância.", how2:"2. Escolha o nível de tropas e o modo de pilha.", how3:"3. Especialistas ficam bloqueados sem a modernização completa do exército.", how4:"4. A liderança é arredondada para baixo para o milhar mais próximo no cálculo.", modeNote:"Guardas + especialistas só é recomendado quando a modernização do exército estiver totalmente concluída.", selectedTiers:"Níveis selecionados", selectedMonsters:"Níveis de monstros selecionados", highestFlyer:"Maior HP total dos voadores", stacksReturned:"Pilhas retornadas", roundedLead:"Liderança arredondada", quickFilter:"Filtro rápido", all:"Todos", troops:"Guardas + especialistas", guardsmen:"Guardas", specialists:"Especialistas", monsters:"Monstros", mercs:"Mercenários", order:"Ordem", tier:"Nível", name:"Nome", type:"Tipo", count:"Quantidade", hp:"HP / unidade", total:"HP total", group:"Grupo", monstersOk:"Monstros: incluídos onde o limite permite", monstersWarn:"Monstros: limitados por teto ou dominância", mercsOk:"Mercenários: ativados neste nível", mercsWarn:"Mercenários começam em G6", specBlocked:"Especialistas exigem modernização completa do exército. Mude para Apenas guardas ou conclua a pesquisa.", specTierBlocked:"Especialistas só estão disponíveis de G7 a G9.", groupGuardsmen:"Guardas", groupSpecialists:"Especialistas", groupMonsters:"Monstros", groupMercs:"Mercenários", disclaimerTitle:"Aviso da calculadora", disclaimerText:"Esta calculadora fornece uma base para composição de tropas e ordem de ataque. Devido a diferenças em bônus, pesquisas, equipamentos e outros modificadores, os resultados podem variar. Ajuste conforme a sua conta.", advG6:"Maximização avançada G6 aplicada", advG5:"Maximização avançada G5 aplicada" }
     };
 
-    function t(key) {
+    function t(key){
       const lang = (document.getElementById("language") || { value: "en" }).value;
       return (i18n[lang] && i18n[lang][key]) || i18n.en[key] || key;
     }
 
-    function applyLanguage() {
+    function applyLanguage(){
       const lang = document.getElementById("language").value;
       document.documentElement.lang = lang;
       document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
@@ -561,7 +1054,9 @@
       set("modernisationNoText", "no");
       set("modernisationYesText", "yes");
       set("calcBtn", "calc");
+      set("heroCalcBtn", "calc");
       set("resetBtn", "reset");
+      set("heroResetBtn", "reset");
       set("howTitle", "howTitle");
       set("how1", "how1");
       set("how2", "how2");
@@ -586,9 +1081,12 @@
       set("disclaimerText", "disclaimerText");
 
       const filter = document.getElementById("typeFilter");
-      if (filter) {
-        const prev = filter.value;
-        filter.innerHTML = `
+      const filterHero = document.getElementById("typeFilterHero");
+
+      [filter, filterHero].forEach(sel => {
+        if (!sel) return;
+        const prev = sel.value;
+        sel.innerHTML = `
           <option value="all">${t("all")}</option>
           <option value="troops">${t("troops")}</option>
           <option value="guardsmen">${t("guardsmen")}</option>
@@ -596,8 +1094,8 @@
           <option value="monsters">${t("monsters")}</option>
           <option value="mercs">${t("mercs")}</option>
         `;
-        filter.value = prev;
-      }
+        sel.value = prev;
+      });
     }
 
     const guardData = {
@@ -615,8 +1113,7 @@
       S8:{Ranged:{name:"Legitimist I",hp:9180},Mounted:{name:"Royal Lion I",hp:18360},Melee:{name:"Duelist I",hp:9180},Flyers:{name:"Whitemane I",hp:183600}},
       S9:{Ranged:{name:"Legitimist II",hp:16530},Mounted:{name:"Royal Lion II",hp:33060},Melee:{name:"Duelist II",hp:16530},Flyers:{name:"Whitemane II",hp:330600}}
     };
-
-    const monsterData = {
+	    const monsterData = {
       M4: [
         ["Gorgon Medusa", "Ranged", 12000],
         ["Magic Dragon", "Ranged", 15000],
@@ -669,14 +1166,22 @@
       troopLevel: document.getElementById("troopLevel"),
       calcBtn: document.getElementById("calcBtn"),
       resetBtn: document.getElementById("resetBtn"),
+      heroCalcBtn: document.getElementById("heroCalcBtn"),
+      heroResetBtn: document.getElementById("heroResetBtn"),
+      refreshVisualBtn: document.getElementById("refreshVisualBtn"),
+      scrollToResultsBtn: document.getElementById("scrollToResultsBtn"),
+      searchUnit: document.getElementById("searchUnit"),
       typeFilter: document.getElementById("typeFilter"),
+      typeFilterHero: document.getElementById("typeFilterHero"),
       outputBody: document.getElementById("outputBody"),
       guardTiers: document.getElementById("guardTiers"),
       monsterLevels: document.getElementById("monsterLevels"),
       flyerCap: document.getElementById("flyerCap"),
       rowCount: document.getElementById("rowCount"),
       roundedLeadership: document.getElementById("roundedLeadership"),
-      messages: document.getElementById("messages")
+      messages: document.getElementById("messages"),
+      resultsStart: document.getElementById("resultsStart"),
+      toTopBtn: document.getElementById("toTopBtn")
     };
 
     const fmt = n => Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 0 });
@@ -685,7 +1190,6 @@
 
     function roundedLeadership(value){
       return Math.floor(Number(value || 0) / 1000) * 1000;
-	  
     }
 
     function getLeadershipCost(unitType){
@@ -885,7 +1389,6 @@
 
         highestFlyerTotal = rows.find(r => r.tier === "G" + high && r.unitType === "Flyers")?.total || 0;
       } else {
-        // unchanged specialist logic for G7-G9
         const plan = specialistPlan(high);
         tiersLabel = plan.top + " / " + plan.spec + " / " + plan.low;
 
@@ -940,8 +1443,7 @@
 
         roundCounts(rows);
       }
-
-      const monLevels = selectedMonsterLevels(high);
+	        const monLevels = selectedMonsterLevels(high);
       const activeMonsterTotals = [];
 
       monLevels.forEach((level, idx) => {
@@ -1021,6 +1523,15 @@
       };
     }
 
+    function getActiveFilter(){
+      return els.typeFilter.value;
+    }
+
+    function syncFilters(value){
+      els.typeFilter.value = value;
+      els.typeFilterHero.value = value;
+    }
+
     function block(msg){
       els.guardTiers.textContent = "-";
       els.monsterLevels.textContent = "-";
@@ -1028,7 +1539,7 @@
       els.rowCount.textContent = "0";
       els.roundedLeadership.textContent = "-";
       els.outputBody.innerHTML = "";
-      els.messages.innerHTML = `<span class="pill bad">${msg}</span>`;
+      els.messages.innerHTML = `<span class="status-pill bad">${msg}</span>`;
     }
 
     function render(){
@@ -1042,30 +1553,38 @@
       els.guardTiers.textContent = result.tiersLabel;
       els.monsterLevels.textContent = result.monsterLevels;
       els.flyerCap.textContent = fmt(result.highestFlyerTotal);
-      els.rowCount.textContent = String(result.rows.filter(r => {
-        const filter = els.typeFilter.value;
-        return filter === "all" ||
-          (filter === "troops" && (r.group === "guardsmen" || r.group === "specialists")) ||
-          r.group === filter;
-      }).length);
       els.roundedLeadership.textContent = fmt(result.roundedL);
 
       let msgHtml =
-        `<span class="pill ${result.monsterOK ? "ok" : "warn"}">${result.monsterOK ? t("monstersOk") : t("monstersWarn")}</span>` +
-        `<span class="pill ${result.mercAllowed ? "ok" : "warn"}">${result.mercAllowed ? t("mercsOk") : t("mercsWarn")}</span>`;
+        `<span class="status-pill ${result.monsterOK ? "ok" : "warn"}">${result.monsterOK ? t("monstersOk") : t("monstersWarn")}</span>` +
+        `<span class="status-pill ${result.mercAllowed ? "ok" : "warn"}">${result.mercAllowed ? t("mercsOk") : t("mercsWarn")}</span>`;
 
       if (result.advancedMsg) {
-        msgHtml += `<span class="pill ok">${result.advancedMsg}</span>`;
+        msgHtml += `<span class="status-pill ok">${result.advancedMsg}</span>`;
       }
 
       els.messages.innerHTML = msgHtml;
 
-      const filter = els.typeFilter.value;
-      const filtered = result.rows.filter(r =>
-        filter === "all" ||
-        (filter === "troops" && (r.group === "guardsmen" || r.group === "specialists")) ||
-        r.group === filter
-      );
+      const filter = getActiveFilter();
+      const q = String(els.searchUnit.value || "").trim().toLowerCase();
+
+      const filtered = result.rows.filter(r => {
+        const matchesFilter =
+          filter === "all" ||
+          (filter === "troops" && (r.group === "guardsmen" || r.group === "specialists")) ||
+          r.group === filter;
+
+        const matchesSearch =
+          !q ||
+          r.name.toLowerCase().includes(q) ||
+          r.tier.toLowerCase().includes(q) ||
+          r.unitType.toLowerCase().includes(q) ||
+          r.group.toLowerCase().includes(q);
+
+        return matchesFilter && matchesSearch;
+      });
+
+      els.rowCount.textContent = String(filtered.length);
 
       els.outputBody.innerHTML = filtered.map(r => `
         <tr>
@@ -1086,31 +1605,76 @@
       `).join("");
     }
 
-    els.calcBtn.addEventListener("click", render);
-
-    els.resetBtn.addEventListener("click", () => {
+    function fullReset(){
       els.leadership.value = 100000;
       els.authority.value = 1000;
       els.dominance.value = 1000;
       els.troopLevel.value = "G7";
       document.querySelector('input[name="stackMode"][value="guards"]').checked = true;
       document.querySelector('input[name="modernisation"][value="no"]').checked = true;
-      els.typeFilter.value = "all";
+      els.searchUnit.value = "";
+      syncFilters("all");
       document.getElementById("language").value = "en";
       applyLanguage();
       render();
-    });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
 
-    els.typeFilter.addEventListener("change", render);
-    document.querySelectorAll('input[name="stackMode"]').forEach(el => el.addEventListener("change", render));
-    document.querySelectorAll('input[name="modernisation"]').forEach(el => el.addEventListener("change", render));
-    document.getElementById("language").addEventListener("change", () => {
-      applyLanguage();
-      render();
-    });
+    function handleToTopVisibility(){
+      if (window.scrollY > 500) {
+        els.toTopBtn.classList.add("show");
+      } else {
+        els.toTopBtn.classList.remove("show");
+      }
+    }
 
+    function bindEvents(){
+      els.calcBtn.addEventListener("click", render);
+      els.heroCalcBtn.addEventListener("click", () => {
+        render();
+        els.resultsStart.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      els.resetBtn.addEventListener("click", fullReset);
+      els.heroResetBtn.addEventListener("click", fullReset);
+
+      els.refreshVisualBtn.addEventListener("click", render);
+
+      els.scrollToResultsBtn.addEventListener("click", () => {
+        els.resultsStart.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      els.typeFilter.addEventListener("change", e => {
+        syncFilters(e.target.value);
+        render();
+      });
+
+      els.typeFilterHero.addEventListener("change", e => {
+        syncFilters(e.target.value);
+        render();
+      });
+
+      els.searchUnit.addEventListener("input", render);
+
+      document.querySelectorAll('input[name="stackMode"]').forEach(el => el.addEventListener("change", render));
+      document.querySelectorAll('input[name="modernisation"]').forEach(el => el.addEventListener("change", render));
+
+      document.getElementById("language").addEventListener("change", () => {
+        applyLanguage();
+        render();
+      });
+
+      els.toTopBtn.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      window.addEventListener("scroll", handleToTopVisibility);
+    }
+
+    bindEvents();
     applyLanguage();
     render();
+    handleToTopVisibility();
   </script>
 </body>
 </html>
