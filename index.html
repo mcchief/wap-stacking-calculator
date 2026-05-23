@@ -746,7 +746,7 @@
             <div class="pill">Monster & Merc Layers</div>
           </div>
           <div class="hero-note">
-            Designed for direct GitHub hosting, better readability on mobile, and faster troop planning without container layout issues.
+            Precision troop stacking and battle planning made simple.
           </div>
         </div>
       </div>
@@ -1278,6 +1278,95 @@
       }, 0);
     }
 
+    function floorCounts(rows){
+      rows.forEach(r => {
+        r.count = Math.max(Math.floor(r.count), 0);
+        r.total = r.count * r.hp;
+      });
+    }
+
+    function optimizedSpecialistCounts(roundedL, high){
+      const plan = specialistPlan(high);
+      if (!plan) return null;
+
+      const ratioSpec = 1.03;
+      const ratioLow = 1.84;
+
+      /*
+        G8/G9 specialist optimized formula:
+        x = top ranged/melee count.
+        Top: Flyers=x/20, Mounted=x/2, Ranged=x, Melee=x
+        Specialist: Top × 1.03
+        Lower Guardsmen: Top × 1.84
+        Leadership cost = Flyers×20 + Mounted×2 + Ranged + Melee
+        Total leadership = 4x × (1 + 1.03 + 1.84)
+      */
+      if (high === 8 || high === 9) {
+        const x = roundedL / (4 * (1 + ratioSpec + ratioLow));
+
+        return {
+          plan,
+          topCounts: {
+            Ranged: x,
+            Mounted: x / 2,
+            Melee: x,
+            Flyers: x / 20
+          },
+          specCounts: {
+            Ranged: x * ratioSpec,
+            Mounted: (x / 2) * ratioSpec,
+            Melee: x * ratioSpec,
+            Flyers: (x / 20) * ratioSpec
+          },
+          lowCounts: {
+            Ranged: x * ratioLow,
+            Mounted: (x / 2) * ratioLow,
+            Melee: x * ratioLow,
+            Flyers: (x / 20) * ratioLow
+          }
+        };
+      }
+
+      /*
+        Dedicated G7 specialist optimized formula:
+        S7 Vulture has 5,100 HP, so it must use the same count as S7 Ranged/Melee.
+        Top G7: Flyers=x/20, Mounted=x/2, Ranged=x, Melee=x
+        S7: Flyers=x×1.03, Mounted=(x/2)×1.03, Ranged=x×1.03, Melee=x×1.03
+        G6: Flyers=(x/20)×1.84, Mounted=(x/2)×1.84, Ranged=x×1.84, Melee=x×1.84
+        Total leadership = Top 4x + S7 23.69x + G6 7.36x = 35.05x
+      */
+      if (high === 7) {
+        const s7LeadershipFactor = (ratioSpec * 1) + (ratioSpec * 1) + (ratioSpec * 1) + (ratioSpec * 20);
+        const topLeadershipFactor = 4;
+        const lowLeadershipFactor = 4 * ratioLow;
+        const x = roundedL / (topLeadershipFactor + s7LeadershipFactor + lowLeadershipFactor);
+
+        return {
+          plan,
+          topCounts: {
+            Ranged: x,
+            Mounted: x / 2,
+            Melee: x,
+            Flyers: x / 20
+          },
+          specCounts: {
+            Ranged: x * ratioSpec,
+            Mounted: (x / 2) * ratioSpec,
+            Melee: x * ratioSpec,
+            Flyers: x * ratioSpec
+          },
+          lowCounts: {
+            Ranged: x * ratioLow,
+            Mounted: (x / 2) * ratioLow,
+            Melee: x * ratioLow,
+            Flyers: (x / 20) * ratioLow
+          }
+        };
+      }
+
+      return null;
+    }
+
     function applyProportionalAcrossAllGuardsmen(rows, roundedL){
       const guardRows = rows.filter(r => r.group === "guardsmen");
       const used = calculateUsedLeadership(rows, "guardsmen");
@@ -1389,59 +1478,24 @@
 
         highestFlyerTotal = rows.find(r => r.tier === "G" + high && r.unitType === "Flyers")?.total || 0;
       } else {
-        const plan = specialistPlan(high);
+        const optimized = optimizedSpecialistCounts(roundedL, high);
+        const plan = optimized.plan;
         tiersLabel = plan.top + " / " + plan.spec + " / " + plan.low;
 
-        order = addTierRows(rows, order, plan.top, guardData, baseCounts[plan.top], "guardsmen");
+        order = addTierRows(rows, order, plan.top, guardData, optimized.topCounts, "guardsmen");
+        order = addTierRows(rows, order, plan.spec, specialistData, optimized.specCounts, "specialists");
+        order = addTierRows(rows, order, plan.low, guardData, optimized.lowCounts, "guardsmen");
+
+        /*
+          Specialist mode is now optimized against the full leadership cap.
+          G7 has dedicated S7 logic because S7 Vulture uses normal S7 5,100 HP
+          and therefore follows S7 ranged/melee count, not flyer ÷20.
+          G8 and G9 retain the normal formula:
+          Specialist = Top Guardsmen × 1.03, Lower Guardsmen = Top Guardsmen × 1.84.
+        */
+        floorCounts(rows);
         highestFlyerTotal = rows.find(r => r.tier === plan.top && r.unitType === "Flyers")?.total || 0;
-
-        if (high === 7) {
-          const g7Top = baseCounts.G7;
-          const s7Equal = g7Top.Ranged * 1.03;
-
-          const s7Base = {
-            Ranged: s7Equal,
-            Melee: s7Equal,
-            Flyers: s7Equal,
-            Mounted: s7Equal / 2
-          };
-
-          const s7Totals = {
-            Ranged: s7Base.Ranged * 5100,
-            Melee: s7Base.Melee * 5100,
-            Flyers: s7Base.Flyers * 5100,
-            Mounted: s7Base.Mounted * 10200
-          };
-
-          const g6Base = {
-            Ranged: g7Top.Ranged * 1.84,
-            Melee: g7Top.Melee * 1.84,
-            Flyers: g7Top.Flyers * 1.84,
-            Mounted: g7Top.Mounted * 1.84
-          };
-
-          const g6Adj = {
-            Ranged: Math.max(g6Base.Ranged, (s7Totals.Ranged + 1) / 2840),
-            Melee: Math.max(g6Base.Melee, (s7Totals.Melee + 1) / 2840),
-            Flyers: Math.max(g6Base.Flyers, (s7Totals.Flyers + 1) / 57000),
-            Mounted: Math.max(g6Base.Mounted, (s7Totals.Mounted + 1) / 5700)
-          };
-
-          order = addTierRows(rows, order, "S7", specialistData, s7Base, "specialists");
-          order = addTierRows(rows, order, "G6", guardData, g6Adj, "guardsmen");
-        } else {
-          const specCounts = {
-            Ranged: baseCounts[plan.top].Ranged * 1.03,
-            Melee: baseCounts[plan.top].Melee * 1.03,
-            Flyers: baseCounts[plan.top].Flyers * 1.03,
-            Mounted: baseCounts[plan.top].Mounted * 1.03
-          };
-
-          order = addTierRows(rows, order, plan.spec, specialistData, specCounts, "specialists");
-          order = addTierRows(rows, order, plan.low, guardData, baseCounts[plan.low], "guardsmen");
-        }
-
-        roundCounts(rows);
+        advancedMsg = "Specialist leadership maximization applied";
       }
 	        const monLevels = selectedMonsterLevels(high);
       const activeMonsterTotals = [];
