@@ -1003,8 +1003,8 @@
 
             <div class="tier-section">
               <div class="tier-section-title">
-                <strong>Guardsmen</strong>
-                <span class="rule">Select 3 Guardsmen, or 2 when using a Specialist</span>
+                <strong id="guardsSectionTitle">Guardsmen</strong>
+                <span class="rule" id="guardsSectionRule">Select 3 Guardsmen, or 2 when using a Specialist</span>
               </div>
               <div class="tier-check-grid" id="guardTierChecks">
                 <label class="choice"><input class="tierCheck" type="checkbox" value="G3"><span>G3</span></label>
@@ -1015,30 +1015,30 @@
                 <label class="choice"><input class="tierCheck" type="checkbox" value="G8"><span>G8</span></label>
                 <label class="choice"><input class="tierCheck" type="checkbox" value="G9"><span>G9</span></label>
               </div>
-              <div class="tier-guidance">
+              <div class="tier-guidance" id="guardsGuidance">
                 <strong>Recommended:</strong> For better Specialist results, use G7 or higher as your main Guardsmen tier. If your available Guardsmen are below G7, use <strong>Guardsmen Only</strong> instead.
               </div>
             </div>
 
             <div class="tier-section">
               <div class="tier-section-title">
-                <strong>Specialists</strong>
-                <span class="rule">Requires full Modernisation + 2 Guardsmen tiers</span>
+                <strong id="specialistsSectionTitle">Specialists</strong>
+                <span class="rule" id="specialistsSectionRule">Requires full Modernisation + 2 Guardsmen tiers</span>
               </div>
               <div class="tier-check-grid" id="specialistTierChecks">
                 <label class="choice specialist-choice"><input class="specTierCheck" type="checkbox" value="S7"><span>S7</span></label>
                 <label class="choice specialist-choice"><input class="specTierCheck" type="checkbox" value="S8"><span>S8</span></label>
                 <label class="choice specialist-choice"><input class="specTierCheck" type="checkbox" value="S9"><span>S9</span></label>
               </div>
-              <div class="tier-guidance">
+              <div class="tier-guidance" id="specialistsGuidance">
                 <strong>Why Specialists may be greyed out:</strong> Specialists require <strong>full Army Modernisation research</strong> and cannot be used alone. Select <strong>2 valid Guardsmen tiers first</strong>; the compatible Specialist options will then become available.
               </div>
             </div>
 
             <div class="tier-section">
               <div class="tier-section-title">
-                <strong>Monsters</strong>
-                <span class="rule">Select 2 or 3 consecutive Monster tiers</span>
+                <strong id="monstersSectionTitle">Monsters</strong>
+                <span class="rule" id="monstersSectionRule">Select 2 or 3 consecutive Monster tiers</span>
               </div>
               <div class="tier-check-grid" id="monsterTierChecks">
                 <label class="choice"><input class="monsterTierCheck" type="checkbox" value="M4"><span>M4</span></label>
@@ -1050,7 +1050,7 @@
               </div>
             </div>
 
-            <div class="tier-help">
+            <div class="tier-help" id="tierHelpText">
               Recommended build: 20 stacks. Use 3 consecutive Guardsmen tiers, or 2 consecutive Guardsmen plus 1 valid Specialist when full Army Modernisation research is complete. Specialists cannot be used alone. Select 2 or 3 consecutive Monster tiers.
             </div>
           </div>
@@ -1196,6 +1196,143 @@
       pt: { language:"Idioma", title:"Calculadora de Formação de Tropas WoA", sub:"Insira liderança, autoridade, dominância, nível de tropas e modo de pilha. A calculadora monta a formação automaticamente.", inputs:"Entradas", leadership:"Liderança", authority:"Autoridade", dominance:"Dominância", troop:"Nível mais alto de tropas", stackMode:"Modo de pilha", guardsOnly:"Apenas guardas", guardsSpecs:"Guardas + especialistas", modernisation:"Modernização do exército concluída", yes:"Sim", no:"Não", calc:"Calcular", reset:"Redefinir", howTitle:"Como usar:", how1:"1. Insira liderança, autoridade e dominância.", how2:"2. Escolha o nível de tropas e o modo de pilha.", how3:"3. Especialistas ficam bloqueados sem a modernização completa do exército.", how4:"4. A liderança é arredondada para baixo para o milhar mais próximo no cálculo.", modeNote:"Guardas + especialistas só é recomendado quando a modernização do exército estiver totalmente concluída.", selectedTiers:"Níveis selecionados", selectedMonsters:"Níveis de monstros selecionados", highestFlyer:"Maior HP total dos voadores", stacksReturned:"Pilhas retornadas", roundedLead:"Liderança arredondada", quickFilter:"Filtro rápido", all:"Todos", troops:"Guardas + especialistas", guardsmen:"Guardas", specialists:"Especialistas", monsters:"Monstros", mercs:"Mercenários", order:"Ordem", tier:"Nível", name:"Nome", type:"Tipo", count:"Quantidade", hp:"HP / unidade", total:"HP total", group:"Grupo", monstersOk:"Monstros: incluídos onde o limite permite", monstersWarn:"Monstros: limitados por teto ou dominância", mercsOk:"Mercenários: ativados neste nível", mercsWarn:"Mercenários começam em G6", specBlocked:"Especialistas exigem modernização completa do exército. Mude para Apenas guardas ou conclua a pesquisa.", specTierBlocked:"Especialistas só estão disponíveis de G7 a G9.", groupGuardsmen:"Guardas", groupSpecialists:"Especialistas", groupMonsters:"Monstros", groupMercs:"Mercenários", disclaimerTitle:"Aviso da calculadora", disclaimerText:"Esta calculadora fornece uma base para composição de tropas e ordem de ataque. Devido a diferenças em bônus, pesquisas, equipamentos e outros modificadores, os resultados podem variar. Ajuste conforme a sua conta.", advG6:"Maximização avançada G6 aplicada", advG5:"Maximização avançada G5 aplicada" }
     };
 
+
+    const guidanceI18n = {
+      en:{
+        troopLabel:"Troop Levels to Include",
+        guardsSectionTitle:"Guardsmen",
+        guardsSectionRule:"Select 3 Guardsmen, or 2 when using a Specialist",
+        guardsGuidance:"<strong>Recommended:</strong> For better Specialist results, use G7 or higher as your main Guardsmen tier. If your available Guardsmen are below G7, use <strong>Guardsmen Only</strong> instead.",
+        specialistsSectionTitle:"Specialists",
+        specialistsSectionRule:"Requires full Modernisation + 2 Guardsmen tiers",
+        specialistsGuidance:"<strong>Why Specialists may be greyed out:</strong> Specialists require <strong>full Army Modernisation research</strong> and cannot be used alone. Select <strong>2 valid Guardsmen tiers first</strong>; compatible Specialist options will then become available.",
+        monstersSectionTitle:"Monsters",
+        monstersSectionRule:"Select 2 or 3 consecutive Monster tiers",
+        tierHelpText:"Recommended build: 20 stacks. Use 3 consecutive Guardsmen tiers, or 2 consecutive Guardsmen plus 1 valid Specialist when full Army Modernisation research is complete. Specialists cannot be used alone. Select 2 or 3 consecutive Monster tiers."
+      },
+      pt:{
+        troopLabel:"Níveis de tropas a incluir",
+        guardsSectionTitle:"Guardas",
+        guardsSectionRule:"Selecione 3 níveis de Guardas, ou 2 ao usar um Especialista",
+        guardsGuidance:"<strong>Recomendado:</strong> Para melhores resultados com Especialistas, use G7 ou superior como nível principal de Guardas. Se os seus Guardas disponíveis estiverem abaixo de G7, use <strong>Apenas Guardas</strong>.",
+        specialistsSectionTitle:"Especialistas",
+        specialistsSectionRule:"Requer Modernização completa + 2 níveis de Guardas",
+        specialistsGuidance:"<strong>Por que os Especialistas podem aparecer desativados:</strong> Os Especialistas exigem pesquisa completa de Modernização do Exército e não podem ser usados sozinhos. Selecione primeiro <strong>2 níveis válidos de Guardas</strong>; depois, as opções compatíveis de Especialista ficarão disponíveis.",
+        monstersSectionTitle:"Monstros",
+        monstersSectionRule:"Selecione 2 ou 3 níveis consecutivos de Monstros",
+        tierHelpText:"Configuração recomendada: 20 stacks. Use 3 níveis consecutivos de Guardas, ou 2 Guardas consecutivos + 1 Especialista válido quando a Modernização do Exército estiver totalmente pesquisada. Especialistas não podem ser usados sozinhos. Selecione 2 ou 3 níveis consecutivos de Monstros."
+      },
+      es:{
+        troopLabel:"Niveles de tropas a incluir",
+        guardsSectionTitle:"Guardias",
+        guardsSectionRule:"Selecciona 3 niveles de Guardias, o 2 al usar un Especialista",
+        guardsGuidance:"<strong>Recomendado:</strong> Para mejores resultados con Especialistas, usa G7 o superior como nivel principal de Guardias. Si tus Guardias disponibles están por debajo de G7, usa <strong>Solo Guardias</strong>.",
+        specialistsSectionTitle:"Especialistas",
+        specialistsSectionRule:"Requiere Modernización completa + 2 niveles de Guardias",
+        specialistsGuidance:"<strong>Por qué los Especialistas pueden aparecer desactivados:</strong> Requieren la investigación completa de Modernización del Ejército y no pueden usarse solos. Selecciona primero <strong>2 niveles válidos de Guardias</strong>; después se habilitarán los Especialistas compatibles.",
+        monstersSectionTitle:"Monstruos",
+        monstersSectionRule:"Selecciona 2 o 3 niveles consecutivos de Monstruos",
+        tierHelpText:"Configuración recomendada: 20 stacks. Usa 3 niveles consecutivos de Guardias, o 2 Guardias consecutivos + 1 Especialista válido con la Modernización del Ejército completa. Los Especialistas no pueden usarse solos. Selecciona 2 o 3 niveles consecutivos de Monstruos."
+      },
+      fr:{
+        troopLabel:"Niveaux de troupes à inclure",
+        guardsSectionTitle:"Gardes",
+        guardsSectionRule:"Sélectionnez 3 niveaux de Gardes, ou 2 avec un Spécialiste",
+        guardsGuidance:"<strong>Recommandé :</strong> Pour de meilleurs résultats avec les Spécialistes, utilisez G7 ou plus comme niveau principal de Gardes. Si vos Gardes disponibles sont inférieurs à G7, utilisez <strong>Gardes uniquement</strong>.",
+        specialistsSectionTitle:"Spécialistes",
+        specialistsSectionRule:"Nécessite Modernisation complète + 2 niveaux de Gardes",
+        specialistsGuidance:"<strong>Pourquoi les Spécialistes peuvent être grisés :</strong> Ils nécessitent la recherche complète de Modernisation de l’armée et ne peuvent pas être utilisés seuls. Sélectionnez d’abord <strong>2 niveaux valides de Gardes</strong>; les options compatibles seront ensuite disponibles.",
+        monstersSectionTitle:"Monstres",
+        monstersSectionRule:"Sélectionnez 2 ou 3 niveaux consécutifs de Monstres",
+        tierHelpText:"Configuration recommandée : 20 stacks. Utilisez 3 niveaux consécutifs de Gardes, ou 2 Gardes consécutifs + 1 Spécialiste valide avec la Modernisation complète. Les Spécialistes ne peuvent pas être utilisés seuls. Sélectionnez 2 ou 3 niveaux consécutifs de Monstres."
+      },
+      ru:{
+        troopLabel:"Уровни войск для включения",
+        guardsSectionTitle:"Гвардейцы",
+        guardsSectionRule:"Выберите 3 уровня гвардейцев или 2 при использовании специалиста",
+        guardsGuidance:"<strong>Рекомендуется:</strong> Для лучших результатов со специалистами используйте G7 или выше как основной уровень гвардейцев. Если доступные гвардейцы ниже G7, используйте <strong>Только гвардейцы</strong>.",
+        specialistsSectionTitle:"Специалисты",
+        specialistsSectionRule:"Нужна полная модернизация + 2 уровня гвардейцев",
+        specialistsGuidance:"<strong>Почему специалисты могут быть недоступны:</strong> Для них требуется полное исследование модернизации армии, и их нельзя использовать отдельно. Сначала выберите <strong>2 допустимых уровня гвардейцев</strong>; после этого станут доступны совместимые специалисты.",
+        monstersSectionTitle:"Монстры",
+        monstersSectionRule:"Выберите 2 или 3 последовательных уровня монстров",
+        tierHelpText:"Рекомендуемая сборка: 20 стеков. Используйте 3 последовательных уровня гвардейцев или 2 последовательных уровня + 1 подходящего специалиста после полной модернизации. Специалистов нельзя использовать отдельно. Выберите 2 или 3 последовательных уровня монстров."
+      },
+      tr:{
+        troopLabel:"Dahil edilecek birlik seviyeleri",
+        guardsSectionTitle:"Muhafızlar",
+        guardsSectionRule:"3 Muhafız seviyesi seçin veya Uzman kullanırken 2 seviye seçin",
+        guardsGuidance:"<strong>Öneri:</strong> Uzmanlarla daha iyi sonuç için ana Muhafız seviyeniz G7 veya üstü olsun. Muhafızlarınız G7'nin altındaysa <strong>Sadece Muhafızlar</strong> modunu kullanın.",
+        specialistsSectionTitle:"Uzmanlar",
+        specialistsSectionRule:"Tam Modernizasyon + 2 Muhafız seviyesi gerekir",
+        specialistsGuidance:"<strong>Uzmanlar neden gri olabilir:</strong> Uzmanlar tam Ordu Modernizasyonu araştırması gerektirir ve tek başına kullanılamaz. Önce <strong>2 geçerli Muhafız seviyesi</strong> seçin; ardından uyumlu Uzman seçenekleri açılır.",
+        monstersSectionTitle:"Canavarlar",
+        monstersSectionRule:"2 veya 3 ardışık Canavar seviyesi seçin",
+        tierHelpText:"Önerilen yapı: 20 stack. 3 ardışık Muhafız seviyesi veya tam Modernizasyon tamamlandığında 2 ardışık Muhafız + 1 geçerli Uzman kullanın. Uzmanlar tek başına kullanılamaz. 2 veya 3 ardışık Canavar seviyesi seçin."
+      },
+      pl:{
+        troopLabel:"Poziomy wojsk do uwzględnienia",
+        guardsSectionTitle:"Strażnicy",
+        guardsSectionRule:"Wybierz 3 poziomy Strażników lub 2 przy użyciu Specjalisty",
+        guardsGuidance:"<strong>Zalecane:</strong> Dla lepszych wyników ze Specjalistami używaj G7 lub wyżej jako głównego poziomu Strażników. Jeśli dostępni Strażnicy są poniżej G7, wybierz <strong>Tylko Strażnicy</strong>.",
+        specialistsSectionTitle:"Specjaliści",
+        specialistsSectionRule:"Wymaga pełnej Modernizacji + 2 poziomów Strażników",
+        specialistsGuidance:"<strong>Dlaczego Specjaliści mogą być wyszarzeni:</strong> Wymagają pełnego badania Modernizacji Armii i nie mogą być używani samodzielnie. Najpierw wybierz <strong>2 prawidłowe poziomy Strażników</strong>; wtedy dostępne będą kompatybilne opcje.",
+        monstersSectionTitle:"Potwory",
+        monstersSectionRule:"Wybierz 2 lub 3 kolejne poziomy Potworów",
+        tierHelpText:"Zalecana konfiguracja: 20 stacków. Użyj 3 kolejnych poziomów Strażników albo 2 kolejnych Strażników + 1 prawidłowego Specjalisty po pełnej Modernizacji. Specjaliści nie mogą być używani samodzielnie. Wybierz 2 lub 3 kolejne poziomy Potworów."
+      },
+      uk:{
+        troopLabel:"Рівні військ для включення",
+        guardsSectionTitle:"Гвардія",
+        guardsSectionRule:"Виберіть 3 рівні гвардії або 2 при використанні спеціаліста",
+        guardsGuidance:"<strong>Рекомендовано:</strong> Для кращих результатів зі спеціалістами використовуйте G7 або вище як основний рівень гвардії. Якщо доступна гвардія нижче G7, використовуйте <strong>Лише гвардія</strong>.",
+        specialistsSectionTitle:"Спеціалісти",
+        specialistsSectionRule:"Потрібна повна модернізація + 2 рівні гвардії",
+        specialistsGuidance:"<strong>Чому спеціалісти можуть бути недоступні:</strong> Вони потребують повного дослідження модернізації армії та не можуть використовуватися окремо. Спочатку виберіть <strong>2 допустимі рівні гвардії</strong>; після цього стануть доступні сумісні спеціалісти.",
+        monstersSectionTitle:"Монстри",
+        monstersSectionRule:"Виберіть 2 або 3 послідовні рівні монстрів",
+        tierHelpText:"Рекомендована побудова: 20 стеків. Використовуйте 3 послідовні рівні гвардії або 2 послідовні рівні + 1 допустимого спеціаліста після повної модернізації. Спеціалістів не можна використовувати окремо. Виберіть 2 або 3 послідовні рівні монстрів."
+      },
+      ar:{
+        troopLabel:"مستويات القوات المراد تضمينها",
+        guardsSectionTitle:"الحرس",
+        guardsSectionRule:"اختر 3 مستويات من الحرس، أو مستويين عند استخدام متخصص",
+        guardsGuidance:"<strong>موصى به:</strong> للحصول على نتائج أفضل مع المتخصصين، استخدم G7 أو أعلى كمستوى الحرس الرئيسي. إذا كانت مستويات الحرس أقل من G7، فاستخدم <strong>الحرس فقط</strong>.",
+        specialistsSectionTitle:"المتخصصون",
+        specialistsSectionRule:"يتطلب تحديثًا كاملاً + مستويين من الحرس",
+        specialistsGuidance:"<strong>لماذا قد تظهر خيارات المتخصصين باللون الرمادي:</strong> يتطلب المتخصصون إكمال بحث تحديث الجيش بالكامل ولا يمكن استخدامهم بمفردهم. اختر أولاً <strong>مستويين صالحين من الحرس</strong>؛ بعدها ستتوفر الخيارات المتوافقة.",
+        monstersSectionTitle:"الوحوش",
+        monstersSectionRule:"اختر مستويين أو 3 مستويات متتالية من الوحوش",
+        tierHelpText:"التكوين الموصى به: 20 مجموعة. استخدم 3 مستويات متتالية من الحرس، أو مستويين متتاليين + متخصص صالح بعد إكمال التحديث بالكامل. لا يمكن استخدام المتخصصين بمفردهم. اختر مستويين أو 3 مستويات متتالية من الوحوش."
+      }
+    };
+
+    function applyGuidanceLanguage(){
+      const lang = document.getElementById("language").value;
+      const g = guidanceI18n[lang] || guidanceI18n.en;
+
+      const text = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      };
+      const rich = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = value;
+      };
+
+      text("troopLevelLabel", g.troopLabel);
+      text("guardsSectionTitle", g.guardsSectionTitle);
+      text("guardsSectionRule", g.guardsSectionRule);
+      rich("guardsGuidance", g.guardsGuidance);
+      text("specialistsSectionTitle", g.specialistsSectionTitle);
+      text("specialistsSectionRule", g.specialistsSectionRule);
+      rich("specialistsGuidance", g.specialistsGuidance);
+      text("monstersSectionTitle", g.monstersSectionTitle);
+      text("monstersSectionRule", g.monstersSectionRule);
+      text("tierHelpText", g.tierHelpText);
+    }
+
     function t(key){
       const lang = (document.getElementById("language") || { value: "en" }).value;
       return (i18n[lang] && i18n[lang][key]) || i18n.en[key] || key;
@@ -1251,6 +1388,8 @@
       set("thGroup", "group");
       set("disclaimerTitle", "disclaimerTitle");
       set("disclaimerText", "disclaimerText");
+
+      applyGuidanceLanguage();
 
       const filter = document.getElementById("typeFilter");
       const filterHero = document.getElementById("typeFilterHero");
