@@ -2140,8 +2140,12 @@
           const [name, unitType, hp] = item;
           const total = count * hp;
           if (count > 0 && total < highestFlyerTotal) {
-            const roundedCount = Math.round(count);
-            rows.push({order:order++,tier:level,name,unitType,count:roundedCount,hp,total:roundedCount*hp,group:"monsters"});
+            // Monsters: round DOWN to a whole 10-stack. This avoids 61–69 behaving like 70 under the 10% permanent-loss rule.
+            // Never round upward, so the resulting HP remains below the Guardsmen/flyer ceiling.
+            const roundedCount = Math.floor(count / 10) * 10;
+            if (roundedCount > 0) {
+              rows.push({order:order++,tier:level,name,unitType,count:roundedCount,hp,total:roundedCount*hp,group:"monsters"});
+            }
             activeMonsterTotals.push(total);
           }
         });
@@ -2154,7 +2158,9 @@
       mercData.forEach(item => {
         const [name, hp] = item;
         const count = mercAllowed ? Math.max(Math.min(baseMerc, (mercCap - 1) / hp), 0) : 0;
-        const roundedCount = Math.round(count);
+        // Mercenaries follow the same 10% permanent-loss protection rule as Monsters:
+        // always round DOWN to the nearest multiple of 10, never upward.
+        const roundedCount = Math.floor(count / 10) * 10;
         if (roundedCount > 0) {
           rows.push({order:order++,tier:"Merc",name,unitType:"Mercenary",count:roundedCount,hp,total:roundedCount*hp,group:"mercs"});
         }
