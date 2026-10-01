@@ -37,6 +37,27 @@ th.sortable.desc::after{content:" ↓";opacity:1;color:var(--gold)}
 .disclaimer{border-color:#304866;background:#0a1728}
 @media(max-width:850px){.guidance{grid-template-columns:1fr}}
 @media(max-width:1000px){.layout{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(3,1fr)}}@media(max-width:650px){.app{padding:9px}.hero,.card{border-radius:17px;padding:14px}.kpis{grid-template-columns:1fr 1fr}.tests{grid-template-columns:1fr}}
+
+/* Responsive presentation only: calculation engine is unchanged. */
+.viewtools{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+.viewtools label{color:var(--mut);font-weight:800}
+.viewbuttons{display:flex;gap:6px}
+.viewbtn{border:1px solid #355374;background:#091727;color:#c8d9eb;border-radius:11px;padding:10px 16px;min-height:44px;font-weight:850;cursor:pointer}
+.viewbtn.active{background:#173a63;color:white;border-color:#5aa7ff}
+.unitcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:11px}
+.unitcard{background:#081626;border:1px solid #29435f;border-radius:15px;padding:13px;min-width:0}
+.cardtop{display:flex;gap:12px;align-items:center;margin-bottom:10px;min-width:0}
+.cardtop .unitpic{width:66px;height:66px;object-fit:contain;flex-shrink:0}
+.cardname{font-size:15px;font-weight:900;overflow-wrap:anywhere}
+.cardmeta{font-size:12px;color:var(--mut);margin-top:3px}
+.cardstats{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.cardstat{background:#102139;border-radius:9px;padding:9px;min-width:0}
+.cardstat span{display:block;color:var(--mut);font-size:11px}
+.cardstat b{display:block;font-size:15px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.cardstat.wide{grid-column:1/-1}
+.cardcount{color:var(--gold)}
+.view-hidden{display:none!important}
+@media(max-width:650px){.viewtools{align-items:stretch}.viewbuttons{width:100%}.viewbtn{flex:1}.unitcards{grid-template-columns:1fr}.toolbar .search{min-width:0;width:100%}}
 </style>
 </head>
 <body><div class="app">
@@ -81,7 +102,9 @@ th.sortable.desc::after{content:" ↓";opacity:1;color:var(--gold)}
 <button class="fbtn" data-filter="m">Monsters</button>
 <button class="fbtn" data-filter="mc">Mercs</button>
 </div></div>
-<div class="tablewrap"><table><thead><tr>
+<div class="viewtools"><label id="viewLabel">Results view</label><div class="viewbuttons" role="group" aria-labelledby="viewLabel"><button type="button" id="cardsView" class="viewbtn" aria-pressed="false">Cards</button><button type="button" id="tableView" class="viewbtn" aria-pressed="false">Table</button></div></div>
+<div id="unitCards" class="unitcards view-hidden" aria-label="Unit result cards"></div>
+<div class="tablewrap" id="resultTable"><table><thead><tr>
 <th class="sortable" data-sort="displayOrder">#</th>
 <th class="sortable" data-sort="t">Tier</th>
 <th class="sortable" data-sort="u">Unit</th>
@@ -200,6 +223,25 @@ function layers(q,ml){
  return out
 }
 let currentRows=[],activeFilter="all",sortKey="n",sortDir="asc";
+const viewPreference={manual:false,mode:window.matchMedia('(max-width: 650px)').matches?'cards':'table'};
+function setView(mode,manual=false){
+ if(manual)viewPreference.manual=true;
+ viewPreference.mode=mode;
+ document.getElementById('unitCards').classList.toggle('view-hidden',mode!=='cards');
+ document.getElementById('resultTable').classList.toggle('view-hidden',mode!=='table');
+ for(const [id,v] of [['cardsView','cards'],['tableView','table']]){
+  const b=document.getElementById(id),active=v===mode;
+  b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));
+ }
+}
+document.getElementById('cardsView').addEventListener('click',()=>setView('cards',true));
+document.getElementById('tableView').addEventListener('click',()=>setView('table',true));
+const mobileViewQuery=window.matchMedia('(max-width: 650px)');
+function onViewportChange(e){if(!viewPreference.manual)setView(e.matches?'cards':'table');}
+if(mobileViewQuery.addEventListener)mobileViewQuery.addEventListener('change',onViewportChange);
+else if(mobileViewQuery.addListener)mobileViewQuery.addListener(onViewportChange);
+setView(viewPreference.mode);
+
 
 function className(c){return c==="g"?"Guardsmen":c==="s"?"Specialists":c==="m"?"Monsters":"Mercenaries"}
 function compare(a,b,key){
@@ -220,6 +262,10 @@ function renderRows(){
    if(d!==0) return sortDir==="asc"?d:-d;
    return x.displayOrder-y.displayOrder;
  });
+ document.getElementById('unitCards').innerHTML=q.map(z=>`<article class="unitcard">
+ <div class="cardtop">${unitImageHTML(z)}<div><div class="cardname">${z.u}</div><div class="cardmeta"><b class="${z.c}">${z.t}</b> · ${className(z.c)} · ${z.y}</div></div></div>
+ <div class="cardstats"><div class="cardstat"><span>Count</span><b class="cardcount">${fmt(z.n)}</b></div><div class="cardstat"><span>HP / unit</span><b>${fmt(z.h)}</b></div><div class="cardstat"><span>Leadership / unit</span><b>${z.l}</b></div><div class="cardstat"><span>Tier</span><b>${z.t}</b></div><div class="cardstat wide"><span>Total HP</span><b>${fmt(z.total)}</b></div></div>
+ </article>`).join('');
  body.innerHTML=q.map((z,i)=>`<tr><td>${i+1}</td><td><b>${z.t}</b></td><td>${z.u}</td><td class="imgcell">${unitImageHTML(z)}</td><td>${z.y}</td><td class="num"><b>${fmt(z.n)}</b></td><td class="num">${z.l}</td><td class="num">${fmt(z.h)}</td><td class="num"><b>${fmt(z.total)}</b></td><td class="${z.c}">${className(z.c)}</td></tr>`).join("");
 }
 function run(show=true,L0=null,GS=null,SS=null){
